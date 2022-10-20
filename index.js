@@ -35,10 +35,12 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
 app.use(cors());
 
+app.use("/api/user/", require("./routers/user"));
 
 app.get("/api/", (req, res) => {
   res.send("<h1>Welcome to Pomodoro API</h1>");
 });
+
 
 const PORT = process.env.PORT || 5500;
 const MONGODB_URL = process.env.MONGODB_URL;
