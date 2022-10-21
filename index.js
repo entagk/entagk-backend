@@ -37,6 +37,8 @@ app.use(cors());
 
 app.use("/api/user/", require("./routers/user"));
 
+app.use("/api/task/", require("./routers/task"));
+
 app.get("/api/", (req, res) => {
   res.send("<h1>Welcome to Pomodoro API</h1>");
 });
@@ -52,7 +54,7 @@ mongoose.connect(MONGODB_URL, {
   .then(() => app.listen(PORT, () => {
     console.log(`server is running at http://localhost:${PORT}/`)
   }))
-  .catch((error) => console.log("The MongoDB Error is", error.message));
+  .catch((error) => console.log("The MongoDB Error is", error.message, "%n", error));
 
 // mongoose.set('useFindAndModify', false);
 // mongoose.set('useCreateIndex', true);
