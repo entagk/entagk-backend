@@ -39,6 +39,8 @@ app.use("/api/user/", require("./routers/user"));
 
 app.use("/api/task/", require("./routers/task"));
 
+app.use("/api/setting/", require("./routers/setting"));
+
 app.get("/api/", (req, res) => {
   res.send("<h1>Welcome to Pomodoro API</h1>");
 });

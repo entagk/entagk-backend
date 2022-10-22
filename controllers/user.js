@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const User = require("./../models/user.js");
 const Tasks = require("./../models/task.js");
 const sendMail = require("./sendMail.js");
+const Setting = require("../models/setting.js");
 
 dotenv.config();
 
@@ -46,6 +47,8 @@ const UserController = {
       const newUser = { email, password: hashedPassword, name, avatar };
       const result = await User.create(newUser);
 
+      await Setting.create({ userId: result._id });
+
       const token = createAcessToken({ email: newUser.email, id: result._id });
 
       res.status(200).json({ token, message: "You are logged in successfully" })
@@ -54,7 +57,7 @@ const UserController = {
       console.log(error);
     }
   },
-  
+
   signIn: async (req, res) => {
     const { email, password } = req.body;
 
@@ -73,7 +76,7 @@ const UserController = {
       res.status(500).json({ message: error.message });
     }
   },
-  
+
   getUser: async (req, res) => {
     try {
       if (!mongoose.Types.ObjectId.isValid(req.userId)) return res.status(400).json({ message: "No user with this id" });
@@ -84,7 +87,7 @@ const UserController = {
       res.status(500).json({ message: error.message });
     }
   },
-  
+
   forgotPassword: async (req, res) => {
     try {
       const { email } = req.body;
@@ -112,7 +115,7 @@ const UserController = {
       res.status(500).json({ message: error.message })
     }
   },
-  
+
   resetPassword: async (req, res) => {
     try {
       const { password } = req.body;
@@ -176,8 +179,8 @@ const UserController = {
     try {
       const user = await User.findByIdAndDelete(req.userId);
 
-      // remove the tasks from database
-      // const userTasks = await Tasks.find({ userId: req.userId });
+      await Tasks.deleteMany({ userId: req.userId });
+      await Setting.deleteOne({ userId: req.userId });
 
       res
         .status(200)
