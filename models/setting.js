@@ -80,6 +80,10 @@ const settingSchema = new mongoose.Schema(
     notificationInterval: {
       type: Number,
       default: 5,
+    },
+    userId: {
+      type: String,
+      require: [true, "You should enter the userId."]
     }
   },
   {
