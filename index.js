@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 /**
  * some notes about body-parser from express docs:
  * body-parser is Node.js body parsing middleware.
@@ -41,10 +42,11 @@ app.use("/api/task/", require("./routers/task"));
 
 app.use("/api/setting/", require("./routers/setting"));
 
-app.get("/api/", (req, res) => {
-  res.send("<h1>Welcome to Pomodoro API</h1>");
-});
+app.use(express.static(path.join(__dirname, 'build')));
 
+app.get("/", function (req, res) { 
+  res.sendFile(path.join(__dirname, 'build', 'index.html'))
+})
 
 const PORT = process.env.PORT || 5500;
 const MONGODB_URL = process.env.MONGODB_URL;
