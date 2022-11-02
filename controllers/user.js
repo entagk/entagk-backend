@@ -2,10 +2,17 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const { google } = require('googleapis');
+const crypto = require('crypto');
+
 const User = require("./../models/user.js");
 const Tasks = require("./../models/task.js");
 const sendMail = require("./sendMail.js");
 const Setting = require("../models/setting.js");
+const ResetId = require('../models/resetId');
+
+const { OAuth2 } = google.auth;
+const client = new OAuth2(process.env.MAILING_SERVICE_CLIENT_ID);
 
 dotenv.config();
 
@@ -19,6 +26,10 @@ const validateEmail = (email) => {
 const createAcessToken = (payload) => {
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "16h" });
 };
+
+const createPasswordResetPassword = (payload) => {
+  return jwt.sign(payload, process.env.RESET_TOKEN_SECRET, { expiresIn: '1h' });
+}
 
 const createRefrishToken = (payload) => {
   return jwt.sign(payload, process.env.REFRISH_TOKEN_SECRET, { expiresIn: "7d" })
@@ -77,6 +88,43 @@ const UserController = {
     }
   },
 
+  googleLogin: async (req, res) => {
+    try {
+      const { token } = req.body;
+
+      const verify = await client.verifyIdToken({ idToken: token, audience: process.env.MAILING_SERVICE_CLIENT_ID })
+
+      const { email_verified, email, name, picture } = verify.getPayload();
+
+      // console.log({ email_verified, email, name, picture });
+
+      if (!email_verified) return res.status(400).json({ message: "This email is not verify, verify it and try again later." });
+
+      const oldUser = await User.findOne({ email });
+
+      if (oldUser) {
+        const token = createAcessToken({ email: oldUser.email, id: oldUser._id });
+
+        res.json({ message: 'Successful Login.', token });
+      } else {
+        const password = email + process.env.GOOGLE_SECRET;
+        const hashedPassword = await bcrypt.hash(password, 12);
+
+        const newUser = await User.create({
+          name, email, password: hashedPassword, avatar: picture
+        });
+
+        const token = createAcessToken({ email: newUser.email, id: newUser._id });
+
+        res.status(200).json({ message: 'Successful Login', token });
+      }
+
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+      console.log(error);
+    }
+  },
+
   getUser: async (req, res) => {
     try {
       if (!mongoose.Types.ObjectId.isValid(req.userId)) return res.status(400).json({ message: "No user with this id" });
@@ -92,12 +140,14 @@ const UserController = {
     try {
       const { email } = req.body;
 
-      const user = User.findOne({ email });
+      const user = await User.findOne({ email });
 
       if (!user) return res.status(400).json({ message: "This email is not found" });
 
-      const token = createAcessToken({ id: user._id });
-      const resetUrl = `${CLIENT_URL}/reset/${token}`;
+      console.log(user);
+      const token = createPasswordResetPassword({ id: user._id }).split(".");
+
+      const resetUrl = `${CLIENT_URL}/reset/${token[2]}`;
 
       sendMail(
         email,
@@ -105,14 +155,34 @@ const UserController = {
         user.name,
         "reset the password",
         "click the link for reseting the password"
-      ).catch((error) => {
+      ).then(async (result) => {
+        if (result.accepted[0] === email) {
+          const createdToken = await ResetId.create({ partOne: token[0], partTwo: token[1], partThree: token[2] });
+          res.status(200).json({ message: 'checkout your email.', createdToken, result, token })
+        }
+      }).catch((error) => {
         console.log(error.message);
-        res.status(500).json({ message: error.message });
-      });
+        res.status(500).json({ message: error });
+      })
 
-      res.status(200).json({ message: "checkout your email." });
     } catch (error) {
-      res.status(500).json({ message: error.message })
+      res.status(500).json({ message: error.message });
+      console.log(error)
+    }
+  },
+
+  verifyResetToken: async (req, res) => {
+    try {
+      const user = await User.findById(req.userId);
+
+      if (user.email) {
+        res.status(200).json({ verify: true, message: "Founded user." })
+      } else {
+        res.status(404).json({ verify: false, message: "Sorry, this user is not found." })
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: error.message });
     }
   },
 
@@ -120,6 +190,9 @@ const UserController = {
     try {
       const { password } = req.body;
       const passwordHash = await bcrypt.hash(password, 12);
+
+      const user = await User.findById(req.userId);
+      if (!user) return req.status(404).json({ message: "Not found user." });
 
       await User.findOneAndUpdate(
         { _id: req.userId },
