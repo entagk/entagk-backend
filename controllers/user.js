@@ -114,7 +114,7 @@ const UserController = {
           name, email, password: hashedPassword, avatar: picture
         });
 
-        await Setting.create({ userId: result._id });
+        await Setting.create({ userId: newUser._id });
 
         const token = createAcessToken({ email: newUser.email, id: newUser._id });
 
