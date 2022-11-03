@@ -52,8 +52,8 @@ const taskControllers = {
 
       const oldTask = await Task.findById(id);
 
-      const newAct = act || oldTask?.act;
-      const newEst = est || oldTask?.est;
+      const newAct = req.body.act !== undefined ? act : oldTask?.act;
+      const newEst = req.body.est !== undefined ? est : oldTask?.est;
 
       if (!oldTask?._id) return res.status(404).json({ message: "This task doesn't found." })
 
@@ -144,7 +144,7 @@ const taskControllers = {
     try {
       const usedTasks = await Task.updateMany({ userId: req.userId, act: { $gte: 1 } }, { act: 0, check: false });
 
-      res.status(200).json({...usedTasks, message: "Successful update."});
+      res.status(200).json({ ...usedTasks, message: "Successful update." });
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
@@ -153,7 +153,7 @@ const taskControllers = {
     try {
       const deletedTasks = await Task.deleteMany({ userId: req.userId });
 
-      res.status(200).json({...deletedTasks, message: "Successfully deleting."});
+      res.status(200).json({ ...deletedTasks, message: "Successfully deleting." });
     } catch (error) {
       res.status(500).json({ message: error.message })
     }

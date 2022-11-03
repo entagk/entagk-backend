@@ -146,7 +146,6 @@ const UserController = {
 
       if (!user) return res.status(400).json({ message: "This email is not found" });
 
-      console.log(user);
       const token = createPasswordResetPassword({ id: user._id }).split(".");
 
       const resetUrl = `${CLIENT_URL}/reset/${token[2]}`;
