@@ -193,6 +193,8 @@ const UserController = {
   resetPassword: async (req, res) => {
     try {
       const { password } = req.body;
+      if (!password || password.length < 8) return res.status(400).json({ message: "Please, enter a valid new password." });
+
       const passwordHash = await bcrypt.hash(password, 12);
 
       const user = await User.findById(req.userId);
