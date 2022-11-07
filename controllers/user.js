@@ -157,13 +157,14 @@ const UserController = {
         "reset the password",
         "click the link for reseting the password"
       ).then(async (result) => {
-        if (result.accepted[0] === email) {
+        if (result?.accepted[0] === email) {
           const createdToken = await ResetId.create({ partOne: token[0], partTwo: token[1], partThree: token[2] });
           res.status(200).json({ message: 'checkout your email.', createdToken, result, token })
         }
+        console.log(result);
       }).catch((error) => {
-        console.log(error.message);
-        res.status(500).json({ message: error });
+        console.log(error);
+        res.status(500).json({ message: error.message || 'some thing error while sending mail', error });
       })
 
     } catch (error) {
