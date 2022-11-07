@@ -5,7 +5,7 @@ const ResetId = require("../models/resetId");
 dotenv.config();
 
 const VerifyResetToken = async (req, res, next) => {
-  const tokenPart3 = req.body.tokenId;
+  const tokenPart3 = req.headers.authorization.split(" ")[1];
   try {
     if (!tokenPart3) return res.status(400).json({ message: "Invalid Authentication." });
 
