@@ -89,10 +89,10 @@ const UserController = {
   },
 
   googleLogin: async (req, res) => {
-    try {
-      const { token } = req.body;
+    const { token } = req.body;
 
-      const verify = await client.verifyIdToken({ idToken: token, audience: process.env.MAILING_SERVICE_CLIENT_ID })
+    const verify = await client.verifyIdToken({ idToken: token, audience: process.env.MAILING_SERVICE_CLIENT_ID })
+    try {
 
       const { email_verified, email, name, picture } = verify.getPayload();
 
@@ -122,7 +122,7 @@ const UserController = {
       }
 
     } catch (error) {
-      res.status(500).json({ message: error.message, MAILING_SERVICE_CLIENT_ID: process.env.MAILING_SERVICE_CLIENT_ID });
+      res.status(500).json({ message: error.message, verify: verify, MAILING_SERVICE_CLIENT_ID: process.env.MAILING_SERVICE_CLIENT_ID });
       console.log(error);
     }
   },
