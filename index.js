@@ -44,7 +44,8 @@ app.use("/api/setting/", require("./routers/setting"));
 
 app.use(express.static(path.join(__dirname, 'build')));
 
-app.get("/", function (req, res) { 
+// use "*" for making make the react-router-dom working
+app.get("*", function (req, res) { 
   res.sendFile(path.join(__dirname, 'build', 'index.html'))
 })
 

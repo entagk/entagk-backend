@@ -89,9 +89,9 @@ const UserController = {
   },
 
   googleLogin: async (req, res) => {
-    try {
-      const { token } = req.body;
+    const { token } = req.body;
 
+    try {
       const verify = await client.verifyIdToken({ idToken: token, audience: process.env.MAILING_SERVICE_CLIENT_ID })
 
       const { email_verified, email, name, picture } = verify.getPayload();
@@ -122,7 +122,7 @@ const UserController = {
       }
 
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message, MAILING_SERVICE_CLIENT_ID: process.env.MAILING_SERVICE_CLIENT_ID });
       console.log(error);
     }
   },
@@ -157,13 +157,16 @@ const UserController = {
         "reset the password",
         "click the link for reseting the password"
       ).then(async (result) => {
-        if (result.accepted[0] === email) {
-          const createdToken = await ResetId.create({ partOne: token[0], partTwo: token[1], partThree: token[2] });
-          res.status(200).json({ message: 'checkout your email.', createdToken, result, token })
+        if (result.accepted !== undefined) {
+          if (result?.accepted[0] === email) {
+            const createdToken = await ResetId.create({ partOne: token[0], partTwo: token[1], partThree: token[2] });
+            res.status(200).json({ message: 'checkout your email.', createdToken, result, token })
+          }
         }
+        console.log(result);
       }).catch((error) => {
-        console.log(error.message);
-        res.status(500).json({ message: error });
+        console.log(error);
+        res.status(500).json({ message: error.message || 'some thing error while sending mail', error });
       })
 
     } catch (error) {
@@ -190,6 +193,8 @@ const UserController = {
   resetPassword: async (req, res) => {
     try {
       const { password } = req.body;
+      if (!password || password.length < 8) return res.status(400).json({ message: "Please, enter a valid new password." });
+
       const passwordHash = await bcrypt.hash(password, 12);
 
       const user = await User.findById(req.userId);

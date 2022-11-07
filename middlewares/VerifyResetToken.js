@@ -11,7 +11,7 @@ const VerifyResetToken = async (req, res, next) => {
 
     const tokenData = await ResetId.findOne({ partThree: tokenPart3 });
 
-    if (!tokenData) return res.status(400).json({ message: 'Expired token, please try set password again.' })
+    if (!tokenData) return res.status(404).json({ message: 'Expired token, please try set password again.' })
 
     const realToken = tokenData.partOne + '.' + tokenData.partTwo + '.' + tokenData.partThree;
 
