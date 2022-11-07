@@ -122,7 +122,7 @@ const UserController = {
       }
 
     } catch (error) {
-      res.status(500).json({ message: error.message, verify: verify, MAILING_SERVICE_CLIENT_ID: process.env.MAILING_SERVICE_CLIENT_ID });
+      res.status(500).json({ message: error.message, verify: verify, MAILING_SERVICE_CLIENT_ID: process.env.MAILING_SERVICE_CLIENT_ID, token });
       console.log(error);
     }
   },
