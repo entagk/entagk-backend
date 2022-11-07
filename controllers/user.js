@@ -91,8 +91,8 @@ const UserController = {
   googleLogin: async (req, res) => {
     const { token } = req.body;
 
-    const verify = await client.verifyIdToken({ idToken: token, audience: process.env.MAILING_SERVICE_CLIENT_ID })
     try {
+      const verify = await client.verifyIdToken({ idToken: token, audience: process.env.MAILING_SERVICE_CLIENT_ID })
 
       const { email_verified, email, name, picture } = verify.getPayload();
 
@@ -157,9 +157,11 @@ const UserController = {
         "reset the password",
         "click the link for reseting the password"
       ).then(async (result) => {
-        if (result?.accepted[0] === email) {
-          const createdToken = await ResetId.create({ partOne: token[0], partTwo: token[1], partThree: token[2] });
-          res.status(200).json({ message: 'checkout your email.', createdToken, result, token })
+        if (result.accepted !== undefined) {
+          if (result?.accepted[0] === email) {
+            const createdToken = await ResetId.create({ partOne: token[0], partTwo: token[1], partThree: token[2] });
+            res.status(200).json({ message: 'checkout your email.', createdToken, result, token })
+          }
         }
         console.log(result);
       }).catch((error) => {
