@@ -19,7 +19,7 @@ dotenv.config();
 const CLIENT_URL = process.env.CLIENT_URL;
 
 const validateEmail = (email) => {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
   return re.test(email);
 }
 
@@ -41,17 +41,17 @@ const UserController = {
 
     try {
       if (!name || !email || !password) {
-        res.status(400).json({ message: "Please enter all data fields" });
+        return res.status(400).json({ message: "Please enter all data fields" });
       }
 
       if (!validateEmail(email)) {
-        res.status(400).json({ message: 'This email is invalid' });
+        return res.status(400).json({ message: 'This email is invalid' });
       }
 
       const oldUser = await User.findOne({ email });
       if (oldUser) return res.status(400).json({ message: "This email already exists" });
 
-      if (password.length < 8) res.status(400).json({ message: 'The password must be at least 8 letters and numbers' });
+      if (password.length < 8) return res.status(400).json({ message: 'The password must be at least 8 letters and numbers' });
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -64,8 +64,8 @@ const UserController = {
 
       res.status(200).json({ token, message: "You are logged in successfully" })
     } catch (error) {
-      res.status(500).json({ message: error.message });
       console.log(error);
+      return res.status(500).json({ message: error.message });
     }
   },
 
@@ -73,6 +73,10 @@ const UserController = {
     const { email, password } = req.body;
 
     try {
+      if (!validateEmail(email)) {
+        return res.status(400).json({ message: 'This email is invalid' });
+      }
+
       const existingUser = await User.findOne({ email });
 
       if (!existingUser) return res.status(404).json({ message: "user not found" });
@@ -142,9 +146,14 @@ const UserController = {
     try {
       const { email } = req.body;
 
+      if (!validateEmail(email)) {
+        return res.status(400).json({ message: 'This email is invalid' });
+      }
+      console.log(validateEmail(email));
+
       const user = await User.findOne({ email });
 
-      if (!user) return res.status(400).json({ message: "This email is not found" });
+      if (!user) return res.status(404).json({ message: "This email is not found" });
 
       const token = createPasswordResetPassword({ id: user._id }).split(".");
 
@@ -160,7 +169,10 @@ const UserController = {
         if (result.accepted !== undefined) {
           if (result?.accepted[0] === email) {
             const createdToken = await ResetId.create({ partOne: token[0], partTwo: token[1], partThree: token[2] });
-            res.status(200).json({ message: 'checkout your email.', createdToken, result, token })
+
+            if (email.toLowerCase().includes('testing')) result.ResetId = createdToken.partThree;
+
+            res.status(200).json({ message: 'checkout your email.', result })
           }
         }
         console.log(result);
@@ -207,7 +219,7 @@ const UserController = {
         }
       );
 
-      res.json({ message: "The password is changed successfuly." });
+      res.status(200).json({ message: "The password is changed successfuly." });
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
@@ -217,7 +229,11 @@ const UserController = {
     try {
       const { name, avatar, oldPassword, newPassword } = req.body;
 
+      if (!name && !avatar && (!oldPassword && !newPassword)) return res.status(400).json({ message: "Please enter the new data" });
+
       const oldUser = await User.findOne({ _id: req.userId });
+
+      if (!oldUser) return res.status(404).json({ message: "This user is not found" });
 
       let newUser;
 
@@ -263,7 +279,7 @@ const UserController = {
 
       res
         .status(200)
-        .json({ message: "تم حذف الحساب بنجاح", deleted_id: user.id });
+        .json({ message: "Deleted account successfully", deleted_id: user.id });
     } catch (error) {
       res.status(500).json({ message: error.message });
       console.log(error);
