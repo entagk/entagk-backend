@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Task = require("./../models/task.js");
 
 const taskControllers = {
@@ -11,7 +12,12 @@ const taskControllers = {
       const total = await Task.countDocuments({ userId });
       const tasks = await Task.find({ userId }).sort({ check: false }).limit(limit).skip(startIndex);
 
-      res.status(200).json({ tasks, total, currentPage: Number(page), numberOfPages: Math.ceil(total / limit) });
+      res.status(200).json({
+        tasks,
+        total,
+        currentPage: page ? Number(page) : total === 0 ? 0 : 1,
+        numberOfPages: Math.ceil(total / limit)
+      });
 
     } catch (error) {
       res.status(500).json({ message: error.message })
@@ -21,16 +27,16 @@ const taskControllers = {
     try {
       const { name, est, notes, project } = req.body;
 
-      if (!name.trim() || !est) return res.status(400).json({ message: "Please, complete the task data at least name and est" })
+      if (!name?.trim() || !est) return res.status(400).json({ message: "Please, complete the task data at least name and est" })
       if (est <= 0) return res.status(400).json({ message: "The est shouldn't be negative number." })
-      if (name?.length > 50 && name.trim()) return res.status(400).json({ message: "The name length is more than 50 characters." })
+      if (name?.length > 50 && name?.trim()) return res.status(400).json({ message: "The name length is more than 50 characters." })
 
-      if (notes?.length > 500 && notes.trim()) return res.status(400).json({ message: "The notes length is more than 50 characters." })
+      if (notes?.length > 500 && notes?.trim()) return res.status(400).json({ message: "The notes length is more than 50 characters." })
       // verify the project
 
       const newTask = await Task.create({ name, est, notes, project, userId: req.userId });
 
-      res.status(200).json({ newTask });
+      res.status(200).json(newTask);
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
@@ -38,26 +44,23 @@ const taskControllers = {
   updateTask: async (req, res) => {
     try {
       const { id } = req.params;
-      if (!id) return res.status(400).json({ message: "You should add the task id." })
 
       const { name, est, act, notes, project } = req.body;
 
+      if(!name && !est && !act && !notes && !project) return res.status(400).json({message: "Please enter the data that you want to update the task to it."})
       // if (!name.trim() || !est) return res.status(400).json({ message: "Please, complete the task data at least name and est" });
       if (est <= 0) return res.status(400).json({ message: "The est shouldn't be negative number." });
       if (act < 0) return res.status(400).json({ message: "The act shouldn't be negative number." });
-      if (act > est) return res.status(400).json({ message: "The act shouldn't be more than est." });
-      if (name?.length > 50 && name.trim()) return res.status(400).json({ message: "The name length is more than 50 characters." });
-
-      if (notes?.length > 500 && notes.trim()) return res.status(400).json({ message: "The notes length is more than 50 characters." });
-
-      const oldTask = await Task.findById(id);
+      if (name?.length > 50 && name?.trim()) return res.status(400).json({ message: "The name length is more than 50 characters." });
+      
+      if (notes?.length > 500 && notes?.trim()) return res.status(400).json({ message: "The notes length is more than 50 characters." });
+      
+      const oldTask = req.oldTask;
 
       const newAct = req.body.act !== undefined ? act : oldTask?.act;
       const newEst = req.body.est !== undefined ? est : oldTask?.est;
 
-      if (!oldTask?._id) return res.status(404).json({ message: "This task doesn't found." })
-
-      if (oldTask.userId !== req.userId) return res.status(401).json({ message: "This task doesn't belong to you." });
+      if (newAct > newEst) return res.status(400).json({ message: "The act shouldn't be more than est." });
 
       const updatedTask = Object.assign(oldTask, { name, est, act, notes, project, check: newAct === newEst });
       const newTask = await Task.findByIdAndUpdate(id, updatedTask, { new: true });
@@ -71,17 +74,10 @@ const taskControllers = {
   deleteTask: async (req, res) => {
     try {
       const { id } = req.params;
-      if (!id) return res.status(400).json({ message: "You should add the task id." })
-
-      const task = await Task.findById(id);
-
-      if (!task?._id) return res.status(404).json({ message: "This task doesn't found." })
-
-      if (task?.userId !== req.userId) return res.status(401).json({ message: "This task doesn't belong to you." });
 
       await Task.findByIdAndDelete(id);
 
-      res.status(200).json({ message: "Successfully deleted", deleted_id: task._id });
+      res.status(200).json({ message: "Successfully deleted", deleted_id: id });
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
@@ -89,13 +85,8 @@ const taskControllers = {
   checkTask: async (req, res) => {
     try {
       const { id } = req.params;
-      if (!id) return res.status(400).json({ message: "You should add the task id." });
 
-      let task = await Task.findById(id);
-
-      if (!task?._id) return res.status(404).json({ message: "This task doesn't found." });
-
-      if (task.userId !== req.userId) return res.status(401).json({ message: "This task doesn't belong to you." });
+      let task = req.oldTask;
 
       const newTask = Object.assign(task, { check: !task.check, act: !task.check ? task.est : 0 })
 
@@ -110,13 +101,8 @@ const taskControllers = {
   increaseAct: async (req, res) => {
     try {
       const { id } = req.params;
-      if (!id) return res.status(400).json({ message: "You should add the task id." });
-
-      const task = await Task.findById(id);
-
-      if (!task?._id) return res.status(404).json({ message: "This task doesn't found." });
-
-      if (task.userId !== req.userId) return res.status(401).json({ message: "This task doesn't belong to you." });
+      
+      const task = req.oldTask;
 
       if (task.act === task.est) return res.status(400).json({ message: "This task is completed." });
 

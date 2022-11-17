@@ -14,8 +14,6 @@ const Auth = (req, res, next) => {
 
     const isCustomAuth = token.length < 500;
 
-    console.log(token, req?.headers?.authorization);
-
     let decodedData;
 
     if (token && isCustomAuth) {

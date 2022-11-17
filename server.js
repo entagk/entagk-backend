@@ -10,7 +10,6 @@ const bodyParser = require("body-parser");
  * CORS is a node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options.
  */
 const cors = require("cors");
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const app = express();
 
