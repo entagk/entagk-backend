@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const mongoose = require("mongoose");
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ const Auth = (req, res, next) => {
       req.userId = decodedData?.sub;
     }
 
+    if (!mongoose.Types.ObjectId.isValid(req.userId)) return res.status(401).json({ message: "Invalid Authentication" });
 
     next();
   } catch (error) {

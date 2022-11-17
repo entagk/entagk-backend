@@ -45,7 +45,6 @@ describe("Task APIs", () => {
             userId = tokenData.sub;
           }
 
-
           done();
         });
     });
