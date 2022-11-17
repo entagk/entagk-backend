@@ -7,8 +7,6 @@ const MONGODB_URL = "mongodb://localhost:27017/?authMechanism=DEFAULT";
 
 let userId, token, resetTokenId;
 
-jest.setTimeout(100000)
-
 beforeAll((done) => {
   mongoose.connect(MONGODB_URL,
     { useNewUrlParser: true, useUnifiedTopology: true },
@@ -21,6 +19,7 @@ afterAll((done) => {
     console.log("done")
   });
 });
+
 
 describe('User APIs', () => {
   const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" }
@@ -131,6 +130,7 @@ describe('User APIs', () => {
           if (err) throw err;
 
           expect(res.body.message).toBe("wrong password");
+
           done();
         })
     });
@@ -169,7 +169,6 @@ describe('User APIs', () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body);
           expect(res.body.message).toBe("Invalid Authentication.");
           done();
         })
@@ -207,7 +206,6 @@ describe('User APIs', () => {
           expect(res.body.result.accepted[0]).toBe(userData.email);
 
           resetTokenId = res.body.result.ResetId;
-          console.log(resetTokenId);
 
           done();
         })
@@ -244,7 +242,6 @@ describe('User APIs', () => {
 
   // PASS
   describe("Testing verifyResetId POST through route /api/user/verify_reset_id", () => {
-
     // PASS
     it("Testing controller with successful message", (done) => {
       supertest(app)
@@ -253,7 +250,6 @@ describe('User APIs', () => {
         .expect(200)
         .end((err, res) => {
           if (err) throw err;
-          console.log(res.body);
 
           expect(res.body.verify).toBe(true);
           expect(res.body.message).toBe("Founded user.");
@@ -376,7 +372,6 @@ describe('User APIs', () => {
         .end((err, res) => {
           if (err) throw err;
 
-          // console.log(res.body, res.status, res.error.message);
           expect(res.body.message).toBe("invalid signature");
 
           done();
@@ -391,7 +386,6 @@ describe('User APIs', () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body);
           expect(res.body.message).toBe("Please enter the new data");
 
           done();
@@ -425,7 +419,6 @@ describe('User APIs', () => {
         .end((err, res) => {
           if (err) throw err;
 
-          // console.log(res.body);
           expect(res.body.message).toBe("Successfuly updates");
           userData.password = newPass;
 

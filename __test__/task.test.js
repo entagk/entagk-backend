@@ -7,8 +7,6 @@ const MONGODB_URL = "mongodb://localhost:27017/?authMechanism=DEFAULT";
 
 let userId, token;
 
-jest.setTimeout(100000);
-
 beforeAll((done) => {
   mongoose.connect(MONGODB_URL,
     { useNewUrlParser: true, useUnifiedTopology: true },
@@ -37,7 +35,6 @@ describe("Task APIs", () => {
 
           userData.token = res.body.token;
           token = res.body.token;
-          console.log(token, res.body);
           if (res.body.token.length < 500) {
             const tokenData = jwt.verify(res.body.token, process.env.ACCESS_TOKEN_SECRET);
             expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
@@ -129,8 +126,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body)
-
           expect(res.body.message).toBe("The notes length is more than 50 characters.");
 
           done();
@@ -191,7 +186,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body, res.status);
           expect(res.body.message).toBe("Invalid id");
 
           done();
@@ -207,7 +201,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body, res.status);
           expect(res.body.message).toBe("This task doesn't found.");
 
           done();
@@ -222,7 +215,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          // console.log(res.body, res.status);
           expect(res.body.message).toBe("Please enter the data that you want to update the task to it.");
 
           done();
@@ -238,7 +230,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body, res.status);
           expect(res.body.message).toBe("The est shouldn't be negative number.");
 
           done();
@@ -254,7 +245,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body, res.status);
           expect(res.body.message).toBe("The act shouldn't be negative number.");
 
           done();
@@ -270,7 +260,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body, res.status);
           expect(res.body.message).toBe("The act shouldn't be more than est.");
 
           done();
@@ -300,8 +289,6 @@ describe("Task APIs", () => {
         .expect(400)
         .end((err, res) => {
           if (err) throw err;
-
-          console.log(res.body)
 
           expect(res.body.message).toBe("The notes length is more than 50 characters.");
 
@@ -341,7 +328,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body, res.status);
           expect(res.body.message).toBe("Invalid id");
 
           done();
@@ -357,7 +343,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body, res.status);
           expect(res.body.message).toBe("This task doesn't found.");
 
           done();
@@ -390,7 +375,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body, res.status);
           expect(res.body.message).toBe("Invalid id");
 
           done();
@@ -406,7 +390,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body, res.status);
           expect(res.body.message).toBe("This task doesn't found.");
 
           done();
@@ -446,7 +429,7 @@ describe("Task APIs", () => {
           if (err) throw err;
 
           const data = res.body;
-          console.log(data);
+
           expect(data.act).toBe(taskData[0].est);
           expect(data.check).toBe(true);
 
@@ -464,7 +447,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body, res.status);
           expect(res.body.message).toBe("Invalid id");
 
           done();
@@ -480,7 +462,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body, res.status);
           expect(res.body.message).toBe("This task doesn't found.");
 
           done();
@@ -496,7 +477,7 @@ describe("Task APIs", () => {
           if (err) throw err;
 
           const data = res.body;
-          console.log(data);
+
           expect(data.message).toBe("This task is completed.");
 
           done();
@@ -512,7 +493,7 @@ describe("Task APIs", () => {
           if (err) throw err;
 
           const data = res.body;
-          console.log(data);
+
           expect(data.act).toBe(0);
           expect(data.check).toBe(false);
 
@@ -587,7 +568,6 @@ describe("Task APIs", () => {
           expect(data.check).toBe(false);
 
           taskData.push(data);
-          console.log(taskData[1]);
 
           done();
         })
@@ -617,8 +597,6 @@ describe("Task APIs", () => {
         .expect(200)
         .end((err, res) => {
           if (err) throw err;
-
-          console.log(res.body, res.status);
 
           expect(res.body.message).toBe("Success deleting.")
           expect(res.body.deletedCount).toBe(taskData.filter((t) => t.check).length);
@@ -664,7 +642,7 @@ describe("Task APIs", () => {
           if (err) throw err;
 
           const data = res.body;
-          console.log(data);
+
           expect(data.act).toBe(taskData[1].est);
           expect(data.check).toBe(true);
           taskData[1] = data;
@@ -681,7 +659,6 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body, res.statusCode);
           expect(res.body.message).toBe("Successful update.");
           expect(res.body.modifiedCount).toBe(taskData.filter(task => task.act > 0).length)
 
@@ -698,8 +675,6 @@ describe("Task APIs", () => {
         .expect(200)
         .end((err, res) => {
           if (err) throw err;
-
-          console.log(res.body, res.statusCode);
 
           expect(res.body.message).toBe("Successfully deleting.")
           expect(res.body.deletedCount).toBe(taskData.length);
