@@ -23,6 +23,9 @@ afterAll((done) => {
 describe("Task APIs", () => {
   const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" };
   describe("Testing getAll controller route /api/task/", () => {
+    /**
+     * Before start in testing: Sign up the user and get the token for authorization for every test.
+     */
     it("Signup before test tasks controller", (done) => {
       supertest(app)
         .post('/api/user/signup') // 'This email is invalid'

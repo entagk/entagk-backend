@@ -13,6 +13,9 @@ beforeAll((done) => {
     () => done());
 });
 
+/**
+ * Before start in testing: Sign up the user and get the token for authorization for every test.
+ */
 beforeAll(async () => {
   const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" };
 
