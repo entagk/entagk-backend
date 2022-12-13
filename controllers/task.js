@@ -1,5 +1,13 @@
-const { default: mongoose } = require("mongoose");
 const Task = require("./../models/task.js");
+
+/**
+ * handle the order at 
+ *  addTask, 
+ *  updateTask,
+ *  deleteTask,
+ *  checkTask,
+ *  and increaseAct.
+ */
 
 const taskControllers = {
   getAll: async (req, res) => {

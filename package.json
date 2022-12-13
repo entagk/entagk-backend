@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --detectOpenHandles --verbose --testTimeout=60000",
     "test:watch": "jest --detectOpenHandles --verbose --watchAll",
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",

@@ -7,7 +7,6 @@ const templateSchema = mongoose.Schema({
   },
   visibility: {
     type: Boolean,
-    require: [true, "please enter the template visibility!"],
     default: false
   },
   description: {
@@ -44,7 +43,6 @@ const templateSchema = mongoose.Schema({
   },
   time: {
     type: Object,
-    require: [true, "please enter the time in second"],
     default: {
       ["PERIOD"]: 1500,
       ["SHORT"]: 300,
@@ -104,7 +102,7 @@ const templateSchema = mongoose.Schema({
   /**
  * todo: {
  *  userId: userId,
- *  position: 1
+ *  order: 1
  * }
  */
   todo: {

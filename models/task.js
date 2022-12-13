@@ -1,5 +1,24 @@
 const mongoose = require("mongoose");
 
+/**
+ * task => {
+ *  userId,
+ *  name,
+ *  est,
+ *  act,
+ *  check,
+ *  notes,
+ *  createdAt,
+ *  updatedAt,
+ *  order,
+ *  template: {
+ *    id: templateId,
+ *    todo: false
+ *  },
+ *  taskClone
+ * }
+ */
+
 const taskSchema = new mongoose.Schema(
   {
     name: {
@@ -26,6 +45,14 @@ const taskSchema = new mongoose.Schema(
     check: {
       type: Boolean,
       default: false
+    },
+    order: {
+      type: Number,
+      require: [true, "Please enter the order of the task"]
+    },
+    template: {
+      type: Object,
+      default: null
     },
     userId: {
       type: String,
