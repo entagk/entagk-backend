@@ -1,5 +1,6 @@
 const Template = require("./../models/template");
 const Task = require("./../models/task");
+const mongoose = require("mongoose");
 
 /**
  * addTemplate ===>> add template to database
@@ -11,7 +12,10 @@ const Task = require("./../models/task");
  * getAllForTodo ===>> get templates for using at todo list
  * updataTemplate ===>> updata template for all templates (enclode todo list templates) 
  * deleteTemplate ===>> delete template for all templates (enclode todo list templates)
- * Write unit testing for each endpoint
+ * ---------------------------------------------------------------------------------------
+ * Write unit testing for each endpoint at __test__
+ * handle endpoints testing and documents at Postman
+ * update the README document
  */
 
 /**
@@ -132,6 +136,28 @@ const TempleteControllers = {
         numberOfPages: Math.ceil(total / limit)
       });
 
+    } catch (error) {
+      res.status(500).json({ message: error.message })
+    }
+  },
+  getOne: async (req, res) => {
+    try {
+      const template = req.oldTemplate;
+
+      res.status(200).json(template);
+    } catch (error) {
+      res.status(500).json({ message: error.message })
+    }
+  },
+  getTasksForOne: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ message: "Invalid id" });
+
+      const tasks = await Task.find({ template: { _id: mongoose.Types.ObjectId(id), todo: false } });
+
+      res.status(200).json(tasks);
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
