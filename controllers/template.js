@@ -112,7 +112,6 @@ const TempleteControllers = {
 
       const tasksIds = tasksIdsData.map(task => task._id);
 
-      console.log(String(templateData._id));
       const updateTemplate = await Template.findByIdAndUpdate(templateData._id, { tasks: tasksIds }, { new: true });
 
       res.status(200).json(updateTemplate);
@@ -158,6 +157,26 @@ const TempleteControllers = {
       const tasks = await Task.find({ template: { _id: mongoose.Types.ObjectId(id), todo: false } });
 
       res.status(200).json(tasks);
+    } catch (error) {
+      res.status(500).json({ message: error.message })
+    }
+  },
+  getForUser: async (req, res) => {
+    const { page } = req.query || 1;
+    try {
+      const limit = 25;
+      const startIndex = (Number(page) - 1) * limit;
+
+      const total = await Template.countDocuments({ userId: req.userId, todo: { $eq: null } }); // Template.find({ userId: req.userId });
+      const templates = await Template.find({ userId: req.userId, todo: { $eq: null } }).limit(limit).skip(startIndex);
+
+      res.status(200).json({
+        templates,
+        total,
+        currentPage: page ? Number(page) : total === 0 ? 0 : 1,
+        numberOfPages: Math.ceil(total / limit)
+      });
+
     } catch (error) {
       res.status(500).json({ message: error.message })
     }

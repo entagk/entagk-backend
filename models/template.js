@@ -107,7 +107,7 @@ const templateSchema = mongoose.Schema({
  */
   todo: {
     type: Object,
-    default: {}
+    default: null
   },
   templateClone: {
     type: String,

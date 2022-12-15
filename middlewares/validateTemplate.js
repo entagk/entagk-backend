@@ -13,7 +13,7 @@ const validateTemplate = async (req, res, next) => {
       else if (req.method !== 'GET') return res.status(405).json({ message: "Not allow for you." });
     }
 
-    if (!oldTemplate?._id) return res.status(404).json({ message: "This task doesn't found." });
+    if (!oldTemplate?._id) return res.status(404).json({ message: "This template doesn't found." });
 
     req.oldTemplate = oldTemplate;
     next();

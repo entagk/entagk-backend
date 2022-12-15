@@ -7,10 +7,12 @@ router.post("/add/", Auth, templateControllers.addTemplate);
 
 router.get("/", templateControllers.getAll);
 
-router.get("/:id", validateTemplate, templateControllers.getOne);
-router.get("/private/:id", Auth, validateTemplate, templateControllers.getOne);
+router.get(`/one/:id`, validateTemplate, templateControllers.getOne);
+router.get("/one/private/:id", Auth, validateTemplate, templateControllers.getOne);
 
-router.get("/tasks/:id", validateTemplate, templateControllers.getTasksForOne);
-router.get("/tasks/private/:id", Auth, validateTemplate, templateControllers.getTasksForOne);
+router.get("/one/tasks/:id", validateTemplate, templateControllers.getTasksForOne);
+router.get("/one/tasks/private/:id", Auth, validateTemplate, templateControllers.getTasksForOne);
+
+router.get("/user", Auth, templateControllers.getForUser);
 
 module.exports = router;
