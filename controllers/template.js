@@ -5,11 +5,13 @@ const Task = require("./../models/task");
  * addTemplate ===>> add template to database
  * getAll ===>> get all public templates from database
  * getOne ===>> get one template useing id
+ * getTasksForOne ===>> get template tasks using template id
  * getForUser ===>> get all users templates
  * addToTodoList ===>> add template and make it only for todo list usage
  * getAllForTodo ===>> get templates for using at todo list
  * updataTemplate ===>> updata template for all templates (enclode todo list templates) 
  * deleteTemplate ===>> delete template for all templates (enclode todo list templates)
+ * Write unit testing for each endpoint
  */
 
 /**
@@ -100,10 +102,7 @@ const TempleteControllers = {
         if (!task.order) task.order = index;
         task.template = { _id: templateData._id, todo: false };
         task.userId = req.userId
-        // console.log(task);
       });
-
-      // console.log(tasks);
 
       const tasksIdsData = await Task.insertMany(tasks);
 
@@ -115,6 +114,26 @@ const TempleteControllers = {
       res.status(200).json(updateTemplate);
     } catch (error) {
       res.status(500).json({ message: error.message });
+    }
+  },
+  getAll: async (req, res) => {
+    const { page } = req.query || 1;
+    try {
+      const limit = 25;
+      const startIndex = (Number(page) - 1) * limit;
+
+      const total = await Template.countDocuments({ visibility: { $eq: true } });
+      const templates = await Template.find({ visibility: { $eq: true } }).limit(limit).skip(startIndex);
+
+      res.status(200).json({
+        templates,
+        total,
+        currentPage: page ? Number(page) : total === 0 ? 0 : 1,
+        numberOfPages: Math.ceil(total / limit)
+      });
+
+    } catch (error) {
+      res.status(500).json({ message: error.message })
     }
   },
   funcName: async (req, res) => {
