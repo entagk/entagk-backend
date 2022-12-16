@@ -183,10 +183,12 @@ const TempleteControllers = {
   },
   addToTodoList: async (req, res) => {
     try {
+      const { id } = req.params;
       const { order } = req.body;
       const oldTemplate = req.oldTemplate;
-      const newTemplate = Object.assign(oldTemplate, {
-        userId: req.userId, 
+
+      const templateData = Object.assign(oldTemplate, {
+        userId: req.userId,
         todo: {
           userId: req.userId,
           order: order || 1,
@@ -194,10 +196,28 @@ const TempleteControllers = {
         visibility: false
       });
 
-      const templateData = await Template.create(newTemplate);
+      const newTemplate = await Template.create(templateData);
 
-      res.status(200).json(templateData);
+      const oldTasks = await Task.find({ template: { _id: mongoose.Types.ObjectId(id), todo: false } });
+      const tasksData = oldTasks.map(({ _doc: task }) => {
+        delete task._id;
+        delete task.createdAt;
+        delete task.updatedAt;
+        return {
+          ...task,
+          userId: req.userId,
+          template: {
+            _id: newTemplate._id,
+            todo: true
+          }
+        }
+      });
 
+      const newTasks = await Task.insertMany(tasksData);
+
+      const updateTemplate = await Template.findByIdAndUpdate(newTemplate._id, { tasks: newTasks.map((task) => task._id) }, { new: true });
+
+      res.status(200).json(updateTemplate);
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
