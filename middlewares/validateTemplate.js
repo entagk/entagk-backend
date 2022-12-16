@@ -7,15 +7,16 @@ const validateTemplate = async (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ message: "Invalid id" });
 
     const oldTemplate = await Template.findById(id);
+    console.log(req.path);
 
     if (oldTemplate.userId !== req?.userId) {
       if (!oldTemplate.visibility) return res.status(405).json({ message: "Not allow for you." });
-      else if (req.method !== 'GET') return res.status(405).json({ message: "Not allow for you." });
     }
 
     if (!oldTemplate?._id) return res.status(404).json({ message: "This template doesn't found." });
 
-    req.oldTemplate = oldTemplate;
+    delete oldTemplate._id;
+    req.oldTemplate = {...oldTemplate};
     next();
 
   } catch (error) {

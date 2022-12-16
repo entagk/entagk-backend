@@ -181,6 +181,27 @@ const TempleteControllers = {
       res.status(500).json({ message: error.message })
     }
   },
+  addToTodoList: async (req, res) => {
+    try {
+      const { order } = req.body;
+      const oldTemplate = req.oldTemplate;
+      const newTemplate = Object.assign(oldTemplate, {
+        userId: req.userId, 
+        todo: {
+          userId: req.userId,
+          order: order || 1,
+        },
+        visibility: false
+      });
+
+      const templateData = await Template.create(newTemplate);
+
+      res.status(200).json(templateData);
+
+    } catch (error) {
+      res.status(500).json({ message: error.message })
+    }
+  },
   funcName: async (req, res) => {
     try {
 
