@@ -230,8 +230,8 @@ const TempleteControllers = {
       const startIndex = (Number(page) - 1) * limit;
       console.log(userId);
 
-      const total = await Template.countDocuments({ userId: userId, todo: {$ne: null} });
-      const templates = await Template.find({ userId: userId, todo: {$ne: null} }).limit(limit).skip(startIndex);
+      const total = await Template.countDocuments({ userId: userId, todo: { $ne: null } });
+      const templates = await Template.find({ userId: userId, todo: { $ne: null } }).limit(limit).skip(startIndex);
 
       res.status(200).json({
         templates,
@@ -239,6 +239,19 @@ const TempleteControllers = {
         currentPage: page ? Number(page) : total === 0 ? 0 : 1,
         numberOfPages: Math.ceil(total / limit)
       });
+    } catch (error) {
+      res.status(500).json({ message: error.message })
+    }
+  },
+  deleteTemplate: async (req, res) => {
+    try {
+      const oldTemplate = req.oldTemplate._doc;
+      // console.log(oldTemplate);
+
+      const deletedTemplate = await Template.findByIdAndDelete(oldTemplate._id);
+
+      const deleatedTasks = await Task.deleteMany({ template: { _id: mongoose.Types.ObjectId(oldTemplate._id), todo: oldTemplate.todo === null ? false : true } });
+      res.status(200).json({ deletedTemplate, deleatedTasks });
     } catch (error) {
       res.status(500).json({ message: error.message })
     }

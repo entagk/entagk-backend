@@ -19,4 +19,6 @@ router.get("/todo/", Auth, templateControllers.getAllForTodo);
 
 router.post('/todo/:id', Auth, validateTemplate, templateControllers.addToTodoList);
 
+router.delete("/:id", Auth, validateTemplate, templateControllers.deleteTemplate);
+
 module.exports = router;
