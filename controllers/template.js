@@ -185,7 +185,8 @@ const TempleteControllers = {
     try {
       const { id } = req.params;
       const { order } = req.body;
-      const oldTemplate = req.oldTemplate;
+      const oldTemplate = req.oldTemplate._doc;
+      delete oldTemplate._id;
 
       const templateData = Object.assign(oldTemplate, {
         userId: req.userId,
@@ -260,7 +261,7 @@ const TempleteControllers = {
     try {
       const { id } = req.params;
 
-      
+
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
