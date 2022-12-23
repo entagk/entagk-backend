@@ -151,10 +151,10 @@ const TempleteControllers = {
   getTasksForOne: async (req, res) => {
     try {
       const { id } = req.params;
+      const template = req.oldTemplate;
+      console.log(template);
 
-      if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ message: "Invalid id" });
-
-      const tasks = await Task.find({ template: { _id: mongoose.Types.ObjectId(id), todo: false } });
+      const tasks = await Task.find({ template: { _id: mongoose.Types.ObjectId(id), todo: template.todo !== null } });
 
       res.status(200).json(tasks);
     } catch (error) {
@@ -252,6 +252,15 @@ const TempleteControllers = {
 
       const deleatedTasks = await Task.deleteMany({ template: { _id: mongoose.Types.ObjectId(oldTemplate._id), todo: oldTemplate.todo === null ? false : true } });
       res.status(200).json({ deletedTemplate, deleatedTasks });
+    } catch (error) {
+      res.status(500).json({ message: error.message })
+    }
+  },
+  updateTemplate: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
