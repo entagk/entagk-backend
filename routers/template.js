@@ -15,6 +15,8 @@ router.get("/one/tasks/private/:id", Auth, validateTemplate, templateControllers
 
 router.get("/user", Auth, templateControllers.getForUser);
 
-router.post('/add_to_todo/:id', Auth, validateTemplate, templateControllers.addToTodoList);
+router.get("/todo/", Auth, templateControllers.getAllForTodo);
+
+router.post('/todo/:id', Auth, validateTemplate, templateControllers.addToTodoList);
 
 module.exports = router;

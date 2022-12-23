@@ -16,7 +16,8 @@ const validateTemplate = async (req, res, next) => {
     if (!oldTemplate?._id) return res.status(404).json({ message: "This template doesn't found." });
 
     delete oldTemplate._id;
-    req.oldTemplate = {...oldTemplate};
+    req.oldTemplate = { ...oldTemplate };
+    console.log(req.oldTemplate);
     next();
 
   } catch (error) {

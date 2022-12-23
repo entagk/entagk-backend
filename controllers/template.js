@@ -141,7 +141,7 @@ const TempleteControllers = {
   },
   getOne: async (req, res) => {
     try {
-      const template = req.oldTemplate;
+      const template = req.oldTemplate._doc;
 
       res.status(200).json(template);
     } catch (error) {
@@ -218,6 +218,27 @@ const TempleteControllers = {
       const updateTemplate = await Template.findByIdAndUpdate(newTemplate._id, { tasks: newTasks.map((task) => task._id) }, { new: true });
 
       res.status(200).json(updateTemplate);
+    } catch (error) {
+      res.status(500).json({ message: error.message })
+    }
+  },
+  getAllForTodo: async (req, res) => {
+    const { page } = req.query || 1;
+    try {
+      const userId = req.userId;
+      const limit = 25;
+      const startIndex = (Number(page) - 1) * limit;
+      console.log(userId);
+
+      const total = await Template.countDocuments({ userId: userId, todo: {$ne: null} });
+      const templates = await Template.find({ userId: userId, todo: {$ne: null} }).limit(limit).skip(startIndex);
+
+      res.status(200).json({
+        templates,
+        total,
+        currentPage: page ? Number(page) : total === 0 ? 0 : 1,
+        numberOfPages: Math.ceil(total / limit)
+      });
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
