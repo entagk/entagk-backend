@@ -1,4 +1,6 @@
 const Task = require("./../models/task.js");
+const Template = require('../models/template');
+const mongoose = require("mongoose");
 
 /**
  * handle the order at 
@@ -10,7 +12,7 @@ const Task = require("./../models/task.js");
  */
 
 const taskControllers = {
-  getAll: async (req, res) => { // modify for template
+  getAll: async (req, res) => {
     const { page } = req.query;
     try {
       const limit = 12;
@@ -31,18 +33,31 @@ const taskControllers = {
       res.status(500).json({ message: error.message })
     }
   },
-  addTask: async (req, res) => { // modify for template
+  addTask: async (req, res) => {
     try {
-      const { name, est, notes, project } = req.body;
+      const { name, est, notes, project, order, template } = req.body;
+      console.log(template);
 
       if (!name?.trim() || !est) return res.status(400).json({ message: "Please, complete the task data at least name and est" })
       if (est <= 0) return res.status(400).json({ message: "The est shouldn't be negative number." })
       if (name?.length > 50 && name?.trim()) return res.status(400).json({ message: "The name length is more than 50 characters." })
 
-      if (notes?.length > 500 && notes?.trim()) return res.status(400).json({ message: "The notes length is more than 50 characters." })
+      if (notes?.length > 500 && notes?.trim()) return res.status(400).json({ message: "The notes length is more than 500 characters." })
       // verify the project
 
-      const newTask = await Task.create({ name, est, notes, project, userId: req.userId });
+      const templateData = template && await Template.findById(template?._id);
+      if (template) {
+        if (!template?._id || !mongoose.Types.ObjectId.isValid(template._id)) return res.status(400).json({ message: "Invalid template" })
+        else {
+          template._id = new mongoose.Types.ObjectId(template._id);
+          template.todo = templateData.todo !== null;
+        }
+      }
+
+      const newTask = await Task.create({ name, est, notes, project, order, template, userId: req.userId });
+      if (template) {
+        await Template.findByIdAndUpdate(template._id, { tasks: [ ...templateData.tasks, newTask._id ] });
+      }
 
       res.status(200).json(newTask);
     } catch (error) {
