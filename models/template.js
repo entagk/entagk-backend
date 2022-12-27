@@ -7,12 +7,12 @@ const mongoose = require("mongoose");
  *   "visibility": false,
  *   "description": "This is the first Template",
  *   "tasks": [
- *      ObjectId("63985a59a3dd40a8ed9f17ca"),
- *       ObjectId("63985a59a3dd40a8ed9f17cb")
+ *      ObjectId("id"),
+ *      ObjectId("id")
  *    ],
- *   "userId": "638c116425db78b50bcc1c08",
- *   "est": 1,
- *   "act": 0,
+ *   "userId": userId,
+ *   "est": Number,
+ *   "act": Number,
  *   "color": "#ef9b0f",
  *   "usedBy": 1,
  *   "time": {
@@ -90,7 +90,7 @@ const templateSchema = mongoose.Schema({
       ["LONG"]: 900,
     }
   },
-  timeForAll: {
+  timeForAll: { // 
     type: Boolean,
     default: true
   },
