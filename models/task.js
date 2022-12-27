@@ -2,20 +2,21 @@ const mongoose = require("mongoose");
 
 /**
  * task => {
- *  userId,
- *  name,
- *  est,
- *  act,
- *  check,
- *  notes,
- *  createdAt,
- *  updatedAt,
- *  order,
+ *  _id: ObjectId,
+ *  userId : String,
+ *  name: String,
+ *  est: Number,
+ *  act: Number,
+ *  check: Boolean,
+ *  notes: String,
+ *  createdAt: Date,
+ *  updatedAt: Date,
+ *  order: Number,
  *  template: {
- *    id: templateId,
+ *    _id: ObjectId(templateId),
  *    todo: false
  *  },
- *  taskClone
+ *  taskClone: "",
  * }
  */
 

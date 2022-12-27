@@ -21,4 +21,6 @@ router.post('/todo/:id', Auth, validateTemplate, templateControllers.addToTodoLi
 
 router.delete("/:id", Auth, validateTemplate, templateControllers.deleteTemplate);
 
+router.patch("/:id", Auth, validateTemplate, templateControllers.updateTemplate);
+
 module.exports = router;

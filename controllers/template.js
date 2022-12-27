@@ -18,24 +18,6 @@ const mongoose = require("mongoose");
  * update the README document
  */
 
-/**
- * task => {
-//  *  userId,
- *  name,
- *  est,
-//  *  act,
- *  notes,
-//  *  createdAt,
-//  *  updatedAt,
- *  order,
-//  *  template: {
-//  *    id: templateId,
-//  *    todo: no
-//  *  },
-//  *  taskClone
- * }
- */
-
 const TempleteControllers = {
   /**
    * @param {body, authentication, ....} req 
@@ -72,7 +54,7 @@ const TempleteControllers = {
       if (!name?.trim() || !desc) return res.status(400).json({ message: "Please, complete the task data at least name and descritption" })
       if (name?.length > 50 && name?.trim()) return res.status(400).json({ message: "The name length is more than 50 characters." })
 
-      if (desc?.length > 500 && desc?.trim()) return res.status(400).json({ message: "The notes length is more than 50 characters." })
+      if (desc?.length > 500 && desc?.trim()) return res.status(400).json({ message: "The notes length is more than 500 characters." })
 
       if (!tasks || tasks.length === 0) return res.status(400).json({ message: "please enter the template tasks." });
 
@@ -260,19 +242,59 @@ const TempleteControllers = {
   updateTemplate: async (req, res) => {
     try {
       const { id } = req.params;
+      const oldTemplate = req.oldTemplate._doc;
 
+      delete oldTemplate._id;
 
+      const {
+        name,
+        desc,
+        visibility,
+        iconURL, // modify when making uploading controllers
+        color,
+        time,
+        timeForAll,
+        autoBreaks,
+        autoPomodors,
+        autoStartNextTask,
+        longInterval,
+        alarmType,
+        alarmVolume,
+        alarmRepet,
+        tickingType,
+        tickingVolume
+      } = req.body;
+
+      const templateBody = {
+        name,
+        visibility,
+        description: desc,
+        iconURL,
+        color,
+        time,
+        timeForAll,
+        autoBreaks,
+        autoPomodors,
+        autoStartNextTask,
+        longInterval,
+        alarmType,
+        alarmVolume,
+        alarmRepet,
+        tickingType,
+        tickingVolume
+      };
+
+      if (name?.trim() && name?.trim()?.length > 50) return res.status(400).json({ message: "The name length is more than 50 characters." })
+
+      if (desc?.trim()?.length > 500 && desc?.trim()) return res.status(400).json({ message: "The notes length is more than 500 characters." })
+
+      const updatedTemplate = await Template.findByIdAndUpdate(id, templateBody, { new: true });
+
+      res.status(200).json(updatedTemplate);
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
-  },
-  funcName: async (req, res) => {
-    try {
-
-    } catch (error) {
-      res.status(500).json({ message: error.message })
-    }
-  },
+  }
 };
 
 module.exports = TempleteControllers;

@@ -1,5 +1,46 @@
 const mongoose = require("mongoose");
 
+/**
+ * {
+ *   "_id": ObjectId("id"),
+ *   "name":"First Template",
+ *   "visibility": false,
+ *   "description": "This is the first Template",
+ *   "tasks": [
+ *      ObjectId("63985a59a3dd40a8ed9f17ca"),
+ *       ObjectId("63985a59a3dd40a8ed9f17cb")
+ *    ],
+ *   "userId": "638c116425db78b50bcc1c08",
+ *   "est": 1,
+ *   "act": 0,
+ *   "color": "#ef9b0f",
+ *   "usedBy": 1,
+ *   "time": {
+ *      "PERIOD": 1500,
+ *      "SHORT": 300,
+ *      "LONG": 900
+ *   },
+ *   "timeForAll": true,
+ *   "autoBreaks": false,
+ *   "autoPomodors": false,
+ *   "autoStartNextTask": false,
+ *   "longInterval": 4,
+ *   "alarmType": {
+ *       "name": "alarm 1",
+ *       "src": "sounds/alarm/1.mp3"
+ *    },
+ *    "alarmVolume": 50,
+ *    "alarmRepet": false,
+ *    "tickingType": { 
+ *        "name": "tricking 1",
+ *        "src": "sounds/tricking/1.mp3"
+ *    },
+ *    "tickingVolume": 50,
+ *    "comments": [],
+ *    "templateClone": ""
+ * }
+ */
+
 const templateSchema = mongoose.Schema({
   name: {
     type: String,
