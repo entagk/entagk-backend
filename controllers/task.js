@@ -10,15 +10,15 @@ const Task = require("./../models/task.js");
  */
 
 const taskControllers = {
-  getAll: async (req, res) => {
+  getAll: async (req, res) => { // modify for template
     const { page } = req.query;
     try {
       const limit = 12;
       const startIndex = (Number(page) - 1) * limit;
 
       const userId = req.userId;
-      const total = await Task.countDocuments({ userId });
-      const tasks = await Task.find({ userId }).sort({ check: false }).limit(limit).skip(startIndex);
+      const total = await Task.countDocuments({ userId, template: null });
+      const tasks = await Task.find({ userId, template: null }).sort({ check: false }).limit(limit).skip(startIndex);
 
       res.status(200).json({
         tasks,
@@ -31,7 +31,7 @@ const taskControllers = {
       res.status(500).json({ message: error.message })
     }
   },
-  addTask: async (req, res) => {
+  addTask: async (req, res) => { // modify for template
     try {
       const { name, est, notes, project } = req.body;
 
@@ -49,7 +49,7 @@ const taskControllers = {
       res.status(500).json({ message: error.message })
     }
   },
-  updateTask: async (req, res) => {
+  updateTask: async (req, res) => { // modify for template
     try {
       const { id } = req.params;
 
@@ -79,7 +79,7 @@ const taskControllers = {
       console.log(error);
     }
   },
-  deleteTask: async (req, res) => {
+  deleteTask: async (req, res) => { // modify for template
     try {
       const { id } = req.params;
 
@@ -90,7 +90,7 @@ const taskControllers = {
       res.status(500).json({ message: error.message })
     }
   },
-  checkTask: async (req, res) => {
+  checkTask: async (req, res) => { // modify for template
     try {
       const { id } = req.params;
 
@@ -106,7 +106,7 @@ const taskControllers = {
       res.status(500).json({ message: error.message })
     }
   },
-  increaseAct: async (req, res) => {
+  increaseAct: async (req, res) => { // modify for template
     try {
       const { id } = req.params;
 
@@ -134,7 +134,7 @@ const taskControllers = {
       res.status(500).json({ message: error.message })
     }
   },
-  clearAct: async (req, res) => {
+  clearAct: async (req, res) => { // modify for template
     try {
       const usedTasks = await Task.updateMany({ userId: req.userId, act: { $gte: 1 } }, { act: 0, check: false });
 
