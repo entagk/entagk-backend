@@ -133,8 +133,7 @@ const TempleteControllers = {
   getTasksForOne: async (req, res) => {
     try {
       const { id } = req.params;
-      const template = req.oldTemplate;
-      console.log(template);
+      const template = req.oldTemplate._doc;
 
       const tasks = await Task.find({ template: { _id: mongoose.Types.ObjectId(id), todo: template.todo !== null } });
 
