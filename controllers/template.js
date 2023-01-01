@@ -86,7 +86,7 @@ const TempleteControllers = {
         if (task.notes?.length > 500 && task.notes?.trim()) return res.status(400).json({ message: "The notes length is more than 50 characters." });
 
         if (!task.order) task.order = index;
-        task.template = { _id: templateData._id, todo: false };
+        task.template = { _id: String(templateData._id), todo: false };
         task.userId = req.userId
       });
 
