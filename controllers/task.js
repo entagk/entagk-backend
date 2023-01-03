@@ -64,7 +64,7 @@ const taskControllers = {
       res.status(500).json({ message: error.message })
     }
   },
-  updateTask: async (req, res) => { // modify for template
+  updateTask: async (req, res) => {
     try {
       const { id } = req.params;
       const oldTask = req.oldTask;
@@ -100,7 +100,7 @@ const taskControllers = {
       console.log(error);
     }
   },
-  deleteTask: async (req, res) => { // modify for template
+  deleteTask: async (req, res) => {
     try {
       const { id } = req.params;
 
@@ -119,7 +119,7 @@ const taskControllers = {
       res.status(500).json({ message: error.message })
     }
   },
-  checkTask: async (req, res) => { // modify for template
+  checkTask: async (req, res) => {
     try {
       const { id } = req.params;
 
@@ -127,9 +127,14 @@ const taskControllers = {
 
       const newTask = Object.assign(task, { check: !task.check, act: !task.check ? task.est : 0 })
 
-      const updatedTask = await Task.findByIdAndUpdate(id, newTask, { new: true });;
+      const updatedTask = await Task.findByIdAndUpdate(id, newTask, { new: true });
 
-      res.status(200).json(updatedTask)
+      if (task.template._id) {
+        const templateData = await Template.findById(task.template._id);
+        await Template.findByIdAndUpdate(task.template._id, { act: (templateData.act + task.act) });
+      }
+
+      res.status(200).json(updatedTask);
 
     } catch (error) {
       res.status(500).json({ message: error.message })
@@ -152,7 +157,7 @@ const taskControllers = {
       res.status(500).json({ message: error.message })
     }
   },
-  clearFinished: async (req, res) => {
+  clearFinished: async (req, res) => { // modify for template
     try {
       const userId = req.userId;
 
@@ -172,7 +177,7 @@ const taskControllers = {
       res.status(500).json({ message: error.message })
     }
   },
-  clearAll: async (req, res) => {
+  clearAll: async (req, res) => { // modify for template
     try {
       const deletedTasks = await Task.deleteMany({ userId: req.userId });
 
