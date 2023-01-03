@@ -123,13 +123,13 @@ const taskControllers = {
     try {
       const { id } = req.params;
 
-      let task = req.oldTask;
+      const task = req.oldTask;
 
       const newTask = Object.assign(task, { check: !task.check, act: !task.check ? task.est : 0 })
 
       const updatedTask = await Task.findByIdAndUpdate(id, newTask, { new: true });
 
-      if (task.template._id) {
+      if (task?.template?._id) {
         const templateData = await Template.findById(task.template._id);
         await Template.findByIdAndUpdate(task.template._id, { act: (templateData.act + task.act) });
       }
@@ -137,10 +137,11 @@ const taskControllers = {
       res.status(200).json(updatedTask);
 
     } catch (error) {
-      res.status(500).json({ message: error.message })
+      res.status(500).json({ message: error.message });
+      console.log(error)
     }
   },
-  increaseAct: async (req, res) => { // modify for template
+  increaseAct: async (req, res) => {
     try {
       const { id } = req.params;
 
@@ -152,39 +153,39 @@ const taskControllers = {
 
       const updatedTask = await Task.findByIdAndUpdate(id, newTask, { new: true });
 
-      if (task.template._id) {
+      if (task.template?._id) {
         const templateData = await Template.findById(task.template._id);
         await Template.findByIdAndUpdate(task.template._id, { act: (templateData.act + 1) });
       }
 
       res.status(200).json(updatedTask);
     } catch (error) {
-      res.status(500).json({ message: error.message })
+      res.status(500).json({ message: error.message });
     }
   },
-  clearFinished: async (req, res) => { // modify for template
+  clearFinished: async (req, res) => {
     try {
       const userId = req.userId;
 
-      const results = await Task.deleteMany({ userId: userId, check: true });
+      const results = await Task.deleteMany({ userId: userId, check: true, template: null });
 
       res.status(200).json({ ...results, message: "Success deleting." });
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
   },
-  clearAct: async (req, res) => { // modify for template
+  clearAct: async (req, res) => {
     try {
-      const usedTasks = await Task.updateMany({ userId: req.userId, act: { $gte: 1 } }, { act: 0, check: false });
+      const usedTasks = await Task.updateMany({ userId: req.userId, template: null, act: { $gte: 1 } }, { act: 0, check: false });
 
       res.status(200).json({ ...usedTasks, message: "Successful update." });
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
   },
-  clearAll: async (req, res) => { // modify for template
+  clearAll: async (req, res) => {
     try {
-      const deletedTasks = await Task.deleteMany({ userId: req.userId });
+      const deletedTasks = await Task.deleteMany({ userId: req.userId, template: null });
 
       res.status(200).json({ ...deletedTasks, message: "Successfully deleting." });
     } catch (error) {
