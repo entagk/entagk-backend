@@ -77,6 +77,7 @@ const TempleteControllers = {
         tickingVolume,
         userId: req.userId
       });
+      let est = 0;
 
       tasks.forEach((task, index) => {
         if (!task.name?.trim() || !task.est) return res.status(400).json({ message: "Please, complete the task data at least name and est" });
@@ -87,14 +88,15 @@ const TempleteControllers = {
 
         if (!task.order) task.order = index;
         task.template = { _id: String(templateData._id), todo: false };
-        task.userId = req.userId
+        task.userId = req.userId;
+        est += task.est;
       });
 
       const tasksIdsData = await Task.insertMany(tasks);
 
       const tasksIds = tasksIdsData.map(task => task._id);
 
-      const updateTemplate = await Template.findByIdAndUpdate(templateData._id, { tasks: tasksIds }, { new: true });
+      const updateTemplate = await Template.findByIdAndUpdate(templateData._id, { tasks: tasksIds, est: est }, { new: true });
 
       res.status(200).json(updateTemplate);
     } catch (error) {
@@ -134,8 +136,9 @@ const TempleteControllers = {
     try {
       const { id } = req.params;
       const template = req.oldTemplate._doc;
+      console.log(template);
 
-      const tasks = await Task.find({ template: { _id: mongoose.Types.ObjectId(id), todo: template.todo !== null } });
+      const tasks = await Task.find({ template: { _id: id, todo: template.todo !== null } });
 
       res.status(200).json(tasks);
     } catch (error) {
@@ -180,7 +183,8 @@ const TempleteControllers = {
 
       const newTemplate = await Template.create(templateData);
 
-      const oldTasks = await Task.find({ template: { _id: mongoose.Types.ObjectId(id), todo: false } });
+      const oldTasks = await Task.find({ template: { _id: id, todo: false } });
+      console.log(oldTasks);
       const tasksData = oldTasks.map(({ _doc: task }) => {
         delete task._id;
         delete task.createdAt;
@@ -189,13 +193,14 @@ const TempleteControllers = {
           ...task,
           userId: req.userId,
           template: {
-            _id: newTemplate._id,
+            _id: String(newTemplate._id),
             todo: true
           }
         }
       });
 
       const newTasks = await Task.insertMany(tasksData);
+      console.log(newTasks);
 
       const updateTemplate = await Template.findByIdAndUpdate(newTemplate._id, { tasks: newTasks.map((task) => task._id) }, { new: true });
 
@@ -232,7 +237,7 @@ const TempleteControllers = {
 
       const deletedTemplate = await Template.findByIdAndDelete(oldTemplate._id);
 
-      const deleatedTasks = await Task.deleteMany({ template: { _id: mongoose.Types.ObjectId(oldTemplate._id), todo: oldTemplate.todo === null ? false : true } });
+      const deleatedTasks = await Task.deleteMany({ template: { _id: oldTemplate._id, todo: oldTemplate.todo === null ? false : true } });
       res.status(200).json({ deletedTemplate, deleatedTasks });
     } catch (error) {
       res.status(500).json({ message: error.message })

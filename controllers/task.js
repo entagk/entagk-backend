@@ -49,7 +49,6 @@ const taskControllers = {
       if (template) {
         if (!template?._id || !mongoose.Types.ObjectId.isValid(template._id)) return res.status(400).json({ message: "Invalid template" })
         else {
-          template._id = new mongoose.Types.ObjectId(template._id);
           template.todo = templateData.todo !== null;
         }
       }
@@ -108,7 +107,7 @@ const taskControllers = {
 
       if (oldTask.template._id) {
         const templateData = await Template.findById(oldTask.template._id)
-        const newTasks = templateData.tasks.map(t => String(t)).filter(t => t !== id).map(t => new mongoose.Types.ObjectId(t));
+        const newTasks = templateData.tasks.map(t => String(t)).filter(t => t !== id);
         await Template.findByIdAndUpdate(oldTask.template._id, { est: (templateData.est - oldTask.est), act: (templateData.act - oldTask.act), tasks: newTasks });
       }
 
