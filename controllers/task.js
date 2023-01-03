@@ -152,6 +152,11 @@ const taskControllers = {
 
       const updatedTask = await Task.findByIdAndUpdate(id, newTask, { new: true });
 
+      if (task.template._id) {
+        const templateData = await Template.findById(task.template._id);
+        await Template.findByIdAndUpdate(task.template._id, { act: (templateData.act + 1) });
+      }
+
       res.status(200).json(updatedTask);
     } catch (error) {
       res.status(500).json({ message: error.message })
