@@ -4,10 +4,6 @@ const validNumber = (number, min, max) => {
   return number < max && number >= min ? true : false;
 }
 
-const validAudioType = (audio) => {
-  return !audio?.name || !audio?.src ? false: true;
-}
-
 const SettingControllers = {
   getSetting: async (req, res) => {
     try {

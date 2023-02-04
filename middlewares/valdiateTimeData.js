@@ -73,10 +73,11 @@ const ValidateTimeData = async (req, res, next) => {
     if (typeof autoPomodors !== 'boolean' && autoPomodors) return res.status(400).json({ message: "The property of the autoPomodors is boolean" })
     if (typeof autoStartNextTask !== 'boolean' && autoStartNextTask) return res.status(400).json({ message: "The property of the autoStartNextTask is boolean" })
 
+    // the volume range 1-100 so we will calculate the validation volume with 
     if (
-      ((!validNumber(alarmVolume, 10, 100)) && alarmVolume) ||
-      ((!validNumber(tickingVolume, 0, 100)) && tickingVolume) ||
-      ((!validNumber(clickVolume, 0, 100)) && clickVolume)
+      ((!validNumber(alarmVolume, 10, 101)) && alarmVolume) ||
+      ((!validNumber(tickingVolume, 0, 101)) && tickingVolume) ||
+      ((!validNumber(clickVolume, 0, 101)) && clickVolume)
     ) return res.status(400).json({ message: "invalid sound volume" });
 
     if (longInterval < 2 && longInterval) return res.status(400).json({ message: "The long interval must be more than 2" })
