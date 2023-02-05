@@ -135,5 +135,5 @@ describe("Template APIs", () => {
           done();
         });
     });
-  })
+  });
 })
