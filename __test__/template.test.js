@@ -58,6 +58,21 @@ describe("Template APIs", () => {
           "est": 10
         }
       ],
+      "visibility": true
+    },
+    {
+      "name": "Template 2",
+      "desc": "This is the Other Template",
+      "tasks": [
+        {
+          "name": "template task 1",
+          "est": 5
+        },
+        {
+          "name": "template task 2",
+          "est": 10
+        }
+      ],
       "visibility": false
     }
   ];
@@ -135,5 +150,93 @@ describe("Template APIs", () => {
           done();
         });
     });
+
+    it("Sending valid template", (done) => {
+      supertest(app)
+        .post("/api/template/add/")
+        .set("Authorization", `Bearer ${token}`)
+        .send(templateData[0])
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.name).toBe(templateData[0].name);
+          expect(res.body.description).toBe(templateData[0].desc);
+          expect(res.body.description).toBe(templateData[0].desc);
+          expect(res.body.visibility).toBe(templateData[0].visibility);
+          expect(res.body.tasks.length).toEqual(templateData[0].tasks.length);
+          expect(res.body.est).toEqual(templateData[0].tasks.reduce((total, { est }) => est + total, 0));
+          expect(res.body.act).toEqual(0);
+          expect(res.body.color).toEqual('#ef9b0f');
+          expect(res.body.time).toEqual({ PERIOD: 1500, SHORT: 300, LONG: 900 });
+          expect(res.body.timeForAll).toBe(true);
+          expect(res.body.autoBreaks).toBe(false);
+          expect(res.body.autoPomodors).toBe(false);
+          expect(res.body.autoStartNextTask).toBe(false);
+          expect(res.body.longInterval).toBe(4);
+          expect(res.body.alarmType).toEqual({ name: 'alarm 1', src: 'sounds/alarm/1.mp3' });
+          expect(res.body.tickingType).toEqual({ name: 'tricking 1', src: 'sounds/tricking/1.mp3' });
+          expect(res.body.alarmVolume).toBe(50);
+          expect(res.body.tickingVolume).toBe(50);
+          expect(res.body.todo).toBe(null);
+
+          templateData[0] = res.body;
+
+          done();
+        })
+    })
+
+    it("Sending nonvisible template", (done) => {
+      supertest(app)
+        .post("/api/template/add/")
+        .set("Authorization", `Bearer ${token}`)
+        .send(templateData[1])
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.name).toBe(templateData[1].name);
+          expect(res.body.description).toBe(templateData[1].desc);
+          expect(res.body.description).toBe(templateData[1].desc);
+          expect(res.body.visibility).toBe(templateData[1].visibility);
+          expect(res.body.tasks.length).toEqual(templateData[1].tasks.length);
+          expect(res.body.est).toEqual(templateData[1].tasks.reduce((total, { est }) => est + total, 0));
+          expect(res.body.act).toEqual(0);
+          expect(res.body.color).toEqual('#ef9b0f');
+          expect(res.body.time).toEqual({ PERIOD: 1500, SHORT: 300, LONG: 900 });
+          expect(res.body.timeForAll).toBe(true);
+          expect(res.body.autoBreaks).toBe(false);
+          expect(res.body.autoPomodors).toBe(false);
+          expect(res.body.autoStartNextTask).toBe(false);
+          expect(res.body.longInterval).toBe(4);
+          expect(res.body.alarmType).toEqual({ name: 'alarm 1', src: 'sounds/alarm/1.mp3' });
+          expect(res.body.tickingType).toEqual({ name: 'tricking 1', src: 'sounds/tricking/1.mp3' });
+          expect(res.body.alarmVolume).toBe(50);
+          expect(res.body.tickingVolume).toBe(50);
+          expect(res.body.todo).toBe(null);
+
+          templateData[1] = res.body;
+
+          done();
+        })
+    })
   });
+
+  describe("Testing getAll controller for route /api/template/", () => {
+    it("Sending vaild getAll request", (done) => {
+      supertest(app)
+        .get("/api/template/")
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.templates).toEqual([{ ...templateData[0] }]);
+          expect(res.body.total).toBe(1);
+          expect(res.body.currentPage).toBe(1);
+          expect(res.body.numberOfPages).toBe(1);
+
+          done();
+        })
+    })
+  })
 })
