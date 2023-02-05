@@ -128,7 +128,7 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body.message).toBe("The notes length is more than 50 characters.");
+          expect(res.body.message).toBe("The notes length is more than 500 characters.");
 
           done();
         })
@@ -292,7 +292,7 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body.message).toBe("The notes length is more than 50 characters.");
+          expect(res.body.message).toBe("The notes length is more than 500 characters.");
 
           done();
         })
@@ -351,6 +351,7 @@ describe("Task APIs", () => {
         })
     })
 
+    // error
     it("delete task", (done) => {
       supertest(app)
         .delete(`/api/task/delete/${taskData[0]._id}`)

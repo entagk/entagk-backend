@@ -49,12 +49,11 @@ const TempleteControllers = {
         tickingVolume
       } = req.body;
 
-      if (!name || !desc) return res.status(400).json({ message: "Please enter the essential data (eg: name or description) of the template" });
+      if (!name?.trim() && !desc) return res.status(400).json({ message: "Please enter the essential data (eg: name or description) of the template" });
 
-      if (!name?.trim() || !desc) return res.status(400).json({ message: "Please, complete the task data at least name and descritption" })
       if (name?.length > 50 && name?.trim()) return res.status(400).json({ message: "The name length is more than 50 characters." })
 
-      if (desc?.length > 500 && desc?.trim()) return res.status(400).json({ message: "The notes length is more than 500 characters." })
+      if (desc?.length > 500 && desc?.trim()) return res.status(400).json({ message: "The description length is more than 500 characters." })
 
       if (!tasks || tasks.length === 0) return res.status(400).json({ message: "please enter the template tasks." });
 
@@ -77,9 +76,10 @@ const TempleteControllers = {
         tickingVolume,
         userId: req.userId
       });
-      let est = 0;
 
-      tasks.forEach((task, index) => {
+      let est = 0;
+      for (let index = 0; index < tasks.length; index++) {
+        const task = tasks[index];
         if (!task.name?.trim() || !task.est) return res.status(400).json({ message: "Please, complete the task data at least name and est" });
         if (task.est <= 0) return res.status(400).json({ message: "The est shouldn't be negative number." });
         if (task.name?.length > 50 && task.name?.trim()) return res.status(400).json({ message: "The name length is more than 50 characters." });
@@ -90,7 +90,7 @@ const TempleteControllers = {
         task.template = { _id: String(templateData._id), todo: false };
         task.userId = req.userId;
         est += task.est;
-      });
+      }
 
       const tasksIdsData = await Task.insertMany(tasks);
 

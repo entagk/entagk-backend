@@ -16,7 +16,8 @@ const Auth = (req, res, next) => {
     const isCustomAuth = token.length < 500;
 
     const tokenValidateion = jwt.decode(token);
-    if (tokenValidateion.exp * 1000 < new Date().getTime()) {
+    console.log(tokenValidateion);
+    if (tokenValidateion?.exp * 1000 < new Date().getTime()) {
       return res.status(401).json({ message: "Invalid Authentication and jwt expired" });
     }
 
