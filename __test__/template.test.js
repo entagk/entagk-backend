@@ -76,6 +76,7 @@ describe("Template APIs", () => {
       "visibility": false
     }
   ];
+  const templateTasks = [];
 
   describe("Testing addTemplate controller route /api/template/add/", () => {
     it("Sending request without sending data ", (done) => {
@@ -180,6 +181,7 @@ describe("Template APIs", () => {
           expect(res.body.tickingVolume).toBe(50);
           expect(res.body.todo).toBe(null);
 
+          templateTasks.push({ tasks: templateData[0].tasks });
           templateData[0] = res.body;
 
           done();
@@ -215,6 +217,7 @@ describe("Template APIs", () => {
           expect(res.body.tickingVolume).toBe(50);
           expect(res.body.todo).toBe(null);
 
+          templateTasks.push({ tasks: templateData[1].tasks });
           templateData[1] = res.body;
 
           done();
@@ -282,7 +285,7 @@ describe("Template APIs", () => {
         });
     });
 
-    it("send not found template using route /api/template/one/privite/63e0180ebb43b174201482a0", (done) => {
+    it("send not found template id using route /api/template/one/privite/63e0180ebb43b174201482a0", (done) => {
       supertest(app)
         .get(`/api/template/one/private/63e0180ebb43b174201482a0`)
         .set("Authorization", `Bearer ${token}`)
@@ -311,5 +314,106 @@ describe("Template APIs", () => {
     });
   });
 
-  
+  describe("Testing getting template tasks controller", () => {
+    it("get tasks from public template", (done) => {
+      supertest(app)
+        .get(`/api/template/one/tasks/${templateData[0]._id}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body[0]._id).toBe(templateData[0].tasks[0]);
+          expect(res.body[1]._id).toBe(templateData[0].tasks[1]);
+
+          expect(res.body[0].name).toBe(templateTasks[0].tasks[0].name);
+          expect(res.body[1].name).toBe(templateTasks[0].tasks[1].name);
+
+          expect(res.body[0].est).toBe(templateTasks[0].tasks[0].est);
+          expect(res.body[1].est).toBe(templateTasks[0].tasks[1].est);
+
+          expect(res.body[0].template._id).toBe(templateData[0]._id);
+          expect(res.body[1].template._id).toBe(templateData[0]._id);
+
+          expect(res.body[0].template.todo).toBe(false);
+          expect(res.body[1].template.todo).toBe(false);
+
+          expect(res.body[0].userId).toBe(userId);
+          expect(res.body[1].userId).toBe(userId);
+
+          done();
+        });
+    });
+
+    it("get tasks from private template", (done) => {
+      supertest(app)
+        .get(`/api/template/one/tasks/private/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body[0]._id).toBe(templateData[1].tasks[0]);
+          expect(res.body[1]._id).toBe(templateData[1].tasks[1]);
+
+          expect(res.body[0].name).toBe(templateTasks[1].tasks[0].name);
+          expect(res.body[1].name).toBe(templateTasks[1].tasks[1].name);
+
+          expect(res.body[0].est).toBe(templateTasks[1].tasks[0].est);
+          expect(res.body[1].est).toBe(templateTasks[1].tasks[1].est);
+
+          expect(res.body[0].template._id).toBe(templateData[1]._id);
+          expect(res.body[1].template._id).toBe(templateData[1]._id);
+
+          expect(res.body[0].template.todo).toBe(false);
+          expect(res.body[1].template.todo).toBe(false);
+
+          expect(res.body[0].userId).toBe(userId);
+          expect(res.body[1].userId).toBe(userId);
+
+          done();
+        });
+    });
+
+    it("send invalid id using route /api/template/one/tasks/privite/djs21dsf", (done) => {
+      supertest(app)
+        .get(`/api/template/one/tasks/private/djs21dsf`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Invalid id");
+
+          done();
+        });
+    });
+
+    it("send not found template id using route /api/template/one/tasks/privite/63e0180ebb43b174201482a0", (done) => {
+      supertest(app)
+        .get(`/api/template/one/tasks/private/63e0180ebb43b174201482a0`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("This template doesn't found.");
+
+          done();
+        });
+    });
+
+    it("get tasks from private template using route /api/template/one/tasks/63e0180ebb43b174201482a0", (done) => {
+      supertest(app)
+        .get(`/api/template/one/tasks/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(405)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Not allow for you.");
+
+          done();
+        });
+    });
+  });
 })

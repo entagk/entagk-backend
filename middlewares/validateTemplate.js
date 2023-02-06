@@ -17,7 +17,6 @@ const validateTemplate = async (req, res, next) => {
 
     delete oldTemplate._id;
     req.oldTemplate = { ...oldTemplate };
-    console.log(req.oldTemplate);
     next();
 
   } catch (error) {
