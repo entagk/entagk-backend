@@ -13,7 +13,6 @@ const Auth = (req, res, next) => {
 
     if (!token) return res.status(401).json({ message: "Invalid Authentication." });
 
-    console.log(token);
     const isCustomAuth = token.length < 500;
 
     const tokenValidateion = jwt.decode(token);

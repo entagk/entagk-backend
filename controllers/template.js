@@ -132,7 +132,7 @@ const TempleteControllers = {
       res.status(500).json({ message: error.message })
     }
   },
-  getForUser: async (req, res) => {
+  getForUser: async (req, res) => { // get templates not at todo list
     const { page } = req.query || 1;
     try {
       const limit = 25;
@@ -163,7 +163,7 @@ const TempleteControllers = {
         userId: req.userId,
         todo: {
           userId: req.userId,
-          order: order || 1,
+          order: order ? order : 0,
         },
         visibility: false
       });

@@ -78,6 +78,8 @@ describe("Template APIs", () => {
   ];
   const templateTasks = [];
 
+  const todoTemplate = [];
+
   describe("Testing addTemplate controller route /api/template/add/", () => {
     it("Sending request without sending data ", (done) => {
       supertest(app)
@@ -464,5 +466,70 @@ describe("Template APIs", () => {
     });
   });
 
-  
+  describe("Testing add template to todo list using route /api/template/toto/:id", () => {
+    it("Sending valid template id", (done) => {
+      const order = 0;
+      supertest(app)
+        .post(`/api/template/todo/${templateData[0]._id}`)
+        .send({ order: order })
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.name).toBe(templateData[0].name);
+          expect(res.body.visibility).toBe(false);
+          expect(res.body.desc).toBe(templateData[0].desc);
+          expect(res.body.userId).toBe(templateData[0].userId);
+          expect(res.body.est).toBe(templateData[0].est);
+          expect(res.body.act).toBe(0);
+          expect(res.body.time).toEqual(templateData[0].time);
+          expect(res.body.timeForAll).toBe(templateData[0].timeForAll);
+          expect(res.body.autoBreaks).toBe(templateData[0].autoBreaks);
+          expect(res.body.autoPomodors).toBe(templateData[0].autoPomodors);
+          expect(res.body.autoAutoStartNextTask).toBe(templateData[0].autoAutoStartNextTask);
+          expect(res.body.longInterval).toBe(templateData[0].longInterval);
+          expect(res.body.alarmType).toEqual(templateData[0].alarmType);
+          expect(res.body.alarmVolume).toBe(templateData[0].alarmVolume);
+          expect(res.body.alarmRepet).toBe(templateData[0].alarmRepet);
+          expect(res.body.tickingType).toEqual(templateData[0].tickingType);
+          expect(res.body.tickingVolume).toBe(templateData[0].tickingVolume);
+          expect(res.body.todo.userId).toBe(userId);
+          expect(res.body.todo.order).toBe(order);
+
+          todoTemplate.push(res.body);
+
+          done();
+        })
+    });
+
+    it("Sending invalid template id", (done) => {
+      supertest(app)
+        .post(`/api/template/todo/dsfdsafasf`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Invalid id");
+
+          done();
+        });
+    });
+
+    it("Sending not template id", (done) => {
+      console.log(templateData[0].tasks)
+      supertest(app)
+        .post(`/api/template/todo/${templateData[0].tasks[0]}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("This template doesn't found.");
+
+          done();
+        });
+    })
+  });
 })
