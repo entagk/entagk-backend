@@ -698,4 +698,181 @@ describe("Template APIs", () => {
         });
     });
   });
+
+  describe("Testing update template using PATCH method & route /api/template/:id", () => {
+    it("Sending invalid template id", (done) => {
+      supertest(app)
+        .patch(`/api/template/dsfdsafasf`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Invalid id");
+
+          done();
+        });
+    });
+
+    it("Sending not template id", (done) => {
+      console.log(templateData[0].tasks)
+      supertest(app)
+        .patch(`/api/template/${templateData[0].tasks[0]}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("This template doesn't found.");
+
+          done();
+        });
+    });
+
+    it("Sending request without data", (done) => {
+      supertest(app)
+        .patch(`/api/template/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Please enter the essential data (eg: name or description) of the template");
+
+          done();
+        })
+    })
+
+    it("Sending request with invalid name", (done) => {
+      supertest(app)
+        .patch(`/api/template/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...templateData[1], name: "The name length is more than 50 characters. The name length is more than 50 characters." })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("The name length is more than 50 characters.");
+
+          done();
+        })
+    })
+
+    it("Sending request with invalid description", (done) => {
+      supertest(app)
+        .patch(`/api/template/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...templateData[1], desc: "The description length is more than 500 characters. The description length is more than 500 characters. The description length is more than 500 characters. The description length is more than 500 characters. The description length is more than 500 characters. The description length is more than 500 characters. The description length is more than 500 characters. The description length is more than 500 characters. The description length is more than 500 characters. The description length is more than 500 characters." })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("The description length is more than 500 characters.");
+
+          done();
+        })
+    })
+
+    it("Sending invalid time", (done) => {
+      const newTime = { PERIOD: 1500 };
+      supertest(app)
+        .patch(`/api/template/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ time: newTime })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("The time should be at this format {PERIOD: ---, SHORT: ---, LONG: ---} with positive numbers");
+
+          done();
+        });
+    });
+
+    it("Sending invalid autoBreaks", (done) => {
+      const autoBreaks = "false";
+      supertest(app)
+        .patch(`/api/template/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ autoBreaks })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("The property of the autoBreaks is boolean");
+
+          done();
+        });
+    });
+
+    it("Sending invalid volume", (done) => {
+      const alarmVolume = 101;
+      supertest(app)
+        .patch(`/api/template/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ alarmVolume })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("invalid sound volume");
+
+          done();
+        });
+    });
+
+    it("Sending invalid sound type", (done) => {
+      const alarmType = {
+        name: "alarm 1"
+      };
+
+      supertest(app)
+        .patch(`/api/template/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ alarmType })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("The sound type should be contines name and src.");
+
+          done();
+        });
+    });
+
+    it("Sending invalid longInterval", (done) => {
+      const longInterval = 1;
+
+      supertest(app)
+        .patch(`/api/template/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ longInterval })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("The long interval must be more than 2");
+
+          done();
+        });
+    });
+
+    it("Update Public template", (done) => {
+      const newName = "Template updated 2";
+      supertest(app)
+        .patch(`/api/template/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ name: newName })
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body).toEqual({ ...templateData[1], name: newName });
+
+          templateData[1] = res.body;
+
+          done();
+        });
+    });
+  })
 })
