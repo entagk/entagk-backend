@@ -906,7 +906,6 @@ describe("Template APIs", () => {
           templateData[1].tasks.push(taskData[0]._id);
 
           templateTasks[1].tasks.push(data);
-          console.log(templateTasks[1].tasks);
 
           done();
         });
@@ -920,12 +919,56 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          console.log(res.body);
-          console.log(templateTasks[1].tasks[2]);
           expect(res.body[2]).toEqual(templateTasks[1].tasks[2]);
 
           done();
         })
     });
   });
+
+  describe("Update template tasks", () => {
+    it("Update task", (done) => {
+      const updatedTask = { name: "Updated task", act: 5 };
+      supertest(app)
+        .patch(`/api/task/update/${templateTasks[1].tasks[2]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send(updatedTask)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+
+          delete data.updatedAt;
+          delete data.createdAt;
+          const newTask = { ...templateTasks[1].tasks[2], ...updatedTask };
+          delete newTask.updatedAt;
+          delete newTask.createdAt;
+          expect(data).toEqual(newTask);
+
+          templateTasks[1].tasks[2] = data;
+
+          done();
+        });
+    });
+
+    it("verifying updated task", (done) => {
+      supertest(app)
+        .get(`/api/template/one/tasks/private/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body[2];
+
+          delete data.updatedAt;
+          delete data.createdAt;
+
+          expect(data).toEqual(templateTasks[1].tasks[2]);
+
+          done();
+        })
+    });
+  })
 })
