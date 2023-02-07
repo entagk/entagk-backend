@@ -164,6 +164,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
+          expect(mongoose.Types.ObjectId.isValid(res.body._id)).toBe(true);
           expect(res.body.name).toBe(templateData[0].name);
           expect(res.body.description).toBe(templateData[0].desc);
           expect(res.body.description).toBe(templateData[0].desc);
@@ -200,6 +201,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
+          expect(mongoose.Types.ObjectId.isValid(res.body._id)).toBe(true);
           expect(res.body.name).toBe(templateData[1].name);
           expect(res.body.description).toBe(templateData[1].desc);
           expect(res.body.description).toBe(templateData[1].desc);
@@ -342,6 +344,8 @@ describe("Template APIs", () => {
 
           expect(res.body[0].userId).toBe(userId);
           expect(res.body[1].userId).toBe(userId);
+
+          templateTasks[0].tasks = res.body;
 
           done();
         });
@@ -875,4 +879,53 @@ describe("Template APIs", () => {
         });
     });
   })
+
+  describe("Adding new task for a template", () => {
+    const taskData = [{ name: "new task", est: 10 }];
+    it("adding task", (done) => {
+      supertest(app)
+        .post('/api/task/add/')
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...taskData[0], template: { _id: templateData[1]._id, todo: templateData[1].todo } })
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+
+          expect(mongoose.Types.ObjectId.isValid(data._id)).toBe(true);
+          expect(data.name).toBe(taskData[0].name);
+          expect(data.est).toBe(taskData[0].est);
+          expect(data.act).toBe(0);
+          expect(data.notes).toBe("");
+          expect(data.check).toBe(false);
+          expect(data.template._id).toBe(templateData[1]._id);
+          expect(data.template.todo).toBe(templateData[1].todo !== null);
+
+          taskData[0] = Object.assign(taskData[0], data);
+          templateData[1].tasks.push(taskData[0]._id);
+
+          templateTasks[1].tasks.push(data);
+          console.log(templateTasks[1].tasks);
+
+          done();
+        });
+    });
+
+    it("verifying task adding", (done) => {
+      supertest(app)
+        .get(`/api/template/one/tasks/private/${templateData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          console.log(res.body);
+          console.log(templateTasks[1].tasks[2]);
+          expect(res.body[2]).toEqual(templateTasks[1].tasks[2]);
+
+          done();
+        })
+    });
+  });
 })
