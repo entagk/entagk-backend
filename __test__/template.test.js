@@ -76,6 +76,7 @@ describe("Template APIs", () => {
       "visibility": false
     }
   ];
+
   const templateTasks = [];
 
   const todoTemplate = [];
@@ -577,6 +578,124 @@ describe("Template APIs", () => {
 
           done();
         })
+    });
+  });
+
+  describe("Testing delete template using DELETE method & route /api/template/:id", () => {
+    it("Sending invalid template id", (done) => {
+      supertest(app)
+        .delete(`/api/template/dsfdsafasf`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Invalid id");
+
+          done();
+        });
+    });
+
+    it("Sending not template id", (done) => {
+      console.log(templateData[0].tasks)
+      supertest(app)
+        .delete(`/api/template/${templateData[0].tasks[0]}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("This template doesn't found.");
+
+          done();
+        });
+    });
+
+    it("Delete Public template", (done) => {
+      supertest(app)
+        .delete(`/api/template/${templateData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.deletedTemplate).toEqual(templateData[0]);
+          expect(res.body.deletedTasks.deletedCount).toBe(templateData[0].tasks.length);
+
+          done();
+        });
+    });
+
+    it("validing deleted template", (done) => {
+      supertest(app)
+        .get(`/api/template/one/private/${templateData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("This template doesn't found.");
+          templateData.filter(t => t._id === templateData[0]._id);
+
+          done();
+        });
+    });
+
+    it("validating tasks deleting", (done) => {
+      supertest(app)
+        .get(`/api/template/one/tasks/private/${templateData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("This template doesn't found.");
+
+          done();
+        });
+    });
+
+    it("Delete Todo list template", (done) => {
+      supertest(app)
+        .delete(`/api/template/${todoTemplate[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.deletedTemplate).toEqual(todoTemplate[0]);
+          expect(res.body.deletedTasks.deletedCount).toBe(todoTemplate[0].tasks.length);
+
+          done();
+        });
+    });
+
+    it("validing deleted todo list template", (done) => {
+      supertest(app)
+        .get(`/api/template/one/private/${todoTemplate[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("This template doesn't found.");
+
+          done();
+        });
+    });
+
+    it("validating tasks deleting for todo list template", (done) => {
+      supertest(app)
+        .get(`/api/template/one/tasks/private/${todoTemplate[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("This template doesn't found.");
+
+          done();
+        });
     });
   });
 })

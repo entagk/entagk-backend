@@ -2,25 +2,16 @@ const validateTemplateData = (req, res, next) => {
   try {
     const {
       name,
-      visibility,
       desc,
-      tasks,
-      iconURL,
-      color,
-      time,
-      timeForAll,
-      autoBreaks,
-      autoPomodors,
-      autoStartNextTask,
-      longInterval,
-      alarmType,
-      alarmVolume,
-      alarmRepet,
-      tickingType,
-      tickingVolume
+      tasks
     } = req.body;
+    console.log(req.body);
 
-    if (!name?.trim() && !desc) return res.status(400).json({ message: "Please enter the essential data (eg: name or description) of the template" });
+    if (req._parsedUrl.pathname === '/add/') {
+      if (!name?.trim() && !desc) return res.status(400).json({ message: "Please enter the essential data (eg: name or description) of the template" });
+    } else {
+      if (Object.keys(req.body).length === 0) return res.status(400).json({ message: "Please enter the essential data (eg: name or description) of the template" });
+    }
 
     if (name?.trim()?.length > 50 && name?.trim()) return res.status(400).json({ message: "The name length is more than 50 characters." })
 
@@ -42,10 +33,6 @@ const validateTemplateData = (req, res, next) => {
         if (task.notes?.length > 500 && task.notes?.trim()) return res.status(400).json({ message: "The notes length is more than 50 characters." });
       }
     }
-
-    // update template 
-    // if (name?.trim() && name?.trim()?.length > 50) return res.status(400).json({ message: "The name length is more than 50 characters." })
-    // if (desc?.trim()?.length > 500 && desc?.trim()) return res.status(400).json({ message: "The description length is more than 500 characters." });
 
     next();
   } catch (error) {

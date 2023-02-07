@@ -54,7 +54,8 @@ const validAudioType = (audio) => {
 
 const ValidateTimeData = async (req, res, next) => {
   try {
-    const { time,
+    const { 
+      time,
       autoBreaks,
       autoPomodors,
       autoStartNextTask,
