@@ -1,3 +1,5 @@
+const { validNumber, validAudioType } = require("./../utils/helper");
+
 // time: {
 //   type: Object,
 //   default: {
@@ -44,17 +46,9 @@
 //     src: "sounds/tricking/1.mp3"
 // }
 
-const validNumber = (number, min, max) => {
-  return number < max && number >= min ? true : false;
-}
-
-const validAudioType = (audio) => {
-  return !audio?.name || !audio?.src ? false : true;
-}
-
 const ValidateTimeData = async (req, res, next) => {
   try {
-    const { 
+    const {
       time,
       autoBreaks,
       autoPomodors,

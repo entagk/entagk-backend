@@ -36,6 +36,7 @@ Entagk is a web application for boosting your productivity using time blocking.
   - Using email
   - Using Google login
   - Reset password using mail.
+- Tasks Templates
 
 ## Built With
 
@@ -51,27 +52,37 @@ Entagk is a web application for boosting your productivity using time blocking.
 ├── __test__
 |   ├── setting.test.js
 |   ├── task.test.js
+|   ├── templates.test.js
 |   └── user.test.js
 ├── build
 ├── controllers
 |   ├── sendMail.js
 |   ├── setting.js
 |   ├── task.js
+|   ├── template.js
 |   └── user.js
 ├── middlewares
 |   ├── auth.js
+|   ├── valdiateTimeAndAudioData.js
+|   ├── validatePrivateTemplate.js
 |   ├── validateTask.js
+|   ├── validateTaskData.js
+|   ├── validateTemplate.js
+|   ├── validateTemplateData.js
 |   └── VerifyResetToken.js
 ├── models
 |   ├── resetId.js
 |   ├── setting.js
 |   ├── task.js
+|   ├── template.js
 |   └── user.js
 ├── routers
 |   ├── setting.js
 |   ├── task.js
+|   ├── template.js
 |   └── user.js
 ├── utils
+|   └── helper.js
 ├── .env.example
 ├── .gitignore
 ├── index.js
@@ -135,7 +146,7 @@ npm run test
 
 ## API Reference
 
-Sal API is organized around [REST](http://en.wikipedia.org/wiki/Representational_State_Transfer). Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns [JSON-encoded](http://www.json.org/) responses, and uses standard HTTP response codes and verbs. It also uses [JWT](https://jwt.io/) for authentication
+Entagk API is organized around [REST](http://en.wikipedia.org/wiki/Representational_State_Transfer). Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns [JSON-encoded](http://www.json.org/) responses, and uses standard HTTP response codes and verbs. It also uses [JWT](https://jwt.io/) for authentication
 
 ### Base URL
 ```

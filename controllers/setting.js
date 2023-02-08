@@ -1,8 +1,5 @@
 const Setting = require("./../models/setting");
-
-const validNumber = (number, min, max) => {
-  return number < max && number >= min ? true : false;
-}
+const { validNumber } = require("../utils/helper");
 
 const SettingControllers = {
   getSetting: async (req, res) => {

@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const SettingControllers = require("./../controllers/setting");
 const Auth = require("./../middlewares/auth");
-const ValidateTimeData = require("./../middlewares/valdiateTimeData");
+const ValidateTimeData = require("./../middlewares/valdiateTimeAndAudioData");
 
 router.get("/", Auth, SettingControllers.getSetting);
 

@@ -1,6 +1,5 @@
 const Template = require("./../models/template");
 const Task = require("./../models/task");
-const mongoose = require("mongoose");
 
 /**
  * addTemplate ===>> add template to database

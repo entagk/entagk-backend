@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --detectOpenHandles --verbose --testTimeout=60000",
+    "test": "jest --detectOpenHandles --verbose --testTimeout=6000",
     "test:watch": "jest --detectOpenHandles --verbose --watchAll",
     "start": "nodemon index.js"
   },

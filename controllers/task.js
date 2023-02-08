@@ -1,6 +1,5 @@
 const Task = require("./../models/task.js");
 const Template = require('../models/template');
-const mongoose = require("mongoose");
 
 /**
  * handle the order at 

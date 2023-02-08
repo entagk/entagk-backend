@@ -3,7 +3,7 @@ const templateControllers = require("./../controllers/template");
 const validateTemplate = require("./../middlewares/validateTemplate");
 const validateTemplateData = require("./../middlewares/validateTemplateData");
 const Auth = require('./../middlewares/auth');
-const ValidateTimeData = require('./../middlewares/valdiateTimeData');
+const ValidateTimeData = require('./../middlewares/valdiateTimeAndAudioData');
 
 router.post("/add/", Auth, validateTemplateData, ValidateTimeData, templateControllers.addTemplate);
 
