@@ -1,5 +1,4 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const { google } = require('googleapis');
@@ -13,27 +12,11 @@ const ResetId = require('../models/resetId');
 
 const { OAuth2 } = google.auth;
 const client = new OAuth2(process.env.MAILING_SERVICE_CLIENT_ID);
+const { validateEmail, createAcessToken, createPasswordResetPassword, createRefrishToken } = require("../utils/helper");
 
 dotenv.config();
 
 const CLIENT_URL = process.env.CLIENT_URL;
-
-const validateEmail = (email) => {
-  const re = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
-  return re.test(email);
-}
-
-const createAcessToken = (payload) => {
-  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "16h" });
-};
-
-const createPasswordResetPassword = (payload) => {
-  return jwt.sign(payload, process.env.RESET_TOKEN_SECRET, { expiresIn: '1h' });
-}
-
-const createRefrishToken = (payload) => {
-  return jwt.sign(payload, process.env.REFRISH_TOKEN_SECRET, { expiresIn: "7d" })
-}
 
 const UserController = {
   signUp: async (req, res) => {

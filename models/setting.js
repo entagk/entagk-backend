@@ -9,7 +9,6 @@ const settingSchema = new mongoose.Schema(
     },
     time: {
       type: Object,
-      require: [true, "please enter the time in second"],
       default: {
         ["PERIOD"]: 1500,
         ["SHORT"]: 300,

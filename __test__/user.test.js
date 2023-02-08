@@ -104,7 +104,6 @@ describe('User APIs', () => {
     });
   });
 
-  // PASS
   describe("testing Signin POST through route /api/user/signin", () => {
     const notFoundUser = { password: 'kdsfjkjske', email: "kdsfjkjske@test.com" };
     it("Testing sending not found user data and it should return error message and statusCode is 400", (done) => {
@@ -240,7 +239,6 @@ describe('User APIs', () => {
     })
   });
 
-  // PASS
   describe("Testing verifyResetId POST through route /api/user/verify_reset_id", () => {
     // PASS
     it("Testing controller with successful message", (done) => {
@@ -288,7 +286,6 @@ describe('User APIs', () => {
     });
   })
 
-  // PASS
   describe("Testing resetPassword POST route /api/user/reset_password", () => {
 
     it("without sending password", (done) => {

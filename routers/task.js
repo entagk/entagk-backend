@@ -1,13 +1,14 @@
 const router = require("express").Router();
 const Auth = require("../middlewares/auth.js");
 const ValidTask = require('../middlewares/validateTask');
+const validateTaskData = require("../middlewares/validateTaskData");
 const TaskControllers = require("./../controllers/task.js");
 
 router.get("/", Auth, TaskControllers.getAll);
 
-router.post("/add/", Auth, TaskControllers.addTask);
+router.post("/add/", Auth, validateTaskData, TaskControllers.addTask);
 
-router.patch("/update/:id", Auth, ValidTask, TaskControllers.updateTask);
+router.patch("/update/:id", Auth, ValidTask, validateTaskData, TaskControllers.updateTask);
 
 router.delete("/delete/:id", Auth, ValidTask, TaskControllers.deleteTask);
 
