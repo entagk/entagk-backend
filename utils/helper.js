@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const validNumber = (number, min, max) => {
-  return number < max && number >= min ? true : false;
+  return number <= max && number >= min ? true : false;
 }
 
 const validAudioType = (audio) => {

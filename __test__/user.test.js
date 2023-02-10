@@ -284,7 +284,7 @@ describe('User APIs', () => {
           done();
         })
     });
-  })
+  });
 
   describe("Testing resetPassword POST route /api/user/reset_password", () => {
 
@@ -358,7 +358,7 @@ describe('User APIs', () => {
           done();
         })
     });
-  })
+  });
 
   describe("Testing updateUser controller route /api/user/update_user", () => {
     it("Sending invalid token", (done) => {
@@ -448,7 +448,7 @@ describe('User APIs', () => {
         })
     });
 
-  })
+  });
 
   describe("Testing deleteAccount controller route /api/user/delete_user", () => {
     it("Delete account successfully", (done) => {
@@ -464,5 +464,7 @@ describe('User APIs', () => {
           done();
         })
     })
-  })
+  });
+
+  
 })
