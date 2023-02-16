@@ -13,9 +13,11 @@ router.get("/user_info", Auth, UserController.getUser);
 
 router.post("/forgot_password", UserController.forgotPassword);
 
-router.post('/verify_reset_id', VerifyResetToken, UserController.verifyResetToken)
+router.post('/verify_reset_id', VerifyResetToken, UserController.verifyResetToken);
 
 router.post("/reset_password", VerifyResetToken, UserController.resetPassword);
+
+router.get("/refresh_token", Auth, UserController.getRefreshToken);
 
 router.patch("/update_user", Auth, UserController.updateUser);
 

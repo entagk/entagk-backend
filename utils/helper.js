@@ -14,7 +14,7 @@ const validateEmail = (email) => {
 }
 
 const createAcessToken = (payload) => {
-  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "16h" });
+  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "24h" });
 };
 
 const createPasswordResetPassword = (payload) => {
@@ -22,7 +22,7 @@ const createPasswordResetPassword = (payload) => {
 }
 
 const createRefrishToken = (payload) => {
-  return jwt.sign(payload, process.env.REFRISH_TOKEN_SECRET, { expiresIn: "7d" })
+  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "30d" })
 }
 
 

@@ -69,7 +69,7 @@ const UserController = {
 
       const token = createAcessToken({ email: existingUser.email, id: existingUser._id });
 
-      res.status(200).json({ token, message: "You are logged in successfully" });
+      res.status(200).json({ access_token: token, message: "You are logged in successfully" });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -203,6 +203,18 @@ const UserController = {
       );
 
       res.status(200).json({ message: "The password is changed successfuly." });
+    } catch (error) {
+      res.status(500).json({ message: error.message })
+    }
+  },
+
+  getRefreshToken: async (req, res) => {
+    try {
+      const existingUser = await User.findById(req.userId);
+      const token = createRefrishToken({ email: existingUser.email, id: existingUser._id });
+
+      res.status(200).json({ refresh_token: token, message: "You are logged in successfully" });
+
     } catch (error) {
       res.status(500).json({ message: error.message })
     }
