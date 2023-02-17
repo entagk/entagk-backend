@@ -7,6 +7,7 @@ const TaskControllers = require("./../controllers/task.js");
 router.get("/", Auth, TaskControllers.getAll);
 
 router.post("/add/", Auth, validateTaskData, TaskControllers.addTask);
+router.post("/add_multiple_tasks", Auth, TaskControllers.addMultipleTasks)
 
 router.patch("/update/:id", Auth, ValidTask, validateTaskData, TaskControllers.updateTask);
 
