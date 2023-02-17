@@ -45,7 +45,7 @@ const UserController = {
 
       const token = createAcessToken({ email: newUser.email, id: result._id });
 
-      res.status(200).json({ token, message: "You are logged in successfully" })
+      res.status(200).json({ access_token: token, message: "You are logged in successfully" })
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: error.message });
@@ -105,7 +105,7 @@ const UserController = {
 
         const token = createAcessToken({ email: newUser.email, id: newUser._id });
 
-        res.status(200).json({ message: 'Successful Login', token });
+        res.status(200).json({ message: 'Successful Login', access_token: token });
       }
 
     } catch (error) {
