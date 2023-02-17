@@ -5,7 +5,7 @@ const validNumber = (number, min, max) => {
 }
 
 const validAudioType = (audio) => {
-  return !audio?.name || !audio?.src ? false : true;
+  return (audio?.name !== 'none' && (!audio?.name || !audio?.src)) ? false : true;
 }
 
 const validateEmail = (email) => {
