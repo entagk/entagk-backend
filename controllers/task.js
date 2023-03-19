@@ -14,12 +14,12 @@ const taskControllers = {
   getAll: async (req, res) => {
     const { page } = req.query;
     try {
-      const limit = 12;
+      const limit = 10;
       const startIndex = (Number(page) - 1) * limit;
 
       const userId = req.userId;
       const total = await Task.countDocuments({ userId, template: null });
-      const tasks = await Task.find({ userId, template: null }).sort({ check: false }).limit(limit).skip(startIndex);
+      const tasks = await Task.find({ userId, template: null }).sort({ check: false, est: -1, }).limit(limit).skip(startIndex);
 
       res.status(200).json({
         tasks,
@@ -70,7 +70,6 @@ const taskControllers = {
 
       const tasksData = await Task.insertMany(tasks);
 
-      console.log(tasksData);
       res.status(200).json(tasksData);
     } catch (error) {
       res.status(500).json({ message: error.message });

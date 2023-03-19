@@ -83,8 +83,6 @@ const UserController = {
 
       const { email_verified, email, name, picture } = verify.getPayload();
 
-      // console.log({ email_verified, email, name, picture });
-
       if (!email_verified) return res.status(400).json({ message: "This email is not verify, verify it and try again later." });
 
       const oldUser = await User.findOne({ email });
@@ -92,7 +90,7 @@ const UserController = {
       if (oldUser) {
         const token = createAcessToken({ email: oldUser.email, id: oldUser._id });
 
-        res.json({ message: 'Successful Login.', token });
+        res.status(200).json({ message: 'Successful Login.', access_token: token });
       } else {
         const password = email + process.env.GOOGLE_SECRET;
         const hashedPassword = await bcrypt.hash(password, 12);

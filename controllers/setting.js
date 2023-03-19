@@ -16,6 +16,7 @@ const SettingControllers = {
   update: async (req, res) => {
     try {
       const userId = req.userId;
+      // make the filter middelware to filter the needed data only
       const {
         format,
         time,
