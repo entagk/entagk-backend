@@ -30,7 +30,7 @@ const mongoose = require("mongoose");
  *       "src": "sounds/alarm/1.mp3"
  *    },
  *    "alarmVolume": 50,
- *    "alarmRepet": false,
+ *    "alarmRepet": 0,
  *    "tickingType": { 
  *        "name": "tricking 1",
  *        "src": "sounds/tricking/1.mp3"
@@ -122,8 +122,8 @@ const templateSchema = mongoose.Schema({
     default: 50,
   },
   alarmRepet: {
-    type: Boolean,
-    default: false
+    type: Number,
+    default: 0
   },
   tickingType: {
     type: Object,

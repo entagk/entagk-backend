@@ -36,8 +36,8 @@ const { validNumber, validAudioType } = require("./../utils/helper");
 //   default: 50,
 // },
 // alarmRepet: {
-//   type: Boolean,
-//   default: false
+//   type: Number,
+//   default: 0
 // },
 // tickingType: {
 //   type: Object,

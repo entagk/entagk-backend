@@ -73,7 +73,7 @@ describe("Account Setting API", () => {
           });
 
           expect(settingData.alarmVolume).toBe(50);
-          expect(settingData.alarmRepet).toBe(false);
+          expect(settingData.alarmRepet).toBe(0);
 
           expect(settingData.tickingType).toStrictEqual({
             name: "tricking 1",
