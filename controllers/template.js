@@ -1,5 +1,5 @@
-const Template = require("./../models/template");
-const Task = require("./../models/task");
+const Template = require("./../models/template"); //
+const Task = require("./../models/task"); //
 
 /**
  * addTemplate ===>> add template to database

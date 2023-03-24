@@ -3,36 +3,36 @@ const app = require("../server");
 const jwt = require('jsonwebtoken');
 const mongoose = require("mongoose");
 
-const MONGODB_URL = "mongodb://localhost:27017/?authMechanism=DEFAULT";
+const MONGODB_URL = "mongodb://127.0.0.1:27017/?authMechanism=DEFAULT";
 
 let userId, token;
+
+const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" };
 
 beforeAll((done) => {
   mongoose.connect(MONGODB_URL,
     { useNewUrlParser: true, useUnifiedTopology: true },
-    () => done());
+  ).then(async () => {
+    const res = await supertest(app).post('/api/user/signup').send(userData)
+
+    token = res.body.access_token;
+    console.log(res.body);
+
+    if (token?.length < 500) {
+      const tokenData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
+      userId = tokenData?.id;
+      console.log(tokenData);
+    } else {
+      const tokenData = jwt.decode(token);
+      expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
+      userId = tokenData?.id;
+      console.log(tokenData);
+    }
+
+    done();
+  });
 });
-
-/**
- * Before start in testing: Sign up the user and get the token for authorization for every test.
- */
-beforeAll(async () => {
-  const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" };
-
-  const res = await supertest(app).post('/api/user/signup').send(userData)
-
-  token = res.body.token;
-
-  if (res.body.token?.length < 500) {
-    const tokenData = jwt.verify(res.body.token, process.env.ACCESS_TOKEN_SECRET);
-    expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
-    userId = tokenData?.id;
-  } else {
-    const tokenData = jwt.decode(res.body.token);
-    expect(mongoose.Types.ObjectId.isValid(tokenData.sub)).toBe(true);
-    userId = tokenData?.sub;
-  }
-})
 
 afterAll((done) => {
   mongoose.connection.db.dropDatabase(() => {

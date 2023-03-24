@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const jwt = require('jsonwebtoken');
 
-const MONGODB_URL = "mongodb://localhost:27017/?authMechanism=DEFAULT";
+const MONGODB_URL = "mongodb://127.0.0.1:27017/?authMechanism=DEFAULT";
 
 let userId, token, resetTokenId;
 
@@ -73,13 +73,13 @@ describe('User APIs', () => {
 
           expect(res.body.message).toBe('You are logged in successfully');
 
-          token = res.body.token;
-          if (res.body.token.length < 500) {
-            const tokenData = jwt.verify(res.body.token, process.env.ACCESS_TOKEN_SECRET);
+          token = res.body.access_token;
+          if (res.body.access_token.length < 500) {
+            const tokenData = jwt.verify(res.body.access_token, process.env.ACCESS_TOKEN_SECRET);
             expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
             userId = tokenData.id;
           } else {
-            const tokenData = jwt.decode(res.body.token);
+            const tokenData = jwt.decode(res.body.access_token);
             expect(mongoose.Types.ObjectId.isValid(tokenData.sub)).toBe(true);
             userId = tokenData.sub;
           }
@@ -144,13 +144,13 @@ describe('User APIs', () => {
 
           expect(res.body.message).toBe("You are logged in successfully");
 
-          token = res.body.token;
-          if (res.body.token.length < 500) {
-            const tokenData = jwt.verify(res.body.token, process.env.ACCESS_TOKEN_SECRET);
+          token = res.body.access_token;
+          if (res.body.access_token.length < 500) {
+            const tokenData = jwt.verify(res.body.access_token, process.env.ACCESS_TOKEN_SECRET);
             expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
             userId = tokenData.id;
           } else {
-            const tokenData = jwt.decode(res.body.token);
+            const tokenData = jwt.decode(res.body.access_token);
             expect(mongoose.Types.ObjectId.isValid(tokenData.sub)).toBe(true);
             userId = tokenData.sub;
           }
@@ -344,13 +344,13 @@ describe('User APIs', () => {
 
           expect(res.body.message).toBe("You are logged in successfully");
 
-          token = res.body.token;
-          if (res.body.token.length < 500) {
-            const tokenData = jwt.verify(res.body.token, process.env.ACCESS_TOKEN_SECRET);
+          token = res.body.access_token;
+          if (res.body.access_token.length < 500) {
+            const tokenData = jwt.verify(res.body.access_token, process.env.ACCESS_TOKEN_SECRET);
             expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
             userId = tokenData.id;
           } else {
-            const tokenData = jwt.decode(res.body.token);
+            const tokenData = jwt.decode(res.body.access_token);
             expect(mongoose.Types.ObjectId.isValid(tokenData.sub)).toBe(true);
             userId = tokenData.sub;
           }
@@ -433,7 +433,7 @@ describe('User APIs', () => {
 
           expect(res.body.message).toBe("You are logged in successfully");
 
-          token = res.body.token;
+          token = res.body.access_token;
           if (token.length < 500) {
             const tokenData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
             expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
@@ -465,6 +465,4 @@ describe('User APIs', () => {
         })
     })
   });
-
-  
 })

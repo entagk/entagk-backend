@@ -2,13 +2,13 @@ const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const { google } = require('googleapis');
-const crypto = require('crypto');
 
 const User = require("./../models/user.js");
-const Tasks = require("./../models/task.js");
-const sendMail = require("./sendMail.js");
-const Setting = require("../models/setting.js");
-const ResetId = require('../models/resetId');
+const Tasks = require("./../models/task.js"); //
+const sendMail = require("../utils/sendMail.js");
+const Setting = require("../models/setting.js"); //
+const Template = require("../models/template.js"); // 
+const ResetId = require('../models/resetId'); // 
 
 const { OAuth2 } = google.auth;
 const client = new OAuth2(process.env.MAILING_SERVICE_CLIENT_ID);
@@ -47,7 +47,7 @@ const UserController = {
 
       res.status(200).json({ access_token: token, message: "You are logged in successfully" })
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return res.status(500).json({ message: error.message });
     }
   },
@@ -269,6 +269,7 @@ const UserController = {
 
       await Tasks.deleteMany({ userId: req.userId });
       await Setting.deleteOne({ userId: req.userId });
+      await Template.deleteMany({userId: req.userId });
 
       console.log(String(user?._id));
 
