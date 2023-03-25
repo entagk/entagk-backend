@@ -2,24 +2,17 @@ const app = require('../server');
 const mongoose = require('mongoose');
 const supertest = require('supertest');
 const jwt = require('jsonwebtoken');
-
-const MONGODB_URL = "mongodb://127.0.0.1:27017/?authMechanism=DEFAULT";
+const {closeDBConnect, openDBConnect} = require("./helper");
 
 let userId, token, resetTokenId;
 
 beforeAll((done) => {
-  mongoose.connect(MONGODB_URL,
-    { useNewUrlParser: true, useUnifiedTopology: true },
-    () => done());
+  openDBConnect(() => {}, false, done);
 });
 
 afterAll((done) => {
-  mongoose.connection.db.dropDatabase(() => {
-    mongoose.connection.close(() => done());
-    console.log("done")
-  });
+  closeDBConnect(done);
 });
-
 
 describe('User APIs', () => {
   const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" }

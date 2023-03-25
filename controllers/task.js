@@ -50,23 +50,7 @@ const taskControllers = {
   },
   addMultipleTasks: async (req, res) => {
     try {
-      const tasks = req.body.map((task) => { 
-        return { ...task, userId: req.userId }; });
-
-      for (let index = 0; index < tasks.length; index++) {
-        const task = tasks[index];
-        const { name, est, act, notes, project, order } = task;
-
-        if (!name?.trim() || !est) return res.status(400).json({ message: `For task ${index + 1}, please complete the task data with at least the name and est` });
-
-        if (est <= 0) return res.status(400).json({ message: `For task ${index + 1}, The est shouldn't be negative number.` });
-        if (act < 0 && act) return res.status(400).json({ message: `For task ${index + 1}, The act shouldn't be negative number.` });
-        if (name?.length > 50 && name?.trim()) return res.status(400).json({ message: `For task ${index + 1}, The name length is more than 50 characters.` });
-
-        if (notes?.length > 500 && notes?.trim()) return res.status(400).json({ message: `For task ${index + 1}, The notes length is more than 500 characters.` });
-        if (order < 0 || !order) task.order = index;
-        delete task?._id
-      }
+      const tasks = req.body;
 
       const tasksData = await Task.insertMany(tasks);
 
@@ -90,7 +74,6 @@ const taskControllers = {
 
       if (oldTask.template) {
         const templateData = await Template.findById(oldTask.template._id);
-        // console.log(templateData);
         await Template.findByIdAndUpdate(oldTask.template._id, { est: (templateData.est - oldTask.est) + newEst, act: (templateData.act - oldTask.act) + newEst });
       }
 

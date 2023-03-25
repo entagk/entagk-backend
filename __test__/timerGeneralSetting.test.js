@@ -12,7 +12,7 @@ const setData = (t, uId) => {
 }
 
 beforeAll((done) => {
-  openDBConnect(setData, done);
+  openDBConnect(setData, true, done);
 });
 
 afterAll((done) => {
