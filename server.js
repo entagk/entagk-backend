@@ -39,7 +39,7 @@ app.use("/api/user/", require("./routers/user"));
 
 app.use("/api/task/", require("./routers/task"));
 
-app.use("/api/setting/", require("./routers/setting"));
+app.use("/api/setting/", require("./routers/timerGeneralSetting"));
 
 app.use("/api/template/", require("./routers/template"));
 

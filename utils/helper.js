@@ -13,6 +13,12 @@ const validateEmail = (email) => {
   return re.test(email);
 }
 
+const filterBody = (props, body) => {
+  const keys = Object.entries(body).filter(([k, v]) => props.includes(k));
+
+  return Object.fromEntries(keys);
+}
+
 const createAcessToken = (payload) => {
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "24h" });
 };
@@ -26,4 +32,4 @@ const createRefrishToken = (payload) => {
 }
 
 
-module.exports = { validNumber, validAudioType, validateEmail, createAcessToken, createPasswordResetPassword, createRefrishToken };
+module.exports = { validNumber, validAudioType, validateEmail, filterBody, createAcessToken, createPasswordResetPassword, createRefrishToken };

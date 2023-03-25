@@ -6,7 +6,7 @@ const { google } = require('googleapis');
 const User = require("./../models/user.js");
 const Tasks = require("./../models/task.js"); //
 const sendMail = require("../utils/sendMail.js");
-const Setting = require("../models/setting.js"); //
+const Setting = require("../models/timerGeneralSetting.js"); //
 const Template = require("../models/template.js"); // 
 const ResetId = require('../models/resetId'); // 
 

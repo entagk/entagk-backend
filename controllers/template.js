@@ -1,5 +1,6 @@
 const Template = require("./../models/template"); //
 const Task = require("./../models/task"); //
+const { filterBody } = require("../utils/helper.js");
 
 /**
  * addTemplate ===>> add template to database
@@ -18,66 +19,49 @@ const Task = require("./../models/task"); //
  */
 
 const TempleteControllers = {
-  /**
-   * @param {body, authentication, ....} req 
-   * @param {*} res 
-   * 
+  /** 
    * first, get all proparties of the template from the request body(req.body);
    * Then validate the data before saving at database.
    * last, response with the comming data from the database
    */
   addTemplate: async (req, res) => {
     try {
-      const {
-        name,
-        visibility,
-        desc,
-        tasks,
-        iconURL,
-        color,
-        time,
-        timeForAll,
-        autoBreaks,
-        autoPomodors,
-        autoStartNextTask,
-        longInterval,
-        alarmType,
-        alarmVolume,
-        alarmRepet,
-        tickingType,
-        tickingVolume
-      } = req.body;
+      const props = `
+      name,
+      visibility,
+      desc,
+      tasks,
+      iconURL,
+      color,
+      time,
+      timeForAll,
+      autoBreaks,
+      autoPomodors,
+      autoStartNextTask,
+      longInterval,
+      alarmType,
+      alarmVolume,
+      alarmRepet,
+      tickingType,
+      tickingVolume`;
+      const body = filterBody(props.split(",").map(e => e.trim()), req.body);
 
       const templateData = await Template.create({
-        name,
-        visibility,
-        description: desc,
-        iconURL,
-        color,
-        time,
-        timeForAll,
-        autoBreaks,
-        autoPomodors,
-        autoStartNextTask,
-        longInterval,
-        alarmType,
-        alarmVolume,
-        alarmRepet,
-        tickingType,
-        tickingVolume,
-        userId: req.userId
+        description: body.desc,
+        userId: req.userId,
+        ...body
       });
 
       let est = 0;
-      for (let index = 0; index < tasks.length; index++) {
-        const task = tasks[index];
+      for (let index = 0; index < body.tasks.length; index++) {
+        const task = body.tasks[index];
         if (!task.order) task.order = index;
         task.template = { _id: String(templateData._id), todo: false };
         task.userId = req.userId;
         est += task.est;
       }
 
-      const tasksIdsData = await Task.insertMany(tasks);
+      const tasksIdsData = await Task.insertMany(body.tasks);
 
       const tasksIds = tasksIdsData.map(task => task._id);
 

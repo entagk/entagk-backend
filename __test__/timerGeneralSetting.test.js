@@ -1,46 +1,36 @@
 const supertest = require("supertest");
 const app = require("../server");
-const jwt = require('jsonwebtoken');
-const mongoose = require("mongoose");
-
-const MONGODB_URL = "mongodb://127.0.0.1:27017/?authMechanism=DEFAULT";
+const { closeDBConnect, openDBConnect } = require('./helper');
 
 let userId, token;
 
-beforeAll((done) => {
-  mongoose.connect(MONGODB_URL,
-    { useNewUrlParser: true, useUnifiedTopology: true },
-  ).then(async () => {
-    const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" };
-  
-    const res = await supertest(app).post('/api/user/signup').send(userData)
-  
-    token = res.body.access_token;
-  
-    if (token?.length < 500) {
-      const tokenData = jwt.verify(res.body.access_token, process.env.ACCESS_TOKEN_SECRET);
-      expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
-      userId = tokenData?.id;
-    } else {
-      const tokenData = jwt.decode(res.body.access_token);
-      expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
-      userId = tokenData?.id;
-    }
+const setData = (t, uId) => {
+  token = t;
+  userId = uId;
+  console.log(token, t);
+  console.log(userId, uId);
+}
 
-    done();
-  });
+beforeAll((done) => {
+  openDBConnect(setData, done);
 });
 
 afterAll((done) => {
-  mongoose.connection.db.dropDatabase(() => {
-    mongoose.connection.close(() => done());
-    console.log("done")
-  });
+  closeDBConnect(done);
 });
 
-describe("Account Setting API", () => {
+const verifySetting = (body, data) => {
+  Object.entries(body).forEach(([k, v]) => {
+    if (k in data) {
+      expect(body[k]).toStrictEqual(data[k]);
+    }
+  })
+}
+
+describe("Timer Setting API", () => {
   let settingData;
   describe("Testing getSetting controller route /api/setting/ with GET", () => {
+    console.log(token);
     it("Getting setting succesfully", (done) => {
       supertest(app)
         .get("/api/setting/")
@@ -50,49 +40,38 @@ describe("Account Setting API", () => {
           if (err) throw err;
 
           settingData = res.body;
-          expect(settingData.format).toBe("analog");
-
-          expect(settingData.time).toStrictEqual({
-            ["PERIOD"]: 1500,
-            ["SHORT"]: 300,
-            ["LONG"]: 900,
-          });
-
-          expect(settingData.autoBreaks).toBe(false)
-          expect(settingData.autoPomodors).toBe(false);
-          expect(settingData.autoStartNextTask).toBe(false);
-
-          expect(settingData.longInterval).toBe(4);
-
-          expect(settingData.alarmType).toStrictEqual({
-            name: "alarm 1",
-            src: 'sounds/alarm/1.mp3'
-          });
-
-          expect(settingData.alarmVolume).toBe(50);
-          expect(settingData.alarmRepet).toBe(0);
-
-          expect(settingData.tickingType).toStrictEqual({
-            name: "tricking 1",
-            src: "sounds/tricking/1.mp3"
-          });
-
-          expect(settingData.tickingVolume).toBe(50);
-
-          expect(settingData.clickType).toStrictEqual({
-            name: "can opening pop",
-            src: "sounds/click/can-opening-pop-101856.mp3"
-          });
-
-          expect(settingData.clickVolume).toBe(50);
-
-          expect(settingData.focusMode).toBe(false);
-
-          expect(settingData.notificationType).toBe("last");
-
-          expect(settingData.notificationInterval).toBe(5);
-
-          expect(settingData.userId).toBe(userId);
+          verifySetting(settingData, {
+            format: "analog",
+            time: {
+              ["PERIOD"]: 1500,
+              ["SHORT"]: 300,
+              ["LONG"]: 900,
+            },
+            autoBreaks: false,
+            autoPomodors: false,
+            autoStartNextTask: false,
+            longInterval: 4,
+            alarmType: {
+              name: "alarm 1",
+              src: 'sounds/alarm/1.mp3'
+            },
+            alarmVolume: 50,
+            alarmRepet: 0,
+            tickingType: {
+              name: "tricking 1",
+              src: "sounds/tricking/1.mp3"
+            },
+            tickingVolume: 50,
+            clickType: {
+              name: "can opening pop",
+              src: "sounds/click/can-opening-pop-101856.mp3"
+            },
+            clickVolume: 50,
+            focusMode: false,
+            notificationType: "last",
+            notificationInterval: 5,
+            userId: userId,
+          })
 
           done();
         })
@@ -313,26 +292,24 @@ describe("Account Setting API", () => {
         })
     })
 
+    const data = {
+      format: "digital",
+      time: { PERIOD: 21, SHORT: 1, LONG: 10 },
+      alarmVolume: 0,
+      tickingVolume: 1,
+      clickVolume: 0,
+    };
+
     it("Sending valid data", (done) => {
       supertest(app)
         .post("/api/setting/update")
         .set("Authorization", `Bearer ${token}`)
-        .send({
-          format: "digital",
-          time: { PERIOD: 21, SHORT: 1, LONG: 10 },
-          alarmVolume: 0,
-          tickingVolume: 1,
-          clickVolume: 0,
-        })
+        .send(data)
         .expect(200)
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body.format).toBe('digital');
-          expect(res.body.time).toStrictEqual({ PERIOD: 21, SHORT: 1, LONG: 10 });
-          expect(res.body.alarmVolume).toBe(0);
-          expect(res.body.clickVolume).toBe(0);
-          expect(res.body.tickingVolume).toBe(1);
+          verifySetting(res.body, data)
 
           done();
         })
