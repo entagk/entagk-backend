@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const User = require("../models/user");
 
 dotenv.config();
 
-const Auth = (req, res, next) => {
+const Auth = async (req, res, next) => {
   try {
     let token;
     if (req?.headers?.authorization) {
@@ -33,6 +34,10 @@ const Auth = (req, res, next) => {
     }
 
     if (!mongoose.Types.ObjectId.isValid(req.userId)) return res.status(401).json({ message: "Invalid Authentication" });
+
+    const user = await User.findById(req.userId) || await User.findOne({ email: decodedData.email });
+
+    if (!user) return res.status(404).json({ message: "user not found" })
 
     next();
   } catch (error) {

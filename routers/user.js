@@ -7,7 +7,7 @@ router.post("/signin", UserController.signIn);
 
 router.post("/signup", UserController.signUp);
 
-router.post('/google_login', UserController.googleLogin);
+router.post('/google_login', UserController.googleLogin); // write its unit testing
 
 router.get("/user_info", Auth, UserController.getUser);
 
@@ -17,7 +17,7 @@ router.post('/verify_reset_id', VerifyResetToken, UserController.verifyResetToke
 
 router.post("/reset_password", VerifyResetToken, UserController.resetPassword);
 
-router.get("/refresh_token", Auth, UserController.getRefreshToken);
+router.get("/refresh_token", Auth, UserController.getRefreshToken); // write its unit testing
 
 router.patch("/update_user", Auth, UserController.updateUser);
 
