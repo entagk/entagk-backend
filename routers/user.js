@@ -17,7 +17,7 @@ router.post('/verify_reset_id', VerifyResetToken, UserController.verifyResetToke
 
 router.post("/reset_password", VerifyResetToken, UserController.resetPassword);
 
-router.get("/refresh_token", Auth, UserController.getRefreshToken); // write its unit testing
+router.get("/refresh_token", Auth, UserController.getRefreshToken);
 
 router.patch("/update_user", Auth, UserController.updateUser);
 
