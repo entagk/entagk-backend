@@ -690,7 +690,7 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body.message).toBe("Success deleting.")
+          expect(res.body.message).toBe("Success deleted.")
           expect(res.body.deletedCount).toBe(taskData.filter((t) => t.check).length);
           taskData = taskData.filter(task => !task?.check);
 
@@ -769,7 +769,7 @@ describe("Task APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body.message).toBe("Successfully deleting.")
+          expect(res.body.message).toBe("Successfully deleted.")
           expect(res.body.deletedCount).toBe(taskData.length);
 
           done();

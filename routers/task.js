@@ -3,7 +3,7 @@ const Auth = require("../middlewares/auth.js");
 const ValidTask = require('../middlewares/validateTask');
 const validateTaskData = require("../middlewares/validateTaskData");
 const ValidateMultiTasksData = require('../middlewares/validateMultiTasksData');
-const TaskControllers = require("./../controllers/task.js");
+const TaskControllers = require("../controllers/task/index.js");
 
 router.get("/", Auth, TaskControllers.getAll);
 
