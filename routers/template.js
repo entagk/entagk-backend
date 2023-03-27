@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const templateControllers = require("./../controllers/template");
+const templateControllers = require("./../controllers/template/index");
 const validateTemplate = require("./../middlewares/validateTemplate");
 const validateTemplateData = require("./../middlewares/validateTemplateData");
 const Auth = require('./../middlewares/auth');
