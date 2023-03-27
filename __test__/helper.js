@@ -15,17 +15,14 @@ const openDBConnect = (setData, signup, done) => {
 
       const res = await supertest(app).post('/api/user/signup').send(userData)
 
-      console.log(res.body);
       token = res.body.access_token;
 
       if (token?.length < 500) {
         const tokenData = jwt.verify(res.body.access_token, process.env.ACCESS_TOKEN_SECRET);
-        console.log(tokenData);
         expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
         userId = tokenData?.id;
       } else {
         const tokenData = jwt.decode(res.body.access_token);
-        console.log(tokenData);
         expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
         userId = tokenData?.id;
       }
