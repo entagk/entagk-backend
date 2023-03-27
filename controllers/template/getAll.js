@@ -15,7 +15,6 @@ const getAll = async (req, res) => {
       currentPage: page ? Number(page) : total === 0 ? 0 : 1,
       numberOfPages: Math.ceil(total / limit)
     });
-
   } catch (error) {
     res.status(500).json({ message: error.message })
   }

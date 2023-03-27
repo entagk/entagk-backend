@@ -12,9 +12,6 @@ const Task = require("../../models/task"); //
  * updataTemplate ===>> updata template for all templates (enclode todo list templates) 
  * deleteTemplate ===>> delete template for all templates (enclode todo list templates)
  * ---------------------------------------------------------------------------------------
- * Write unit testing for each endpoint at __test__
- * handle endpoints testing and documents at Postman
- * update the README document
  */
 
 const TempleteControllers = {
@@ -31,7 +28,7 @@ const TempleteControllers = {
   addToTodoList: require('./addToTodoList'),
   getAllForTodo: require('./getAllForTodo'),
   deleteTemplate: require('./deleteTemplate'),
-  updateTemplate: require('./updateTemplate')
+  updateTemplate: require('./updateTemplate'),
 };
 
 module.exports = TempleteControllers;

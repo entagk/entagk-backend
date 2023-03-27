@@ -342,7 +342,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          verifyTasks(res.body, templateData[0], templateTasks[0].tasks);
+          verifyTasks(res.body.tasks, templateData[0], templateTasks[0].tasks);
 
           templateTasks[0].tasks = res.body;
 
@@ -358,7 +358,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          verifyTasks(res.body, templateData[1], templateTasks[1].tasks);
+          verifyTasks(res.body.tasks, templateData[1], templateTasks[1].tasks);
           done();
         });
     });
@@ -873,7 +873,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body[2]).toEqual(templateTasks[1].tasks[2]);
+          expect(res.body.tasks[2]).toEqual(templateTasks[1].tasks[2]);
 
           done();
         })
@@ -914,7 +914,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          const data = res.body[2];
+          const data = res.body.tasks[2];
 
           delete data.updatedAt;
           delete data.createdAt;
