@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const SettingControllers = require("../controllers/timerGeneralSetting");
+const SettingControllers = require("../controllers/timerGeneralSetting/index");
 const Auth = require("../middlewares/auth");
 const ValidateTimeData = require("../middlewares/valdiateTimeAndAudioData");
 
