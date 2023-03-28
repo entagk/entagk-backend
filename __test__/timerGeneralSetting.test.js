@@ -71,7 +71,7 @@ describe("Timer Setting API", () => {
             notificationType: "last",
             notificationInterval: 5,
             userId: userId,
-          })
+          });
 
           done();
         })

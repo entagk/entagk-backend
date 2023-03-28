@@ -90,4 +90,4 @@ const timerSettingSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("TimerSetting", timerSettingSchema);
+module.exports = mongoose.model("Setting", timerSettingSchema);
