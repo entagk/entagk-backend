@@ -73,7 +73,7 @@ describe("Template APIs", () => {
   let templateData = [
     {
       "name": "Template 1",
-      "desc": "This is the Other Template",
+      "desc": "This is the first template",
       "tasks": [
         {
           "name": "template task 1",
@@ -540,6 +540,76 @@ describe("Template APIs", () => {
         })
     });
   });
+
+  describe("Search at general templates using GET method through route /api/template/search?search={value}", () => {
+    it("sending request without query", (done) => {
+      supertest(app)
+        .get('/api/template/search?search=')
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          console.log(res.body);
+          expect(res.body.message).toBe("no search query, try again please");
+
+          done();
+        })
+    })
+
+    it("sending valid request", (done) => {
+      supertest(app)
+        .get(`/api/template/search?search=${'template is'}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          console.log(res.body);
+
+          expect(res.body.templates).toStrictEqual(templateData.filter(t => t.visibility));
+          expect(res.body.total).toBe(1);
+          expect(res.body.currentPage).toBe(1);
+          expect(res.body.numberOfPages).toBe(1);
+
+          done();
+        })
+    })
+  })
+
+  describe("Search at user templates using GET method through route /api/template/user/search?search={value}", () => {
+    it("sending request without query", (done) => {
+      supertest(app)
+        .get('/api/template/user/search?search=')
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          console.log(res.body);
+          expect(res.body.message).toBe("no search query, try again please");
+
+          done();
+        })
+    })
+
+    it("sending valid request", (done) => {
+      supertest(app)
+        .get(`/api/template/user/search?search=${'2 is'}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const searchTemplate = templateData.concat(todoTemplate);
+
+          expect(res.body.templates).toStrictEqual(searchTemplate);
+          expect(res.body.total).toBe(searchTemplate.length);
+          expect(res.body.currentPage).toBe(1);
+          expect(res.body.numberOfPages).toBe(1);
+
+          done();
+        })
+    })
+  })
 
   describe("Testing delete template using DELETE method & route /api/template/:id", () => {
     it("Sending invalid template id", (done) => {

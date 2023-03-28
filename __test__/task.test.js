@@ -20,6 +20,18 @@ afterAll((done) => {
   closeDBConnect(done);
 });
 
+const test = (body, data) => {
+  const dataEntries = Object.entries(body);
+
+  if (body._id)
+    expect(mongoose.Types.ObjectId.isValid(body._id)).toBe(true);
+
+  dataEntries.forEach(([k, v]) => {
+    if (data[k])
+      expect(body[k]).toStrictEqual(data[k]);
+  })
+}
+
 describe("Task APIs", () => {
   describe("Testing getAll controller route /api/task/", () => {
     it("get all tasks", (done) => {
@@ -32,10 +44,7 @@ describe("Task APIs", () => {
 
           const data = res.body;
 
-          expect(data.tasks).toStrictEqual([]);
-          expect(data.total).toBe(0);
-          expect(data.currentPage).toBe(0);
-          expect(data.numberOfPages).toBe(0);
+          test(data, { tasks: [], total: 0, currentPage: 0, numberOfPages: 0 })
 
           done();
         })
@@ -115,12 +124,7 @@ describe("Task APIs", () => {
 
           const data = res.body;
 
-          expect(mongoose.Types.ObjectId.isValid(data._id)).toBe(true);
-          expect(data.name).toBe(taskData[0].name);
-          expect(data.est).toBe(taskData[0].est);
-          expect(data.act).toBe(0);
-          expect(data.notes).toBe(taskData[0].notes);
-          expect(data.check).toBe(false);
+          test(data, { userId, check: false, notes: taskData[0].notes, act: 0, est: taskData[0].est, name: taskData[0].name, _id: taskData[0]._id });
 
           taskData[0] = Object.assign(taskData[0], data);
 
@@ -138,11 +142,7 @@ describe("Task APIs", () => {
 
           const data = res.body;
 
-          expect(data.tasks[0]).toStrictEqual(taskData[0]);
-
-          expect(data.total).toBe(1);
-          expect(data.currentPage).toBe(1);
-          expect(data.numberOfPages).toBe(1);
+          test(data, { tasks: taskData, total: 1, currentPage: 1, numberOfPages: 1 });
 
           done();
         })
@@ -235,12 +235,8 @@ describe("Task APIs", () => {
           if (err) throw err;
 
           const data = res.body[0];
-          expect(mongoose.Types.ObjectId.isValid(data._id)).toBe(true);
-          expect(data.name).toBe(taskData[0].name);
-          expect(data.est).toBe(taskData[0].est);
-          expect(data.act).toBe(0);
-          expect(data.notes).toBe(taskData[0].notes);
-          expect(data.check).toBe(false);
+
+          test(data, { userId, check: false, notes: taskData[0].notes, act: 0, est: taskData[0].est, name: taskData[0].name });
 
           taskData[1] = Object.assign(taskData[0], data);
 
@@ -258,11 +254,7 @@ describe("Task APIs", () => {
 
           const data = res.body;
 
-          expect(data.tasks[1]).toStrictEqual(taskData[1]);
-
-          expect(data.total).toBe(taskData.length);
-          expect(data.currentPage).toBe(1);
-          expect(data.numberOfPages).toBe(1);
+          test({ ...data, tasks: data.tasks[1] }, { tasks: taskData[1], total: taskData.length, currentPage: 1, numberOfPages: 1 });
 
           done();
         })
@@ -399,13 +391,8 @@ describe("Task APIs", () => {
 
           const data = res.body;
 
-          expect(data._id).toBe(taskData[0]._id);
-          expect(data.name).toBe("test2");
-          expect(data.act).toBe(1);
-          expect(data.notes).toBe(taskData[0].notes);
-          expect(data.project).toBe("");
-          expect(data.check).toBe(false);
-          expect(data.userId).toBe(userId);
+          test(data, { userId, check: false, notes: taskData[0].notes, act: 1, est: taskData[0].est, name: "test2", _id: taskData[0]._id });
+
           done();
         })
     })
@@ -499,12 +486,7 @@ describe("Task APIs", () => {
 
           const data = res.body;
 
-          expect(mongoose.Types.ObjectId.isValid(data._id)).toBe(true);
-          expect(data.name).toBe(taskData[0].name);
-          expect(data.est).toBe(taskData[0].est);
-          expect(data.act).toBe(0);
-          expect(data.notes).toBe(taskData[0].notes);
-          expect(data.check).toBe(false);
+          test(data, { userId, check: false, notes: taskData[0].notes, act: 0, est: taskData[0].est, name: taskData[0].name });
 
           taskData[0] = Object.assign(taskData[0], data);
 
@@ -522,8 +504,7 @@ describe("Task APIs", () => {
 
           const data = res.body;
 
-          expect(data.act).toBe(taskData[0].est);
-          expect(data.check).toBe(true);
+          test(data, { act: taskData[0].est, check: true });
 
           done();
         })
@@ -603,13 +584,7 @@ describe("Task APIs", () => {
 
           const data = res.body;
 
-          expect(data._id).toBe(taskData[0]._id);
-          expect(data.name).toBe(taskData[0].name);
-          expect(data.act).toBe(1);
-          expect(data.notes).toBe(taskData[0].notes);
-          expect(data.project).toBe("");
-          expect(data.check).toBe(false);
-          expect(data.userId).toBe(userId);
+          test(data, { userId, check: false, project: "", notes: taskData[0].notes, act: 1, name: taskData[0].name, _id: taskData[0]._id });
 
           done();
         })
@@ -628,12 +603,7 @@ describe("Task APIs", () => {
 
           const data = res.body;
 
-          expect(mongoose.Types.ObjectId.isValid(data._id)).toBe(true);
-          expect(data.name).toBe(taskData[0].name);
-          expect(data.est).toBe(5);
-          expect(data.act).toBe(0);
-          expect(data.notes).toBe(taskData[0].notes);
-          expect(data.check).toBe(false);
+          test(data, { userId, check: false, notes: taskData[0].notes, act: 0, est: 5, name: taskData[0].name });
 
           taskData.push(data);
 
@@ -652,12 +622,7 @@ describe("Task APIs", () => {
 
           const data = res.body;
 
-          expect(mongoose.Types.ObjectId.isValid(data._id)).toBe(true);
-          expect(data.name).toBe(taskData[0].name);
-          expect(data.est).toBe(9);
-          expect(data.act).toBe(0);
-          expect(data.notes).toBe(taskData[0].notes);
-          expect(data.check).toBe(false);
+          test(data, { userId, check: false, notes: taskData[0].notes, act: 0, est: 9, name: taskData[0].name });
 
           taskData.push(data);
 
@@ -674,8 +639,9 @@ describe("Task APIs", () => {
           if (err) throw err;
 
           const data = res.body;
-          expect(data.act).toBe(taskData[1].est);
-          expect(data.check).toBe(true);
+
+          test(data, { check: true, act: taskData[1].est });
+
           taskData[1] = data;
 
           done();
@@ -701,26 +667,18 @@ describe("Task APIs", () => {
 
   describe("Testing clearAct controller route /api/task/clear_act", () => {
     it("increase act for unchecked task", (done) => {
-      console.log(taskData[0]);
       supertest(app)
-        .patch(`/api/task/update/${taskData[0]._id}`)
+        .patch(`/api/task/update/${taskData[1]._id}`)
         .set("Authorization", `Bearer ${token}`)
-        .send({ act: taskData[0].est - 1 })
+        .send({ act: taskData[1].est - 1 })
         // .expect(200)
         .end((err, res) => {
           if (err) throw err;
 
           const data = res.body;
-          console.log(data);
-          // expect(data._id).toBe(taskData[0]._id);
-          // expect(data.name).toBe(taskData[0].name);
-          // expect(data.act).toBe(taskData[0].est - 1);
-          // expect(data.est).toBe(taskData[0].est);
-          // expect(data.notes).toBe(taskData[0].notes);
-          // expect(data.project).toBe("");
-          // expect(data.check).toBe(false);
-          // expect(data.userId).toBe(userId);
-          taskData[0] = data;
+
+          test(data, { userId, check: false, notes: taskData[0].notes, act: taskData[1].est - 1, est: taskData[1].est, name: taskData[1].name, _id: taskData[1]._id });
+          taskData[1] = data;
 
           done();
         })
@@ -736,8 +694,8 @@ describe("Task APIs", () => {
 
           const data = res.body;
 
-          expect(data.act).toBe(taskData[1].est);
-          expect(data.check).toBe(true);
+          test(data, { userId, check: true, notes: taskData[0].notes, act: taskData[1].est, est: taskData[1].est, name: taskData[1].name, _id: taskData[1]._id });
+
           taskData[1] = data;
 
           done();
