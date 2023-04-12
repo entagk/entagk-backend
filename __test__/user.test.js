@@ -2,24 +2,19 @@ const app = require('../server');
 const mongoose = require('mongoose');
 const supertest = require('supertest');
 const jwt = require('jsonwebtoken');
+const { closeDBConnect, openDBConnect } = require("./helper");
 
-const MONGODB_URL = "mongodb://localhost:27017/?authMechanism=DEFAULT";
+const { createAcessToken } = require('./../utils/helper');
 
 let userId, token, resetTokenId;
 
 beforeAll((done) => {
-  mongoose.connect(MONGODB_URL,
-    { useNewUrlParser: true, useUnifiedTopology: true },
-    () => done());
+  openDBConnect(() => { }, false, done);
 });
 
 afterAll((done) => {
-  mongoose.connection.db.dropDatabase(() => {
-    mongoose.connection.close(() => done());
-    console.log("done")
-  });
+  closeDBConnect(done);
 });
-
 
 describe('User APIs', () => {
   const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" }
@@ -73,13 +68,13 @@ describe('User APIs', () => {
 
           expect(res.body.message).toBe('You are logged in successfully');
 
-          token = res.body.token;
-          if (res.body.token.length < 500) {
-            const tokenData = jwt.verify(res.body.token, process.env.ACCESS_TOKEN_SECRET);
+          token = res.body.access_token;
+          if (res.body.access_token.length < 500) {
+            const tokenData = jwt.verify(res.body.access_token, process.env.ACCESS_TOKEN_SECRET);
             expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
             userId = tokenData.id;
           } else {
-            const tokenData = jwt.decode(res.body.token);
+            const tokenData = jwt.decode(res.body.access_token);
             expect(mongoose.Types.ObjectId.isValid(tokenData.sub)).toBe(true);
             userId = tokenData.sub;
           }
@@ -144,13 +139,13 @@ describe('User APIs', () => {
 
           expect(res.body.message).toBe("You are logged in successfully");
 
-          token = res.body.token;
-          if (res.body.token.length < 500) {
-            const tokenData = jwt.verify(res.body.token, process.env.ACCESS_TOKEN_SECRET);
+          token = res.body.access_token;
+          if (res.body.access_token.length < 500) {
+            const tokenData = jwt.verify(res.body.access_token, process.env.ACCESS_TOKEN_SECRET);
             expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
             userId = tokenData.id;
           } else {
-            const tokenData = jwt.decode(res.body.token);
+            const tokenData = jwt.decode(res.body.access_token);
             expect(mongoose.Types.ObjectId.isValid(tokenData.sub)).toBe(true);
             userId = tokenData.sub;
           }
@@ -284,10 +279,9 @@ describe('User APIs', () => {
           done();
         })
     });
-  })
+  });
 
   describe("Testing resetPassword POST route /api/user/reset_password", () => {
-
     it("without sending password", (done) => {
       supertest(app)
         .post('/api/user/reset_password')
@@ -344,13 +338,13 @@ describe('User APIs', () => {
 
           expect(res.body.message).toBe("You are logged in successfully");
 
-          token = res.body.token;
-          if (res.body.token.length < 500) {
-            const tokenData = jwt.verify(res.body.token, process.env.ACCESS_TOKEN_SECRET);
+          token = res.body.access_token;
+          if (res.body.access_token.length < 500) {
+            const tokenData = jwt.verify(res.body.access_token, process.env.ACCESS_TOKEN_SECRET);
             expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
             userId = tokenData.id;
           } else {
-            const tokenData = jwt.decode(res.body.token);
+            const tokenData = jwt.decode(res.body.access_token);
             expect(mongoose.Types.ObjectId.isValid(tokenData.sub)).toBe(true);
             userId = tokenData.sub;
           }
@@ -358,7 +352,65 @@ describe('User APIs', () => {
           done();
         })
     });
-  })
+  });
+
+  describe("Testing refreshToken GET route /api/user/refresh_token", () => {
+    it("Testing sending request without token", (done) => {
+      supertest(app)
+        .get('/api/user/refresh_token')
+        .expect(401)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Invalid Authentication.");
+          done();
+        })
+    });
+
+    it("Send request with invalid token", (done) => {
+      supertest(app)
+        .get('/api/user/refresh_token')
+        .set("Authorization", `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QwMTIzQGV4YW1wbGUuY29tIiwiaWQiOiI2MzhjMTE2NDI1ZGI3OGI1MGJjYzFjMDgiLCJpYXQiOjE2NzEwMzE5NzMsImV4cCI6MTY3MTA4OTU3M30.6lafCmgJDX393gGNakvwPbprgCHvrvVIXxUC3wSmxMg`)
+        .expect(401)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Invalid Authentication and jwt expired");
+
+          done();
+        })
+    });
+
+    it("Send request with invalid token of fack userId", (done) => {
+      const fakeToken = createAcessToken({ email: userData.email, id: userData?.id });
+      supertest(app)
+        .get('/api/user/refresh_token')
+        .set("Authorization", `Bearer ${fakeToken}`)
+        .expect(401)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Invalid Authentication");
+
+          done();
+        })
+    });
+
+    it("Send request with invalid token of not found user", (done) => {
+      const fakeToken = createAcessToken({ email: "wjdjsifk@jfdd.com", id: '641ee1ba92578ebf24203deb' });
+      supertest(app)
+        .get('/api/user/refresh_token')
+        .set("Authorization", `Bearer ${fakeToken}`)
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("user not found");
+
+          done();
+        })
+    });
+  });
 
   describe("Testing updateUser controller route /api/user/update_user", () => {
     it("Sending invalid token", (done) => {
@@ -433,7 +485,7 @@ describe('User APIs', () => {
 
           expect(res.body.message).toBe("You are logged in successfully");
 
-          token = res.body.token;
+          token = res.body.access_token;
           if (token.length < 500) {
             const tokenData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
             expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
@@ -448,7 +500,7 @@ describe('User APIs', () => {
         })
     });
 
-  })
+  });
 
   describe("Testing deleteAccount controller route /api/user/delete_user", () => {
     it("Delete account successfully", (done) => {
@@ -464,5 +516,5 @@ describe('User APIs', () => {
           done();
         })
     })
-  })
+  });
 })

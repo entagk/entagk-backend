@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const templateControllers = require("./../controllers/template");
+const templateControllers = require("./../controllers/template/index");
 const validateTemplate = require("./../middlewares/validateTemplate");
 const validateTemplateData = require("./../middlewares/validateTemplateData");
 const Auth = require('./../middlewares/auth');
@@ -16,6 +16,7 @@ router.get("/one/tasks/:id", validateTemplate, templateControllers.getTasksForOn
 router.get("/one/tasks/private/:id", Auth, validateTemplate, templateControllers.getTasksForOne);
 
 router.get("/user", Auth, templateControllers.getForUser);
+router.get('/user/search', Auth, templateControllers.searchTemplates)
 
 router.get("/todo/", Auth, templateControllers.getAllForTodo);
 
@@ -24,5 +25,7 @@ router.post('/todo/:id', Auth, validateTemplate, templateControllers.addToTodoLi
 router.delete("/:id", Auth, validateTemplate, templateControllers.deleteTemplate);
 
 router.patch("/:id", Auth, validateTemplate, validateTemplateData, ValidateTimeData, templateControllers.updateTemplate);
+
+router.get('/search/', templateControllers.searchTemplates);
 
 module.exports = router;

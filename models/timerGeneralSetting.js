@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const settingSchema = new mongoose.Schema(
+const timerSettingSchema = new mongoose.Schema(
   {
     format: {
       type: String,
@@ -43,8 +43,8 @@ const settingSchema = new mongoose.Schema(
       default: 50,
     },
     alarmRepet: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     tickingType: {
       type: Object,
@@ -90,4 +90,4 @@ const settingSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Setting", settingSchema);
+module.exports = mongoose.model("Setting", timerSettingSchema);

@@ -3,9 +3,7 @@ const mongoose = require("mongoose");
 
 const validateTaskData = async (req, res, next) => {
   try {
-
     const { name, est, act, notes, project, order, template } = req.body;
-    console.log(req._parsedUrl.pathname);
     if (req._parsedUrl.pathname === '/add/') {
       if (!name?.trim() || !est) return res.status(400).json({ message: "Please, complete the task data at least name and est" });
     } else {

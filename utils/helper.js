@@ -1,11 +1,11 @@
 const jwt = require("jsonwebtoken");
 
 const validNumber = (number, min, max) => {
-  return number < max && number >= min ? true : false;
+  return number <= max && number >= min ? true : false;
 }
 
 const validAudioType = (audio) => {
-  return !audio?.name || !audio?.src ? false : true;
+  return (audio?.name !== 'none' && (!audio?.name || !audio?.src)) ? false : true;
 }
 
 const validateEmail = (email) => {
@@ -13,8 +13,14 @@ const validateEmail = (email) => {
   return re.test(email);
 }
 
+const filterBody = (props, body) => {
+  const keys = Object.entries(body).filter(([k, v]) => props.includes(k));
+
+  return Object.fromEntries(keys);
+}
+
 const createAcessToken = (payload) => {
-  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "16h" });
+  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "24h" });
 };
 
 const createPasswordResetPassword = (payload) => {
@@ -22,8 +28,7 @@ const createPasswordResetPassword = (payload) => {
 }
 
 const createRefrishToken = (payload) => {
-  return jwt.sign(payload, process.env.REFRISH_TOKEN_SECRET, { expiresIn: "7d" })
+  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "30d" })
 }
 
-
-module.exports = { validNumber, validAudioType, validateEmail, createAcessToken, createPasswordResetPassword, createRefrishToken };
+module.exports = { validNumber, validAudioType, validateEmail, filterBody, createAcessToken, createPasswordResetPassword, createRefrishToken };

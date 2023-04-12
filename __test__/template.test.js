@@ -1,53 +1,79 @@
 const supertest = require("supertest");
 const app = require("../server");
-const jwt = require('jsonwebtoken');
 const mongoose = require("mongoose");
 
-const MONGODB_URL = "mongodb://localhost:27017/?authMechanism=DEFAULT";
+const { closeDBConnect, openDBConnect } = require('./helper');
 
 let userId, token;
 
+const setData = (t, uId) => {
+  token = t;
+  userId = uId;
+}
+
 beforeAll((done) => {
-  mongoose.connect(MONGODB_URL,
-    { useNewUrlParser: true, useUnifiedTopology: true },
-    () => done());
+  openDBConnect(setData, true, done);
 });
-
-/**
- * Before start in testing: Sign up the user and get the token for authorization for every test.
- */
-beforeAll(async () => {
-  const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" };
-
-  const res = await supertest(app).post('/api/user/signup').send(userData)
-
-  token = res.body.token;
-
-  if (res.body.token?.length < 500) {
-    const tokenData = jwt.verify(res.body.token, process.env.ACCESS_TOKEN_SECRET);
-    expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
-    userId = tokenData?.id;
-  } else {
-    const tokenData = jwt.decode(res.body.token);
-    expect(mongoose.Types.ObjectId.isValid(tokenData.sub)).toBe(true);
-    userId = tokenData?.sub;
-  }
-})
 
 afterAll((done) => {
-  mongoose.connection.db.dropDatabase(() => {
-    mongoose.connection.close(() => done());
-    console.log("done")
-  });
+  closeDBConnect(done);
 });
 
-describe("Template APIs", () => {
-  const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" };
+const verifyTemplateData = (body, data) => {
+  const dataEntries = Object.entries(body);
 
+  dataEntries.forEach(([k, v]) => {
+    if (data[k] || k === 'description') {
+      if (k === '_id') {
+        expect(mongoose.Types.ObjectId.isValid(body._id)).toEqual(true);
+      } else if (k === 'tasks') {
+        expect(body.tasks.length).toEqual(data.tasks.length); // 
+      } else if (k === 'est' && !data[k]) {
+        expect(body.est).toEqual(data.tasks.reduce((total, { est }) => est + total, 0)); //
+      } else if (k === 'description' && !data[k]) {
+        expect(body.description).toEqual(data.desc);
+      } else {
+        expect(body[k]).toEqual(data[k]);
+      }
+    }
+  })
+};
+
+const verifyTasks = (body, template, data) => {
+  console.log(data);
+  console.log(template);
+  body.forEach((task, index) => {
+    expect(body[index]._id).toBe(template.tasks[index]);
+    Object.entries(task).forEach(([k, v]) => {
+      if (k === 'template') {
+        expect(body[index].template._id).toBe(template._id);
+        expect(body[index].template.todo).toBe(false);
+      } else if (k === 'userId') {
+        expect(body[index].userId).toBe(userId);
+      } else if (k !== '_id' && data[index][k]) {
+        expect(body[index][k]).toBe(data[index][k]);
+      }
+    })
+  })
+}
+
+const verifyForMultiple = (body, data) => {
+  expect(body.total).toBe(data.length);
+  expect(body.currentPage).toBe(body.total === 0 ? 0 : 1);
+  expect(body.numberOfPages).toBe(Math.ceil(body.total / 25));
+  expect(body.templates).toEqual(data);
+}
+
+const verifyDeleting = (body, data) => {
+  expect(body.deletedTemplate).toEqual(data);
+  expect(body.deletedTasks.deletedCount).toBe(data.tasks.length);
+}
+
+describe("Template APIs", () => {
   let templateData = [
     {
       "name": "Template 1",
-      "desc": "This is the Other Template",
+      "desc": "This is the first template",
       "tasks": [
         {
           "name": "template task 1",
@@ -164,26 +190,22 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(mongoose.Types.ObjectId.isValid(res.body._id)).toBe(true);
-          expect(res.body.name).toBe(templateData[0].name);
-          expect(res.body.description).toBe(templateData[0].desc);
-          expect(res.body.description).toBe(templateData[0].desc);
-          expect(res.body.visibility).toBe(templateData[0].visibility);
-          expect(res.body.tasks.length).toEqual(templateData[0].tasks.length);
-          expect(res.body.est).toEqual(templateData[0].tasks.reduce((total, { est }) => est + total, 0));
-          expect(res.body.act).toEqual(0);
-          expect(res.body.color).toEqual('#ef9b0f');
-          expect(res.body.time).toEqual({ PERIOD: 1500, SHORT: 300, LONG: 900 });
-          expect(res.body.timeForAll).toBe(true);
-          expect(res.body.autoBreaks).toBe(false);
-          expect(res.body.autoPomodors).toBe(false);
-          expect(res.body.autoStartNextTask).toBe(false);
-          expect(res.body.longInterval).toBe(4);
-          expect(res.body.alarmType).toEqual({ name: 'alarm 1', src: 'sounds/alarm/1.mp3' });
-          expect(res.body.tickingType).toEqual({ name: 'tricking 1', src: 'sounds/tricking/1.mp3' });
-          expect(res.body.alarmVolume).toBe(50);
-          expect(res.body.tickingVolume).toBe(50);
-          expect(res.body.todo).toBe(null);
+          verifyTemplateData(res.body, {
+            ...templateData[0],
+            act: 0,
+            color: '#ef9b0f',
+            time: { PERIOD: 1500, SHORT: 300, LONG: 900 },
+            timeForAll: true,
+            autoBreaks: false,
+            autoPomodors: false,
+            autoStartNextTask: false,
+            longInterval: 4,
+            alarmType: { name: 'alarm 1', src: 'sounds/alarm/1.mp3' },
+            tickingType: { name: 'tricking 1', src: 'sounds/tricking/1.mp3' },
+            alarmVolume: 50,
+            tickingVolume: 50,
+            todo: null,
+          });
 
           templateTasks.push({ tasks: templateData[0].tasks });
           templateData[0] = res.body;
@@ -201,26 +223,22 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(mongoose.Types.ObjectId.isValid(res.body._id)).toBe(true);
-          expect(res.body.name).toBe(templateData[1].name);
-          expect(res.body.description).toBe(templateData[1].desc);
-          expect(res.body.description).toBe(templateData[1].desc);
-          expect(res.body.visibility).toBe(templateData[1].visibility);
-          expect(res.body.tasks.length).toEqual(templateData[1].tasks.length);
-          expect(res.body.est).toEqual(templateData[1].tasks.reduce((total, { est }) => est + total, 0));
-          expect(res.body.act).toEqual(0);
-          expect(res.body.color).toEqual('#ef9b0f');
-          expect(res.body.time).toEqual({ PERIOD: 1500, SHORT: 300, LONG: 900 });
-          expect(res.body.timeForAll).toBe(true);
-          expect(res.body.autoBreaks).toBe(false);
-          expect(res.body.autoPomodors).toBe(false);
-          expect(res.body.autoStartNextTask).toBe(false);
-          expect(res.body.longInterval).toBe(4);
-          expect(res.body.alarmType).toEqual({ name: 'alarm 1', src: 'sounds/alarm/1.mp3' });
-          expect(res.body.tickingType).toEqual({ name: 'tricking 1', src: 'sounds/tricking/1.mp3' });
-          expect(res.body.alarmVolume).toBe(50);
-          expect(res.body.tickingVolume).toBe(50);
-          expect(res.body.todo).toBe(null);
+          verifyTemplateData(res.body, {
+            ...templateData[1],
+            act: 0,
+            color: '#ef9b0f',
+            time: { PERIOD: 1500, SHORT: 300, LONG: 900 },
+            timeForAll: true,
+            autoBreaks: false,
+            autoPomodors: false,
+            autoStartNextTask: false,
+            longInterval: 4,
+            alarmType: { name: 'alarm 1', src: 'sounds/alarm/1.mp3' },
+            tickingType: { name: 'tricking 1', src: 'sounds/tricking/1.mp3' },
+            alarmVolume: 50,
+            tickingVolume: 50,
+            todo: null,
+          });
 
           templateTasks.push({ tasks: templateData[1].tasks });
           templateData[1] = res.body;
@@ -238,10 +256,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body.templates).toEqual([{ ...templateData[0] }]);
-          expect(res.body.total).toBe(1);
-          expect(res.body.currentPage).toBe(1);
-          expect(res.body.numberOfPages).toBe(1);
+          verifyForMultiple(res.body, [{ ...templateData[0] }]);
 
           done();
         })
@@ -327,23 +342,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body[0]._id).toBe(templateData[0].tasks[0]);
-          expect(res.body[1]._id).toBe(templateData[0].tasks[1]);
-
-          expect(res.body[0].name).toBe(templateTasks[0].tasks[0].name);
-          expect(res.body[1].name).toBe(templateTasks[0].tasks[1].name);
-
-          expect(res.body[0].est).toBe(templateTasks[0].tasks[0].est);
-          expect(res.body[1].est).toBe(templateTasks[0].tasks[1].est);
-
-          expect(res.body[0].template._id).toBe(templateData[0]._id);
-          expect(res.body[1].template._id).toBe(templateData[0]._id);
-
-          expect(res.body[0].template.todo).toBe(false);
-          expect(res.body[1].template.todo).toBe(false);
-
-          expect(res.body[0].userId).toBe(userId);
-          expect(res.body[1].userId).toBe(userId);
+          verifyTasks(res.body.tasks, templateData[0], templateTasks[0].tasks);
 
           templateTasks[0].tasks = res.body;
 
@@ -359,24 +358,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body[0]._id).toBe(templateData[1].tasks[0]);
-          expect(res.body[1]._id).toBe(templateData[1].tasks[1]);
-
-          expect(res.body[0].name).toBe(templateTasks[1].tasks[0].name);
-          expect(res.body[1].name).toBe(templateTasks[1].tasks[1].name);
-
-          expect(res.body[0].est).toBe(templateTasks[1].tasks[0].est);
-          expect(res.body[1].est).toBe(templateTasks[1].tasks[1].est);
-
-          expect(res.body[0].template._id).toBe(templateData[1]._id);
-          expect(res.body[1].template._id).toBe(templateData[1]._id);
-
-          expect(res.body[0].template.todo).toBe(false);
-          expect(res.body[1].template.todo).toBe(false);
-
-          expect(res.body[0].userId).toBe(userId);
-          expect(res.body[1].userId).toBe(userId);
-
+          verifyTasks(res.body.tasks, templateData[1], templateTasks[1].tasks);
           done();
         });
     });
@@ -460,11 +442,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body.total).toBe(templateData.length);
-          expect(res.body.currentPage).toBe(res.body.total === 0 ? 0 : 1);
-          expect(res.body.numberOfPages).toBe(Math.ceil(res.body.total / 25));
-
-          expect(res.body.templates).toEqual(templateData);
+          verifyForMultiple(res.body, templateData);
 
           done();
         })
@@ -482,25 +460,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body.name).toBe(templateData[0].name);
-          expect(res.body.visibility).toBe(false);
-          expect(res.body.desc).toBe(templateData[0].desc);
-          expect(res.body.userId).toBe(templateData[0].userId);
-          expect(res.body.est).toBe(templateData[0].est);
-          expect(res.body.act).toBe(0);
-          expect(res.body.time).toEqual(templateData[0].time);
-          expect(res.body.timeForAll).toBe(templateData[0].timeForAll);
-          expect(res.body.autoBreaks).toBe(templateData[0].autoBreaks);
-          expect(res.body.autoPomodors).toBe(templateData[0].autoPomodors);
-          expect(res.body.autoAutoStartNextTask).toBe(templateData[0].autoAutoStartNextTask);
-          expect(res.body.longInterval).toBe(templateData[0].longInterval);
-          expect(res.body.alarmType).toEqual(templateData[0].alarmType);
-          expect(res.body.alarmVolume).toBe(templateData[0].alarmVolume);
-          expect(res.body.alarmRepet).toBe(templateData[0].alarmRepet);
-          expect(res.body.tickingType).toEqual(templateData[0].tickingType);
-          expect(res.body.tickingVolume).toBe(templateData[0].tickingVolume);
-          expect(res.body.todo.userId).toBe(userId);
-          expect(res.body.todo.order).toBe(order);
+          verifyTemplateData(res.body, { ...templateData[0], visibility: false, act: 0, userId: userId, order: order })
 
           todoTemplate.push(res.body);
 
@@ -574,16 +534,82 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body.total).toBe(todoTemplate.length);
-          expect(res.body.currentPage).toBe(todoTemplate.length === 0 ? 0 : 1);
-          expect(res.body.numberOfPages).toBe(Math.ceil(todoTemplate.length / 25));
-
-          expect(res.body.templates).toEqual(todoTemplate);
+          verifyForMultiple(res.body, todoTemplate);
 
           done();
         })
     });
   });
+
+  describe("Search at general templates using GET method through route /api/template/search?search={value}", () => {
+    it("sending request without query", (done) => {
+      supertest(app)
+        .get('/api/template/search?search=')
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          console.log(res.body);
+          expect(res.body.message).toBe("no search query, try again please");
+
+          done();
+        })
+    })
+
+    it("sending valid request", (done) => {
+      supertest(app)
+        .get(`/api/template/search?search=${'template is'}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          console.log(res.body);
+
+          expect(res.body.templates).toStrictEqual(templateData.filter(t => t.visibility));
+          expect(res.body.total).toBe(1);
+          expect(res.body.currentPage).toBe(1);
+          expect(res.body.numberOfPages).toBe(1);
+
+          done();
+        })
+    })
+  })
+
+  describe("Search at user templates using GET method through route /api/template/user/search?search={value}", () => {
+    it("sending request without query", (done) => {
+      supertest(app)
+        .get('/api/template/user/search?search=')
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          console.log(res.body);
+          expect(res.body.message).toBe("no search query, try again please");
+
+          done();
+        })
+    })
+
+    it("sending valid request", (done) => {
+      supertest(app)
+        .get(`/api/template/user/search?search=${'2 is'}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const searchTemplate = templateData.concat(todoTemplate);
+
+          expect(res.body.templates).toStrictEqual(searchTemplate);
+          expect(res.body.total).toBe(searchTemplate.length);
+          expect(res.body.currentPage).toBe(1);
+          expect(res.body.numberOfPages).toBe(1);
+
+          done();
+        })
+    })
+  })
 
   describe("Testing delete template using DELETE method & route /api/template/:id", () => {
     it("Sending invalid template id", (done) => {
@@ -623,8 +649,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body.deletedTemplate).toEqual(templateData[0]);
-          expect(res.body.deletedTasks.deletedCount).toBe(templateData[0].tasks.length);
+          verifyDeleting(res.body, templateData[0]);
 
           done();
         });
@@ -667,8 +692,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body.deletedTemplate).toEqual(todoTemplate[0]);
-          expect(res.body.deletedTasks.deletedCount).toBe(todoTemplate[0].tasks.length);
+          verifyDeleting(res.body, todoTemplate[0]);
 
           done();
         });
@@ -919,7 +943,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          expect(res.body[2]).toEqual(templateTasks[1].tasks[2]);
+          expect(res.body.tasks[2]).toEqual(templateTasks[1].tasks[2]);
 
           done();
         })
@@ -960,7 +984,7 @@ describe("Template APIs", () => {
         .end((err, res) => {
           if (err) throw err;
 
-          const data = res.body[2];
+          const data = res.body.tasks[2];
 
           delete data.updatedAt;
           delete data.createdAt;

@@ -2,11 +2,13 @@ const router = require("express").Router();
 const Auth = require("../middlewares/auth.js");
 const ValidTask = require('../middlewares/validateTask');
 const validateTaskData = require("../middlewares/validateTaskData");
-const TaskControllers = require("./../controllers/task.js");
+const ValidateMultiTasksData = require('../middlewares/validateMultiTasksData');
+const TaskControllers = require("../controllers/task/index.js");
 
 router.get("/", Auth, TaskControllers.getAll);
 
 router.post("/add/", Auth, validateTaskData, TaskControllers.addTask);
+router.post("/add_multiple_tasks", Auth, ValidateMultiTasksData, TaskControllers.addMultipleTasks);
 
 router.patch("/update/:id", Auth, ValidTask, validateTaskData, TaskControllers.updateTask);
 
