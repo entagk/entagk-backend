@@ -6,7 +6,7 @@ const getAll = async (req, res) => {
     const limit = 10;
     const startIndex = (Number(page) - 1) * limit;
 
-    const userId = req.userId;
+    const userId = req.user._id.toString();
     const total = await Task.countDocuments({ userId, template: null });
     const tasks = await Task.find({ userId, template: null }).sort({ check: 1, est: -1,  _id: 1 }).limit(limit).skip(startIndex);
 

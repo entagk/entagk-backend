@@ -3,7 +3,7 @@ const { validNumber, filterBody } = require("../../utils/helper");
 
 const updateSetting = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user._id.toString();
     const props = `
     format,
     time,

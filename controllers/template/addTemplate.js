@@ -26,7 +26,7 @@ const addTemplate = async (req, res) => {
 
     const templateData = await Template.create({
       description: body.desc,
-      userId: req.userId,
+      userId: req.user._id.toString(),
       ...body
     });
 
@@ -34,8 +34,8 @@ const addTemplate = async (req, res) => {
     for (let index = 0; index < body.tasks.length; index++) {
       const task = body.tasks[index];
       if (!task.order) task.order = index;
-      task.template = { _id: String(templateData._id), todo: false };
-      task.userId = req.userId;
+      task.template = { _id: templateData._id.toString(), todo: false };
+      task.userId = req.user._id.toString();
       est += task.est;
     }
 

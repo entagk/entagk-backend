@@ -21,23 +21,25 @@ const Auth = async (req, res, next) => {
       return res.status(401).json({ message: "Invalid Authentication and jwt expired" });
     }
 
-    let decodedData;
+    let decodedData, userId;
 
     if (token && isCustomAuth) {
       decodedData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-      req.userId = decodedData?.id;
+      userId = decodedData?.id;
     } else {
       decodedData = jwt.decode(token);
 
-      req.userId = decodedData?.sub;
+      userId = decodedData?.sub;
     }
 
-    if (!mongoose.Types.ObjectId.isValid(req.userId)) return res.status(401).json({ message: "Invalid Authentication" });
+    if (!mongoose.Types.ObjectId.isValid(userId)) return res.status(401).json({ message: "Invalid Authentication" });
 
-    const user = await User.findById(req.userId) || await User.findOne({ email: decodedData.email });
+    const user = await User.findById(userId).select("-password") || await User.findOne({ email: decodedData.email }).select("-password");
 
-    if (!user) return res.status(404).json({ message: "user not found" })
+    if (!user) return res.status(404).json({ message: "user not found" });
+
+    req.user = user;
 
     next();
   } catch (error) {

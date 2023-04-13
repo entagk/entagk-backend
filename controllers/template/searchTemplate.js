@@ -14,9 +14,9 @@ const searchTemplates = async (req, res) => {
     console.log(keys);
 
     let total, templates;
-    if(req.userId) {
-      total = await Template.countDocuments({ $or: [{ name: { $in: keys } }, { description: { $in: keys } }], userId: req.userId });
-      templates = await Template.find({ $or: [{ name: { $in: keys } }, { description: { $in: keys } }], userId: req.userId }).limit(limit).skip(startIndex);
+    if(req?.user?._id?.toString()) {
+      total = await Template.countDocuments({ $or: [{ name: { $in: keys } }, { description: { $in: keys } }], userId: req?.user?._id?.toString() });
+      templates = await Template.find({ $or: [{ name: { $in: keys } }, { description: { $in: keys } }], userId: req?.user?._id?.toString() }).limit(limit).skip(startIndex);
     } else {
       total = await Template.countDocuments({ $or: [{ name: { $in: keys } }, { description: { $in: keys } }], visibility: true });
       templates = await Template.find({ $or: [{ name: { $in: keys } }, { description: { $in: keys } }], visibility: true }).limit(limit).skip(startIndex);

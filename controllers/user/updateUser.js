@@ -4,15 +4,15 @@ const User = require("../../models/user.js");
 
 const updateUser = async (req, res) => {
   try {
-    const { name, avatar, oldPassword, newPassword } = req.body;
+    const { name, oldPassword, newPassword } = req.body;
 
-    if (!name && !avatar && (!oldPassword && !newPassword)) return res.status(400).json({ message: "Please enter the new data" });
+    if (!name && (!oldPassword && !newPassword)) return res.status(400).json({ message: "Please enter the new data" });
 
-    const oldUser = await User.findOne({ _id: req.userId });
+    const oldUser = await User.findOne({ _id: req.user._id.toString() });
 
     if (!oldUser) return res.status(404).json({ message: "This user is not found" });
 
-    let newUser;
+    let newUser = oldUser;
 
     if (newPassword) {
       const isPasswordCorrect = await bcrypt.compare(
@@ -29,15 +29,14 @@ const updateUser = async (req, res) => {
       const passwordHash = await bcrypt.hash(newPassword, 12);
       newUser = Object.assign(oldUser, {
         name,
-        avatar,
         password: passwordHash
       });
 
     } else {
-      newUser = Object.assign(oldUser, { name, avatar });
+      newUser = Object.assign(oldUser, { name });
     }
 
-    const afterUpdatae = await User.findByIdAndUpdate(req.userId, newUser, {
+    const afterUpdatae = await User.findByIdAndUpdate(req.user._id.toString(), newUser, {
       new: true,
     })
 

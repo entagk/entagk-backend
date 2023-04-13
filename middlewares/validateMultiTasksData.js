@@ -35,7 +35,7 @@ const ValidateMultiTasksData = async (req, res, next) => {
     if (req.body?.length === 0) return res.status(400).json({ message: 'No data have been sent yet.' });
 
     const tasks = req.body?.map((task) => {
-      return { ...task, userId: req.userId };
+      return { ...task, userId: req.user._id.toString() };
     });
 
     for (let index = 0; index < tasks.length; index++) {

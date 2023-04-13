@@ -2,7 +2,7 @@ const Task = require("../../models/task.js");
 
 const clearFinished = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user._id.toString();
 
     const results = await Task.deleteMany({ userId: userId, check: true, template: null });
 

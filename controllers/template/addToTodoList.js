@@ -9,9 +9,9 @@ const addToTodoList =  async (req, res) => {
     delete oldTemplate._id;
 
     const templateData = Object.assign(oldTemplate, {
-      userId: req.userId,
+      userId: req.user._id.toString(),
       todo: {
-        userId: req.userId,
+        userId: req.user._id.toString(),
         order: order ? order : 0,
       },
       visibility: false
@@ -27,9 +27,9 @@ const addToTodoList =  async (req, res) => {
       delete task.updatedAt;
       return {
         ...task,
-        userId: req.userId,
+        userId: req.user._id.toString(),
         template: {
-          _id: String(newTemplate._id),
+          _id: newTemplate._id,
           todo: true
         }
       }

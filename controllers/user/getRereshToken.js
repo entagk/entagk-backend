@@ -8,7 +8,7 @@ dotenv.config();
 
 const getRefreshToken = async (req, res) => {
   try {
-    const existingUser = await User.findById(req.userId);
+    const existingUser = await User.findById(req.user._id.toString());
     const token = createRefrishToken({ email: existingUser.email, id: existingUser._id });
 
     res.status(200).json({ refresh_token: token, message: "You are logged in successfully" });

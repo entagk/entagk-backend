@@ -3,7 +3,7 @@ const Template = require("../../models/template");
 const getAllForTodo = async (req, res) => {
   const { page } = req.query || 1;
   try {
-    const userId = req.userId;
+    const userId = req.user._id.toString();
     const limit = 25;
     const startIndex = (Number(page) - 1) * limit;
     console.log(userId);

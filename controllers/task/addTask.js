@@ -7,7 +7,7 @@ const addTask = async (req, res) => {
 
     const templateData = req.templateData;
 
-    const newTask = await Task.create({ name, est, notes, project, order, template, userId: req.userId });
+    const newTask = await Task.create({ name, est, notes, project, order, template, userId: req.user._id.toString() });
     if (template) {
       await Template.findByIdAndUpdate(template?._id, { tasks: [...templateData.tasks, newTask._id], est: templateData.est + est });
     }
