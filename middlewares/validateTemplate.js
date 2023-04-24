@@ -15,8 +15,9 @@ const validateTemplate = async (req, res, next) => {
       if (!oldTemplate?.visibility) return res.status(405).json({ message: "Not allow for you." });
     }
 
-    delete oldTemplate._id;
-    req.oldTemplate = { ...oldTemplate };
+    // delete oldTemplate._id;
+    req.oldTemplate = oldTemplate;
+    console.log(oldTemplate);
     next();
 
   } catch (error) {

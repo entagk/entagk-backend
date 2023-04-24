@@ -7,13 +7,15 @@ const checkTask = async (req, res) => {
 
     const task = req.oldTask;
 
+    if (task.tasks.length > 0) return res.status(400).json({ message: "This is template not single task" })
+
     const newTask = Object.assign(task, { check: !task.check, act: !task.check ? task.est : 0 })
 
     const updatedTask = await Task.findByIdAndUpdate(id, newTask, { new: true });
 
     if (task?.template?._id) {
-      const templateData = await Template.findById(task.template._id);
-      await Template.findByIdAndUpdate(task.template._id, { act: (templateData.act + task.act) });
+      const templateData = await Task.findById(task.template._id);
+      await Task.findByIdAndUpdate(task.template._id, { act: (templateData.act + task.act) });
     }
 
     res.status(200).json(updatedTask);

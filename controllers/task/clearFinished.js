@@ -4,7 +4,7 @@ const clearFinished = async (req, res) => {
   try {
     const userId = req.user._id.toString();
 
-    const results = await Task.deleteMany({ userId: userId, check: true, template: null });
+    const results = await Task.deleteMany({ userId: userId, check: true, template: null, tasks: { $eq: [] } });
 
     res.status(200).json({ ...results, message: "Success deleted." });
   } catch (error) {

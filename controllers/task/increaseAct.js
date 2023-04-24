@@ -7,6 +7,8 @@ const increaseAct = async (req, res) => {
 
     const task = req.oldTask;
 
+    if (task.tasks.length > 0) return res.status(400).json({ message: "This is template not single task" })
+
     if (task.act === task.est) return res.status(400).json({ message: "This task is completed." });
 
     const newTask = Object.assign(task, { act: task.act + 1, check: task.act + 1 === task.est });

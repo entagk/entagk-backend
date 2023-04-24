@@ -29,7 +29,9 @@ const TempleteControllers = {
   getAllForTodo: require('./getAllForTodo'),
   deleteTemplate: require('./deleteTemplate'),
   updateTemplate: require('./updateTemplate'),
-  searchTemplates: require('./searchTemplate')
+  searchTemplates: require('./searchTemplate'),
+  getTasksForTodoTemp: require('./getTasksForTodoTemp'),
+  getTasksForMultTodoTemp: require('./getTasksForMultTodoTemp')
 };
 
 module.exports = TempleteControllers;

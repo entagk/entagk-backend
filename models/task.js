@@ -58,7 +58,20 @@ const taskSchema = new mongoose.Schema(
     userId: {
       type: String,
       require: [true, "You should enter the userId."]
-    }
+    },
+    color: {// templateTodo
+      type: String,
+      default: null
+    },
+    tasks: {// templateTodo
+      type: Array,
+      default: null,
+    },
+    setting: {// templateTodo
+      type: Object,
+      default: null
+    },
+    templateClone: "" // templateTodo
   },
   {
     timestamps: true,

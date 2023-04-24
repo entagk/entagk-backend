@@ -4,7 +4,7 @@ const getTasksForOne = async (req, res) => {
   const { page } = req.query || 1;
   try {
     const { id } = req.params;
-    const template = req.oldTemplate._doc;
+    const template = req.oldTemplate;
     console.log(template);
 
     const limit = 25;
@@ -20,6 +20,7 @@ const getTasksForOne = async (req, res) => {
       numberOfPages: Math.ceil(total / limit)
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message })
   }
 };
