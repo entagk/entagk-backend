@@ -1,7 +1,7 @@
-const Task = require("../../models/task.js");
-const Template = require('../../models/template');
+const Task = require("../../models/task");
+const Template = require("../../models/template");
 
-const deleteTask= async (req, res) => {
+const deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -9,9 +9,15 @@ const deleteTask= async (req, res) => {
     console.log(oldTask);
 
     if (oldTask.template?._id) {
-      const templateData = await Template.findById(oldTask.template._id)
-      const newTasks = templateData.tasks.map(t => String(t)).filter(t => t !== id);
-      await Template.findByIdAndUpdate(oldTask.template._id, { est: (templateData.est - oldTask.est), act: (templateData.act - oldTask.act), tasks: newTasks });
+      if (oldTask.template.todo) {
+        const templateData = await Task.findById(oldTask.template._id)
+        const newTasks = templateData.tasks.map(t => String(t)).filter(t => t !== id);
+        await Task.findByIdAndUpdate(oldTask.template._id, { est: (templateData.est - oldTask.est), act: (templateData.act - oldTask.act), tasks: newTasks });
+      } else {
+        const templateData = await Template.findById(oldTask.template._id)
+        const newTasks = templateData.tasks.map(t => String(t)).filter(t => t !== id);
+        await Template.findByIdAndUpdate(oldTask.template._id, { est: (templateData.est - oldTask.est), act: (templateData.act - oldTask.act), tasks: newTasks });
+      }
     }
 
     await Task.findByIdAndDelete(id);

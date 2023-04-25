@@ -1,4 +1,5 @@
 const Template = require("../models/template");
+const Task = require("../models/task");
 const mongoose = require("mongoose");
 
 const validateTaskData = async (req, res, next) => {
@@ -16,10 +17,13 @@ const validateTaskData = async (req, res, next) => {
 
     if (notes?.length > 500 && notes?.trim()) return res.status(400).json({ message: "The notes length is more than 500 characters." })
 
-    const templateData = await Template.findById(template?._id);
+    const templateData = await Template.findById(template?._id) ?? await Task.findById(template._id);
     console.log(templateData);
     if (template) {
-      if (!templateData?._id || !mongoose.Types.ObjectId.isValid(template?._id) || templateData !== null) return res.status(400).json({ message: "Invalid template" });
+      console.log(!templateData?._id);
+      console.log(!mongoose.Types.ObjectId.isValid(template?._id))
+      console.log(templateData === null)
+      if (!templateData?._id || !mongoose.Types.ObjectId.isValid(template?._id) || templateData === null) return res.status(400).json({ message: "Invalid template" });
       else {
         template.todo = templateData?.todo !== null;
       }
