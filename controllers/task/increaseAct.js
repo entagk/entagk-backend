@@ -6,7 +6,7 @@ const increaseAct = async (req, res) => {
 
     const task = req.oldTask;
 
-    if (!task.template.todo) {
+    if (!task.template?.todo) {
       return res.status(400).json({ message: "invalid template task" })
     }
 
@@ -14,13 +14,14 @@ const increaseAct = async (req, res) => {
 
     if (task.act === task.est) return res.status(400).json({ message: "This task is completed." });
 
-    const newTask = Object.assign(task, { act: task.act + 1, check: task.act + 1 === task.est });
+    const newTask = { act: task.act + 1, check: task.act + 1 === task.est };
 
     const updatedTask = await Task.findByIdAndUpdate(id, newTask, { new: true });
 
     if (task.template?._id) {
       const templateData = await Task.findById(task.template._id);
-      await Task.findByIdAndUpdate(task.template._id, { act: (templateData.act + 1) });
+      const newAct = templateData.act + 1;
+      await Task.findByIdAndUpdate(task.template._id, { act: newAct, check: newAct === templateData.est }, { new: true });
     }
 
     res.status(200).json(updatedTask);
