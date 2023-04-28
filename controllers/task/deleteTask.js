@@ -10,9 +10,13 @@ const deleteTask = async (req, res) => {
 
     if (oldTask.template?._id) {
       if (oldTask.template.todo) {
-        const templateData = await Task.findById(oldTask.template._id)
-        const newTasks = templateData.tasks.map(t => String(t)).filter(t => t !== id);
-        await Task.findByIdAndUpdate(oldTask.template._id, { est: (templateData.est - oldTask.est), act: (templateData.act - oldTask.act), tasks: newTasks });
+        const templateData = await Task.findById(oldTask.template._id);
+        if (templateData.tasks.length === 1) {
+          await Task.findByIdAndDelete(oldTask.template._id);
+        } else {
+          const newTasks = templateData.tasks.map(t => String(t)).filter(t => t !== id);
+          await Task.findByIdAndUpdate(oldTask.template._id, { est: (templateData.est - oldTask.est), act: (templateData.act - oldTask.act), tasks: newTasks });
+        }
       } else {
         const templateData = await Template.findById(oldTask.template._id)
         const newTasks = templateData.tasks.map(t => String(t)).filter(t => t !== id);
