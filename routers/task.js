@@ -4,13 +4,14 @@ const ValidTask = require('../middlewares/validateTask');
 const validateTaskData = require("../middlewares/validateTaskData");
 const ValidateMultiTasksData = require('../middlewares/validateMultiTasksData');
 const TaskControllers = require("../controllers/task/index.js");
+const ValidateTimeData = require("../middlewares/valdiateTimeAndAudioData.js");
 
 router.get("/", Auth, TaskControllers.getAll);
 
 router.post("/add/", Auth, validateTaskData, TaskControllers.addTask);
 router.post("/add_multiple_tasks", Auth, ValidateMultiTasksData, TaskControllers.addMultipleTasks);
 
-router.patch("/update/:id", Auth, ValidTask, validateTaskData, TaskControllers.updateTask);
+router.patch("/update/:id", Auth, ValidTask, validateTaskData, ValidateTimeData, TaskControllers.updateTask);
 
 router.delete("/delete/:id", Auth, ValidTask, TaskControllers.deleteTask);
 
