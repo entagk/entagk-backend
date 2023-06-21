@@ -2,6 +2,7 @@ const Task = require("../../models/task.js");
 // fix it
 const clearAct = async (req, res) => {
   try {
+    
     const deletedTasks = await Task.deleteMany({
       userId: req.user._id.toString(),
       template: null,
