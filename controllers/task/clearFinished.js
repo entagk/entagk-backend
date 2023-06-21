@@ -1,5 +1,7 @@
 const Task = require("../../models/task.js");
 
+// fix it
+
 const clearFinished = async (req, res) => {
   try {
     const userId = req.user._id.toString();
