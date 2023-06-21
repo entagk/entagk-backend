@@ -1,13 +1,31 @@
 const Task = require("../../models/task.js");
 // fix it
-const clearAct = async (req, res) => {
+const clearAll = async (req, res) => {
   try {
-    
+
     const deletedTasks = await Task.deleteMany({
-      userId: req.user._id.toString(),
-      template: null,
-      tasks: { $eq: [] }
+      $or: [
+        {// normal tasks
+          userId: req.user._id.toString(),
+          template: null,
+          setting: null,
+          tasks: { $eq: [] },
+        },
+        {// todo template tasks
+          userId: req.user._id.toString(),
+          "template.todo": true,
+          tasks: { $eq: [] },
+        },
+        {// todo template
+          userId: req.user._id.toString(),
+          template: null,
+          tasks: { $ne: [] },
+          setting: { $ne: null },
+        }
+      ]
     });
+
+    console.log(deletedTasks)
 
     res.status(200).json({ ...deletedTasks, message: "Successfully deleted." });
   } catch (error) {
@@ -15,4 +33,4 @@ const clearAct = async (req, res) => {
   }
 };
 
-module.exports = clearAct;
+module.exports = clearAll;
