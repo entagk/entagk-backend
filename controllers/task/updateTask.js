@@ -22,7 +22,7 @@ const updateTask = async (req, res) => {
       const newTempAct = templateData.act - oldTask.act + newAct;
       const newTempEst = templateData.est - oldTask.est + newEst;
 
-      await Task.findByIdAndUpdate(oldTask.template._id, { est: newTempEst, act: newTempAct, check: newTempAct === newTempAct }, { new: true });
+      await Task.findByIdAndUpdate(oldTask.template._id, { est: newTempEst, act: newTempAct, check: newTempAct === newTempEst }, { new: true });
     }
 
     res.status(200).json(updatedTask);
