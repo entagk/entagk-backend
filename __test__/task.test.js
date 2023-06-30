@@ -511,6 +511,7 @@ describe("Task APIs", () => {
     })
   });
 
+  // fix these
   describe("Testing increaseAct controller route /api/task/increase_act/:id", () => {
     it("Send request with invalid id", (done) => {
       supertest(app)

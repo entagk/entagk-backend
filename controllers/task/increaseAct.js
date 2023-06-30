@@ -6,7 +6,7 @@ const increaseAct = async (req, res) => {
 
     const task = req.oldTask;
 
-    if (!task.template?.todo) {
+    if (!task.template?.todo && task.template !== null) {
       return res.status(400).json({ message: "invalid template task" })
     }
 
