@@ -29,10 +29,7 @@ const addTemplate = async (req, res) => {
     const body = filterBody(props.split(",").map(e => e.trim()), req.body);
 
 
-    const templateBody = {
-      ...body,
-      description: body.desc
-    };
+    const templateBody = body;
 
     const updatedTemplate = await Template.findByIdAndUpdate(id, templateBody, { new: true });
 

@@ -25,7 +25,6 @@ const addTemplate = async (req, res) => {
     const body = filterBody(props.split(",").map(e => e.trim()), req.body);
 
     const templateData = await Template.create({
-      description: body.desc,
       userId: req.user._id.toString(),
       ...body
     });

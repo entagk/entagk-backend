@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
  *   "_id": ObjectId("id"),
  *   "name":"First Template",
  *   "visibility": false,
- *   "description": "This is the first Template",
+ *   "desc": "This is the first Template",
  *   "tasks": [
  *      ObjectId("id"),
  *      ObjectId("id")
@@ -51,9 +51,9 @@ const templateSchema = mongoose.Schema(
       type: Boolean,
       default: false
     },
-    description: {
+    desc: {
       type: String,
-      require: [true, "please enter the template visibility!"]
+      require: [true, "please enter the template description!"]
     },
     tasks: {
       type: Array,
@@ -67,10 +67,6 @@ const templateSchema = mongoose.Schema(
       type: Number,
       require: [true, "please enter the est pomodoro"],
       default: 1,
-    },
-    act: {
-      type: Number,
-      default: 0,
     },
     iconURL: {
       type: String
@@ -140,16 +136,6 @@ const templateSchema = mongoose.Schema(
     comments: {
       type: Array,
       default: []
-    },
-    /**
-   * todo: {
-   *  userId: userId,
-   *  order: 1
-   * }
-   */
-    todo: {
-      type: Object,
-      default: null
     },
     templateClone: {
       type: String,

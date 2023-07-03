@@ -15,11 +15,11 @@ const searchTemplates = async (req, res) => {
 
     let total, templates;
     if(req?.user?._id?.toString()) {
-      total = await Template.countDocuments({ $or: [{ name: { $in: keys } }, { description: { $in: keys } }], userId: req?.user?._id?.toString() });
-      templates = await Template.find({ $or: [{ name: { $in: keys } }, { description: { $in: keys } }], userId: req?.user?._id?.toString() }).limit(limit).skip(startIndex);
+      total = await Template.countDocuments({ $or: [{ name: { $in: keys } }, { desc: { $in: keys } }], userId: req?.user?._id?.toString() });
+      templates = await Template.find({ $or: [{ name: { $in: keys } }, { desc: { $in: keys } }], userId: req?.user?._id?.toString() }).limit(limit).skip(startIndex);
     } else {
-      total = await Template.countDocuments({ $or: [{ name: { $in: keys } }, { description: { $in: keys } }], visibility: true });
-      templates = await Template.find({ $or: [{ name: { $in: keys } }, { description: { $in: keys } }], visibility: true }).limit(limit).skip(startIndex);
+      total = await Template.countDocuments({ $or: [{ name: { $in: keys } }, { desc: { $in: keys } }], visibility: true });
+      templates = await Template.find({ $or: [{ name: { $in: keys } }, { desc: { $in: keys } }], visibility: true }).limit(limit).skip(startIndex);
     }
 
     res
