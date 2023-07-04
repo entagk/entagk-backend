@@ -10,8 +10,8 @@ const getTasksForOne = async (req, res) => {
     const limit = 25;
     const startIndex = (Number(page) - 1) * limit;
 
-    const total = await Task.countDocuments({ template: { _id: id, todo: template.todo !== null } });
-    const tasks = await Task.find({ template: { _id: id, todo: template.todo !== null } }).limit(limit).skip(startIndex);
+    const total = await Task.countDocuments({ "template._id": id });
+    const tasks = await Task.find({ "template._id": id }).limit(limit).skip(startIndex);
 
     res.status(200).json({
       tasks,
