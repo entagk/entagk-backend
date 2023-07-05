@@ -1,4 +1,5 @@
 const Task = require("../../models/task.js");
+const Template = require("../../models/template.js")
 
 const updateTask = async (req, res) => {
   try {
@@ -17,12 +18,16 @@ const updateTask = async (req, res) => {
     const updatedTask = await Task.findByIdAndUpdate(id, newTask, { new: true });
 
     if (oldTask.template) {
-      const templateData = await Task.findById(oldTask.template._id);
+      const templateData = oldTask.template.todo ? await Task.findById(oldTask.template._id) : await Template.findById(oldTask.template._id);
 
       const newTempAct = templateData.act - oldTask.act + newAct;
       const newTempEst = templateData.est - oldTask.est + newEst;
 
-      await Task.findByIdAndUpdate(oldTask.template._id, { est: newTempEst, act: newTempAct, check: newTempAct === newTempEst }, { new: true });
+      if (oldTask.template.todo) {
+        await Task.findByIdAndUpdate(oldTask.template._id, { est: newTempEst, act: newTempAct, check: newTempAct === newTempEst }, { new: true });
+      } else {
+        await Template.findByIdAndUpdate(oldTask.template._id, { est: newTempEst }, { new: true });
+      }
     }
 
     res.status(200).json(updatedTask);
