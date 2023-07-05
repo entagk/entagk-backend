@@ -17,7 +17,7 @@ const validateTaskData = async (req, res, next) => {
 
     if (notes?.length > 500 && notes?.trim()) return res.status(400).json({ message: "The notes length is more than 500 characters." })
 
-    const templateData = await Template.findById(template?._id) ?? await Task.findById(template?._id);
+    const templateData = await Template.findById(template?._id) || await Task.findById(template?._id);
     console.log(templateData);
     if (template) {
       console.log(!templateData?._id);
@@ -25,7 +25,7 @@ const validateTaskData = async (req, res, next) => {
       console.log(templateData === null)
       if (!templateData?._id || !mongoose.Types.ObjectId.isValid(template?._id) || templateData === null) return res.status(400).json({ message: "Invalid template" });
       else {
-        template.todo = templateData?.todo !== null;
+        template.todo = templateData?.template === null;
       }
     }
 

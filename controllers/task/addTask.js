@@ -10,11 +10,19 @@ const addTask = async (req, res) => {
     console.log(template);
 
     const newTask = await Task.create({ name, est, notes, project, order, template, userId: req.user._id.toString() });
+    console.log(templateData.est + est);
     if (template?._id) {
       if (template?.todo) {
         await Task.findByIdAndUpdate(template?._id, { tasks: [...templateData.tasks, newTask._id], est: templateData.est + est });
-      } else if (template?.todo && template?._id) {
-        await Template.findByIdAndUpdate(template?._id, { tasks: [...templateData.tasks, newTask._id], est: templateData.est + est });
+      } else {
+        await Template.findByIdAndUpdate(
+          template?._id,
+          {
+            tasks: [...templateData.tasks, newTask._id],
+            est: templateData.est + est
+          }, {
+          new: true
+        });
       }
     }
 
