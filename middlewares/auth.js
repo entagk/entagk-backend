@@ -45,7 +45,7 @@ const Auth = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     if (error.name !== 'JsonWebTokenError') {
-      res.status(500).json({ message: error.message, from: "Auth.js", token });
+      res.status(500).json({ message: error.message, from: "Auth.js" });
     } else {
       res.status(401).json({ message: error.message, error });
     }
