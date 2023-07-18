@@ -1,13 +1,14 @@
 const Template = require("../../models/template");
 
 const getForUser = async (req, res) => { // get templates not at todo list
-  const { page } = req.query || 1;
+  const { search, sort, page } = req.query || { search: "", sort: "updatedAt", page: 1 };
   try {
-    const limit = 25;
+    const limit = 2;
     const startIndex = (Number(page) - 1) * limit;
 
-    const total = await Template.countDocuments({ userId: req.user._id.toString(), todo: { $eq: null } }); // Template.find({ userId: req.user._id.toString() });
-    const templates = await Template.find({ userId: req.user._id.toString(), todo: { $eq: null } }).limit(limit).skip(startIndex);
+    const keys = search?.trim()?.split(" ").map(e => new RegExp(e, 'gi'));
+    const total = await Template.countDocuments({ $or: [{ name: { $in: keys } }, { desc: { $in: keys } }], userId: req?.user?._id?.toString() });
+    const templates = await Template.find({ $or: [{ name: { $in: keys } }, { desc: { $in: keys } }], userId: req?.user?._id?.toString() }).sort({ [sort]: 1 }).limit(limit).skip(startIndex);
 
     res.status(200).json({
       templates,
