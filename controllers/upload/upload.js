@@ -15,15 +15,16 @@ const Upload = async (req, res) => {
     const folder = req._parsedUrl.pathname;
     const user = req.user;
     const options = { folder: `${folder}/${user._id.toString()}`, tags: [user._id.toString()] };
+    const oldAvatar = await File.findOne({ path: user?.avatar });
 
     if (folder.includes('avatar')) {
-      options.width = 150;
-      options.height = 150;
+      options.width = 200;
+      options.height = 200;
       if (user.avatar) {
-        const oldAvatar = await File.findOne({ path: user.avatar })
         cloudinary.api.delete_resources([oldAvatar?.name], (result) => {
           console.log(result);
-        })
+        });
+
       }
     }
 
@@ -37,6 +38,8 @@ const Upload = async (req, res) => {
     }
     const result = await cloudinary.uploader.upload(file.path, options);
     console.log(result);
+
+    await File.findByIdAndDelete(oldAvatar?._id);
 
     const saved = await File.create({
       name: result.public_id,

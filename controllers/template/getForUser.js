@@ -3,7 +3,7 @@ const Template = require("../../models/template");
 const getForUser = async (req, res) => { // get templates not at todo list
   const { search, sort, page } = req.query || { search: "", sort: "updatedAt", page: 1 };
   try {
-    const limit = 2;
+    const limit = 25;
     const startIndex = (Number(page) - 1) * limit;
 
     const keys = search?.trim()?.split(" ").map(e => new RegExp(e, 'gi'));
