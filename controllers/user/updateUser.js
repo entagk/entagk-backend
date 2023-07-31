@@ -20,10 +20,10 @@ const updateUser = async (req, res) => {
         oldUser.password
       );
 
-      if (!isPasswordCorrect) return res.status(400).json({ message: "The old password does not match." });
+      if (!isPasswordCorrect) return res.status(400).json({ errors: { oldPassword: "The old password does not match." } });
 
       if (newPassword.length < 8) {
-        res.status(400).json({ message: "The password shouldn't be less than 8 letter or numbers" })
+        res.status(400).json({ errors: { newPassword: "The password shouldn't be less than 8 letter or numbers" } })
       }
 
       const passwordHash = await bcrypt.hash(newPassword, 12);
@@ -38,7 +38,7 @@ const updateUser = async (req, res) => {
 
     const afterUpdatae = await User.findByIdAndUpdate(req.user._id.toString(), newUser, {
       new: true,
-    })
+    }).select('-password')
 
     res.status(200).json({ message: "Successfuly updates", afterUpdatae });
   } catch (error) {
