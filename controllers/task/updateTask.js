@@ -12,7 +12,11 @@ const updateTask = async (req, res) => {
     const newAct = req.body?.act !== undefined ? act : oldTask?.act;
     const newEst = req.body?.est !== undefined ? est : oldTask?.est;
 
-    if (newAct > newEst) return res.status(400).json({ message: "The act shouldn't be more than est." });
+    if (newAct > newEst) return res.status(400).json({
+      errors: {
+        act: "The act shouldn't be more than est."
+      }
+    });
 
     const newTask = { name, est: newEst, act: newAct, notes, project, order, check: newAct === newEst, setting };
     const updatedTask = await Task.findByIdAndUpdate(id, newTask, { new: true });
