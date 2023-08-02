@@ -62,7 +62,20 @@ const ValidateTimeData = async (req, res, next) => {
       clickVolume
     } = req.body;
 
-    if ((typeof time !== 'object' || !time["PERIOD"] || !time["SHORT"] || !time["LONG"] || !validNumber(time["PERIOD"], 1, 3600) || !validNumber(time["SHORT"], 1, 3600) || !validNumber(time["LONG"], 1, 3600)) && time) return res.status(400).json({ message: "The time should be at this format {PERIOD: ---, SHORT: ---, LONG: ---} with positive numbers" })
+    if (
+      (typeof time !== 'object' ||
+        !time["PERIOD"] ||
+        !time["SHORT"] ||
+        !time["LONG"] ||
+        !validNumber(time["PERIOD"], 1, 3600) ||
+        !validNumber(time["SHORT"], 1, 3600) ||
+        !validNumber(time["LONG"], 1, 3600)
+      ) && time
+    ) return res.status(400).json({
+      errors: {
+        time: "The time should be at this format {PERIOD: ---, SHORT: ---, LONG: ---} with positive numbers"
+      }
+    })
 
     if (typeof autoBreaks !== 'boolean' && autoBreaks)
       return res.status(400).json({
@@ -99,8 +112,13 @@ const ValidateTimeData = async (req, res, next) => {
           tickingVolume: "invalid ticking volume"
         }
       });
+
     if ((!validNumber(clickVolume, 0, 100)) && clickVolume)
-      return res.status(400).json({ message: "invalid click volume" });
+      return res.status(400).json({
+        errors: {
+          clickVolume: "invalid click volume"
+        }
+      });
 
     if (longInterval < 2 && longInterval)
       return res.status(400).json({
