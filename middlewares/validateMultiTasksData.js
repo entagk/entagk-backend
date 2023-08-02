@@ -31,7 +31,7 @@
 
 const ValidateMultiTasksData = async (req, res, next) => {
   try {
-    if(!Array.isArray(req.body)) return res.status(400).json({message: "The data have been sent is not array, please try again"});
+    if (!Array.isArray(req.body)) return res.status(400).json({ message: "The data have been sent is not array, please try again" });
     if (req.body?.length === 0) return res.status(400).json({ message: 'No data have been sent yet.' });
 
     const tasks = req.body?.map((task) => {
@@ -42,13 +42,46 @@ const ValidateMultiTasksData = async (req, res, next) => {
       const task = tasks[index];
       const { name, est, act, notes, project, order } = task;
 
-      if (!name?.trim() || !est) return res.status(400).json({ message: `For task ${index + 1}, please complete the task data with at least the name and est` });
+      if (!name?.trim() || !est)
+        return res.status(400).json({
+          errors: !name?.trim() ? {
+            name: `For task ${index + 1}, This field is required`,
+          } : !est ? {
+            est: `For task ${index + 1}, This field is required`
+          } : {
+            name: `For task ${index + 1}, This field is required`,
+            est: `For task ${index + 1}, This field is required`
+          }
+        });
 
-      if (est <= 0) return res.status(400).json({ message: `For task ${index + 1}, The est shouldn't be negative number.` });
-      if (act < 0 && act) return res.status(400).json({ message: `For task ${index + 1}, The act shouldn't be negative number.` });
-      if (name?.length > 50 && name?.trim()) return res.status(400).json({ message: `For task ${index + 1}, The name length is more than 50 characters.` });
+      if (est <= 0)
+        return res.status(400).json({
+          errors: {
+            est: `For task ${index + 1}, The est shouldn't be negative number.`
+          }
+        });
 
-      if (notes?.length > 500 && notes?.trim()) return res.status(400).json({ message: `For task ${index + 1}, The notes length is more than 500 characters.` });
+      if (act < 0 && act)
+        return res.status(400).json({
+          errors: {
+            act: `For task ${index + 1}, The act shouldn't be negative number.`
+          }
+        });
+
+      if (name?.length > 50 && name?.trim())
+        return res.status(400).json({
+          errors: {
+            name: `For task ${index + 1}, The name length is more than 50 characters.`
+          }
+        });
+
+      if (notes?.length > 500 && notes?.trim())
+        return res.status(400).json({
+          errors: {
+            notes: `For task ${index + 1}, The notes length is more than 500 characters.`
+          }
+        });
+
       if (order < 0 || !order) task.order = index;
 
       delete task?._id;

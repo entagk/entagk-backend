@@ -7,11 +7,16 @@ const validateTaskData = async (req, res, next) => {
     const { name, est, act, notes, project, order, template } = req.body;
     if (req._parsedUrl.pathname === '/add/') {
       if (!name?.trim() || !est) return res.status(400).json({
-        errors: {
+        errors: !name?.trim() ? {
+          name: "This field is required",
+        } : !est ? {
+          est: "This field is required"
+        } : {
           name: "This field is required",
           est: "This field is required"
         }
       });
+
     } else {
       // updateTask
       if (!name && !est && !act && !notes && !project) return res.status(400).json({ message: "Please enter the data that you want to update the task to it." })
