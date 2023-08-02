@@ -18,13 +18,18 @@ const signUp = async (req, res) => {
     }
 
     if (!validateEmail(email)) {
-      return res.status(400).json({ message: 'This email is invalid' });
+      return res.status(400).json({ errors: { email: 'This email is invalid' } });
     }
 
     const oldUser = await User.findOne({ email });
     if (oldUser) return res.status(400).json({ message: "This email already exists" });
 
-    if (password.length < 8) return res.status(400).json({ message: 'The password must be at least 8 letters and numbers' });
+    if (password.length < 8)
+      return res.status(400).json({
+        errors: {
+          password: 'The password must be at least 8 letters and numbers'
+        }
+      });
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -37,7 +42,6 @@ const signUp = async (req, res) => {
 
     res.status(200).json({ access_token: token, message: "You are logged in successfully" })
   } catch (error) {
-    // console.log(error);
     return res.status(500).json({ message: error.message });
   }
 };
