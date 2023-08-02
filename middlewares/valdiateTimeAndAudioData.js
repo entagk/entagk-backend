@@ -64,25 +64,72 @@ const ValidateTimeData = async (req, res, next) => {
 
     if ((typeof time !== 'object' || !time["PERIOD"] || !time["SHORT"] || !time["LONG"] || !validNumber(time["PERIOD"], 1, 3600) || !validNumber(time["SHORT"], 1, 3600) || !validNumber(time["LONG"], 1, 3600)) && time) return res.status(400).json({ message: "The time should be at this format {PERIOD: ---, SHORT: ---, LONG: ---} with positive numbers" })
 
-    if (typeof autoBreaks !== 'boolean' && autoBreaks) return res.status(400).json({ message: "The property of the autoBreaks is boolean" })
-    if (typeof autoPomodors !== 'boolean' && autoPomodors) return res.status(400).json({ message: "The property of the autoPomodors is boolean" })
-    if (typeof autoStartNextTask !== 'boolean' && autoStartNextTask) return res.status(400).json({ message: "The property of the autoStartNextTask is boolean" })
+    if (typeof autoBreaks !== 'boolean' && autoBreaks)
+      return res.status(400).json({
+        error: {
+          autoBreaks: "The property of the autoBreaks is boolean"
+        }
+      })
+
+    if (typeof autoPomodors !== 'boolean' && autoPomodors)
+      return res.status(400).json({
+        error: {
+          autoPomodors: "The property of the autoPomodors is boolean"
+        }
+      })
+
+    if (typeof autoStartNextTask !== 'boolean' && autoStartNextTask)
+      return res.status(400).json({
+        error: {
+          autoStartNextTask: "The property of the autoStartNextTask is boolean"
+        }
+      })
 
     // the volume range 1-100 so we will calculate the validation volume with 
-    if (
-      ((!validNumber(alarmVolume, 10, 100)) && alarmVolume) ||
-      ((!validNumber(tickingVolume, 0, 100)) && tickingVolume) ||
-      ((!validNumber(clickVolume, 0, 100)) && clickVolume)
-    ) return res.status(400).json({ message: "invalid sound volume" });
+    if ((!validNumber(alarmVolume, 10, 100)) && alarmVolume)
+      return res.status(400).json({
+        errors: {
+          alarmVolume: "invalid alarm volume"
+        }
+      });
 
-    if (longInterval < 2 && longInterval) return res.status(400).json({ message: "The long interval must be more than 2" })
+    if ((!validNumber(tickingVolume, 0, 100)) && tickingVolume)
+      return res.status(400).json({
+        errors: {
+          tickingVolume: "invalid ticking volume"
+        }
+      });
+    if ((!validNumber(clickVolume, 0, 100)) && clickVolume)
+      return res.status(400).json({ message: "invalid click volume" });
+
+    if (longInterval < 2 && longInterval)
+      return res.status(400).json({
+        errors: {
+          longInterval: "The long interval must be more than 2"
+        }
+      })
+
+    if ((!validAudioType(alarmType) && alarmType))
+      return res.status(400).json({
+        errors: {
+          alarmType: "The sound type should be contines name and src."
+        }
+      });
 
     if (
-      (!validAudioType(alarmType) && alarmType) ||
-      (!validAudioType(tickingType) && tickingType) ||
-      (!validAudioType(clickType) && clickType)
-    )
-      return res.status(400).json({ message: "The sound type should be contines name and src." });
+      (!validAudioType(tickingType) && tickingType))
+      return res.status(400).json({
+        errors: {
+          tickingType: "The sound type should be contines name and src."
+        }
+      });
+
+    if ((!validAudioType(clickType) && clickType))
+      return res.status(400).json({
+        errors: {
+          clickType: "The sound type should be contines name and src."
+        }
+      });
 
     next();
   } catch (error) {
