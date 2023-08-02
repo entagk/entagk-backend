@@ -20,7 +20,8 @@ const updateSetting = async (req, res) => {
     clickVolume,
     focusMode,
     notificationType,
-    notificationInterval`.split(",").map((e) => e.trim());
+    notificationInterval,
+    applyTaskSetting`.split(",").map((e) => e.trim());
     const body = filterBody(props, req.body);
 
     if (Object.keys(req.body).length === 0)
@@ -53,6 +54,13 @@ const updateSetting = async (req, res) => {
           notificationInterval: "Invalid notification interval between 1 and 60"
         }
       });
+
+    if (typeof body.applyTaskSetting !== 'boolean' && body.applyTaskSetting)
+      return res.status(400).json({
+        errors: {
+          applyTaskSetting: "The property of the focusMode is boolean"
+        }
+      })
 
     const oldSetting = await TimerSetting.findOne({ userId });
     const newSetting = Object.assign(oldSetting, {
