@@ -397,341 +397,340 @@ describe("Task APIs", () => {
     })
   });
 
-  // describe("Testing deleteTask controller route /api/task/delete/:id", () => {
-  //   it("Send request with invalid id", (done) => {
-  //     supertest(app)
-  //       .delete(`/api/task/delete/dfjdsfkewejriek`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("Invalid id");
-
-  //         done();
-  //       })
-  //   })
-
-  //   it('Send id for not found task', (done) => {
-  //     supertest(app)
-  //       .delete(`/api/task/delete/637433baec806fe7624d1447`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ ...userData, est: 5 })
-  //       .expect(404)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("This task doesn't found.");
-
-  //         done();
-  //       })
-  //   })
-
-  //   it("delete task", (done) => {
-  //     supertest(app)
-  //       .delete(`/api/task/delete/${taskData[0]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         const data = res.body;
-  //         expect(data.message).toBe("Successfully deleted");
-  //         expect(data.deleted_id).toBe(taskData[0]._id);
-
-  //         done();
-  //       })
-  //   })
-  // });
-
-  // describe("Testing checkTask controller route /api/task/check/:id", () => {
-  //   it("Send request with invalid id", (done) => {
-  //     supertest(app)
-  //       .post(`/api/task/check/dfjdsfkewejriek`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("Invalid id");
-
-  //         done();
-  //       })
-  //   })
-
-  //   it('Send id for not found task', (done) => {
-  //     supertest(app)
-  //       .post(`/api/task/check/637433baec806fe7624d1447`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ ...userData, est: 5 })
-  //       .expect(404)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("This task doesn't found.");
-
-  //         done();
-  //       })
-  //   })
-
-  //   it("Add new task", (done) => {
-  //     supertest(app)
-  //       .post('/api/task/add/')
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send(taskData[0])
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         const data = res.body;
-
-  //         test(data, { userId, check: false, notes: taskData[0].notes, act: 0, est: taskData[0].est, name: taskData[0].name });
-
-  //         taskData[0] = Object.assign(taskData[0], data);
-
-  //         done();
-  //       })
-  //   })
-
-  //   it("check task", (done) => {
-  //     supertest(app)
-  //       .post(`/api/task/check/${taskData[0]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         const data = res.body;
-
-  //         test(data, { act: taskData[0].est, check: true });
-
-  //         done();
-  //       })
-  //   })
-  // });
-
-  // // fix these
-  // describe("Testing increaseAct controller route /api/task/increase_act/:id", () => {
-  //   it("Send request with invalid id", (done) => {
-  //     supertest(app)
-  //       .post(`/api/task/increase_act/dfjdsfkewejriek`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("Invalid id");
-
-  //         done();
-  //       })
-  //   })
-
-  //   it('Send id for not found task', (done) => {
-  //     supertest(app)
-  //       .post(`/api/task/increase_act/637433baec806fe7624d1447`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ ...userData, est: 5 })
-  //       .expect(404)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("This task doesn't found.");
-
-  //         done();
-  //       })
-  //   })
-
-  //   it("increaseAct a checked task", (done) => {
-  //     supertest(app)
-  //       .post(`/api/task/increase_act/${taskData[0]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         const data = res.body;
-
-  //         expect(data.message).toBe("This task is completed.");
-
-  //         done();
-  //       })
-  //   });
-
-  //   it("uncheck task", (done) => {
-  //     supertest(app)
-  //       .post(`/api/task/check/${taskData[0]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         const data = res.body;
-
-  //         expect(data.act).toBe(0);
-  //         expect(data.check).toBe(false);
-
-  //         done();
-  //       })
-  //   })
-
-  //   it("increaseAct a unchecked task", (done) => {
-  //     supertest(app)
-  //       .post(`/api/task/increase_act/${taskData[0]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         const data = res.body;
-
-  //         test(data, { userId, check: false, project: "", notes: taskData[0].notes, act: 1, name: taskData[0].name, _id: taskData[0]._id });
-
-  //         done();
-  //       })
-  //   });
-  // });
-
-  // describe("Testing clearFinished controller route /api/task/clear_finished/", () => {
-  //   it("Add new task data", (done) => {
-  //     supertest(app)
-  //       .post('/api/task/add/')
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ ...taskData[0], est: 5 })
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         const data = res.body;
-
-  //         test(data, { userId, check: false, notes: taskData[0].notes, act: 0, est: 5, name: taskData[0].name });
-
-  //         taskData.push(data);
-
-  //         done();
-  //       })
-  //   })
-
-  //   it("Add other new task data", (done) => {
-  //     supertest(app)
-  //       .post('/api/task/add/')
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ ...taskData[0], est: 9 })
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         const data = res.body;
-
-  //         test(data, { userId, check: false, notes: taskData[0].notes, act: 0, est: 9, name: taskData[0].name });
-
-  //         taskData.push(data);
-
-  //         done();
-  //       })
-  //   })
-
-  //   it("check task", (done) => {
-  //     supertest(app)
-  //       .post(`/api/task/check/${taskData[1]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         const data = res.body;
-
-  //         test(data, { check: true, act: taskData[1].est });
-
-  //         taskData[1] = data;
-
-  //         done();
-  //       })
-  //   })
-
-  //   it("clear finished tasks", (done) => {
-  //     supertest(app)
-  //       .delete('/api/task/clear_finished/')
-  //       .set('Authorization', `Bearer ${token}`)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("Success deleted.")
-  //         expect(res.body.deletedCount).toBe(taskData.filter((t) => t.check).length);
-  //         taskData = taskData.filter(task => !task?.check);
-
-  //         done();
-  //       })
-  //   })
-  // });
-
-  // describe("Testing clearAct controller route /api/task/clear_act", () => {
-  //   it("increase act for unchecked task", (done) => {
-  //     supertest(app)
-  //       .patch(`/api/task/update/${taskData[1]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ act: taskData[1].est - 1 })
-  //       // .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         const data = res.body;
-
-  //         test(data, { userId, check: false, notes: taskData[0].notes, act: taskData[1].est - 1, est: taskData[1].est, name: taskData[1].name, _id: taskData[1]._id });
-  //         taskData[1] = data;
-
-  //         done();
-  //       })
-  //   });
-
-  //   it("check task", (done) => {
-  //     supertest(app)
-  //       .post(`/api/task/check/${taskData[1]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         const data = res.body;
-
-  //         test(data, { userId, check: true, notes: taskData[0].notes, act: taskData[1].est, est: taskData[1].est, name: taskData[1].name, _id: taskData[1]._id });
-
-  //         taskData[1] = data;
-
-  //         done();
-  //       })
-  //   });
-
-  //   it("clear act from tasks", (done) => {
-  //     supertest(app)
-  //       .delete('/api/task/clear_act')
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("Successful update.");
-  //         expect(res.body.modifiedCount).toBe(taskData.filter(task => task.act > 0).length)
-
-  //         done();
-  //       })
-  //   })
-  // });
-
-  // describe('Testing clearAll controller route /api/task/clear_all', () => {
-  //   it("clear finished tasks", (done) => {
-  //     supertest(app)
-  //       .delete('/api/task/clear_all/')
-  //       .set('Authorization', `Bearer ${token}`)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("Successfully deleted.")
-  //         expect(res.body.deletedCount).toBe(taskData.length);
-
-  //         done();
-  //       })
-  //   })
-  // });
+  describe("Testing deleteTask controller route /api/task/delete/:id", () => {
+    it("Send request with invalid id", (done) => {
+      supertest(app)
+        .delete(`/api/task/delete/dfjdsfkewejriek`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Invalid id");
+
+          done();
+        })
+    })
+
+    it('Send id for not found task', (done) => {
+      supertest(app)
+        .delete(`/api/task/delete/637433baec806fe7624d1447`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...userData, est: 5 })
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("This task doesn't found.");
+
+          done();
+        })
+    })
+
+    it("delete task", (done) => {
+      supertest(app)
+        .delete(`/api/task/delete/${taskData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+          expect(data.message).toBe("Successfully deleted");
+          expect(data.deleted_id).toBe(taskData[0]._id);
+
+          done();
+        })
+    })
+  });
+
+  describe("Testing checkTask controller route /api/task/check/:id", () => {
+    it("Send request with invalid id", (done) => {
+      supertest(app)
+        .post(`/api/task/check/dfjdsfkewejriek`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Invalid id");
+
+          done();
+        })
+    })
+
+    it('Send id for not found task', (done) => {
+      supertest(app)
+        .post(`/api/task/check/637433baec806fe7624d1447`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...userData, est: 5 })
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("This task doesn't found.");
+
+          done();
+        })
+    })
+
+    it("Add new task", (done) => {
+      supertest(app)
+        .post('/api/task/add/')
+        .set("Authorization", `Bearer ${token}`)
+        .send(taskData[0])
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+
+          test(data, { userId, check: false, notes: taskData[0].notes, act: 0, est: taskData[0].est, name: taskData[0].name });
+
+          taskData[0] = Object.assign(taskData[0], data);
+
+          done();
+        })
+    })
+
+    it("check task", (done) => {
+      supertest(app)
+        .post(`/api/task/check/${taskData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+
+          test(data, { act: taskData[0].est, check: true });
+
+          done();
+        })
+    })
+  });
+
+  describe("Testing increaseAct controller route /api/task/increase_act/:id", () => {
+    it("Send request with invalid id", (done) => {
+      supertest(app)
+        .post(`/api/task/increase_act/dfjdsfkewejriek`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Invalid id");
+
+          done();
+        })
+    })
+
+    it('Send id for not found task', (done) => {
+      supertest(app)
+        .post(`/api/task/increase_act/637433baec806fe7624d1447`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...userData, est: 5 })
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("This task doesn't found.");
+
+          done();
+        })
+    })
+
+    it("increaseAct a checked task", (done) => {
+      supertest(app)
+        .post(`/api/task/increase_act/${taskData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+
+          expect(data.message).toBe("This task is completed.");
+
+          done();
+        })
+    });
+
+    it("uncheck task", (done) => {
+      supertest(app)
+        .post(`/api/task/check/${taskData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+
+          expect(data.act).toBe(0);
+          expect(data.check).toBe(false);
+
+          done();
+        })
+    })
+
+    it("increaseAct a unchecked task", (done) => {
+      supertest(app)
+        .post(`/api/task/increase_act/${taskData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+
+          test(data, { userId, check: false, project: "", notes: taskData[0].notes, act: 1, name: taskData[0].name, _id: taskData[0]._id });
+
+          done();
+        })
+    });
+  });
+
+  describe("Testing clearFinished controller route /api/task/clear_finished/", () => {
+    it("Add new task data", (done) => {
+      supertest(app)
+        .post('/api/task/add/')
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...taskData[0], est: 5 })
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+
+          test(data, { userId, check: false, notes: taskData[0].notes, act: 0, est: 5, name: taskData[0].name });
+
+          taskData.push(data);
+
+          done();
+        })
+    })
+
+    it("Add other new task data", (done) => {
+      supertest(app)
+        .post('/api/task/add/')
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...taskData[0], est: 9 })
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+
+          test(data, { userId, check: false, notes: taskData[0].notes, act: 0, est: 9, name: taskData[0].name });
+
+          taskData.push(data);
+
+          done();
+        })
+    })
+
+    it("check task", (done) => {
+      supertest(app)
+        .post(`/api/task/check/${taskData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+
+          test(data, { check: true, act: taskData[1].est });
+
+          taskData[1] = data;
+
+          done();
+        })
+    })
+
+    it("clear finished tasks", (done) => {
+      supertest(app)
+        .delete('/api/task/clear_finished/')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Success deleted.")
+          expect(res.body.deletedCount).toBe(taskData.filter((t) => t.check).length);
+          taskData = taskData.filter(task => !task?.check);
+
+          done();
+        })
+    })
+  });
+
+  describe("Testing clearAct controller route /api/task/clear_act", () => {
+    it("increase act for unchecked task", (done) => {
+      supertest(app)
+        .patch(`/api/task/update/${taskData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ act: taskData[1].est - 1 })
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+
+          test(data, { userId, check: false, notes: taskData[0].notes, act: taskData[1].est - 1, est: taskData[1].est, name: taskData[1].name, _id: taskData[1]._id });
+          taskData[1] = data;
+
+          done();
+        })
+    });
+
+    it("check task", (done) => {
+      supertest(app)
+        .post(`/api/task/check/${taskData[1]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+
+          test(data, { userId, check: true, notes: taskData[0].notes, act: taskData[1].est, est: taskData[1].est, name: taskData[1].name, _id: taskData[1]._id });
+
+          taskData[1] = data;
+
+          done();
+        })
+    });
+
+    it("clear act from tasks", (done) => {
+      supertest(app)
+        .delete('/api/task/clear_act')
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Successful update.");
+          expect(res.body.modifiedCount).toBe(taskData.filter(task => task.act > 0).length)
+
+          done();
+        })
+    })
+  });
+
+  describe('Testing clearAll controller route /api/task/clear_all', () => {
+    it("clear finished tasks", (done) => {
+      supertest(app)
+        .delete('/api/task/clear_all/')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          expect(res.body.message).toBe("Successfully deleted.")
+          expect(res.body.deletedCount).toBe(taskData.length);
+
+          done();
+        })
+    })
+  });
 })
