@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 
 const MONGODB_URL = "mongodb://127.0.0.1:27017/?authMechanism=DEFAULT";
 
-
 const openDBConnect = (setData, signup, done) => {
   mongoose.connect(MONGODB_URL,
     { useNewUrlParser: true, useUnifiedTopology: true },
@@ -39,6 +38,5 @@ const closeDBConnect = (done) => {
     console.log("done")
   });
 }
-
 
 module.exports = { closeDBConnect, openDBConnect }
