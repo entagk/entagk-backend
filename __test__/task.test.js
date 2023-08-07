@@ -260,142 +260,142 @@ describe("Task APIs", () => {
     });
   })
 
-  // describe("Testing updateTask controller route /api/task/update/:id", () => {
-  //   it("Send request with invalid id", (done) => {
-  //     supertest(app)
-  //       .patch(`/api/task/update/dfjdsfkewejriek`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
+  describe("Testing updateTask controller route /api/task/update/:id", () => {
+    it("Send request with invalid id", (done) => {
+      supertest(app)
+        .patch(`/api/task/update/dfjdsfkewejriek`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
 
-  //         expect(res.body.message).toBe("Invalid id");
+          expect(res.body.message).toBe("Invalid id");
 
-  //         done();
-  //       })
-  //   })
+          done();
+        })
+    })
 
-  //   it('Send id for not found task', (done) => {
-  //     supertest(app)
-  //       .patch(`/api/task/update/637433baec806fe7624d1447`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ ...userData, est: 5 })
-  //       .expect(404)
-  //       .end((err, res) => {
-  //         if (err) throw err;
+    it('Send id for not found task', (done) => {
+      supertest(app)
+        .patch(`/api/task/update/637433baec806fe7624d1447`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...userData, est: 5 })
+        .expect(404)
+        .end((err, res) => {
+          if (err) throw err;
 
-  //         expect(res.body.message).toBe("This task doesn't found.");
+          expect(res.body.message).toBe("This task doesn't found.");
 
-  //         done();
-  //       })
-  //   })
+          done();
+        })
+    })
 
-  //   it("Send request without data", (done) => {
-  //     supertest(app)
-  //       .patch(`/api/task/update/${taskData[0]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
+    it("Send request without data", (done) => {
+      supertest(app)
+        .patch(`/api/task/update/${taskData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
 
-  //         expect(res.body.message).toBe("Please enter the data that you want to update the task to it.");
+          expect(res.body.message).toBe("Please enter the data that you want to update the task to it.");
 
-  //         done();
-  //       })
-  //   })
+          done();
+        })
+    })
 
-  //   it("Send invalid est", (done) => {
-  //     supertest(app)
-  //       .patch(`/api/task/update/${taskData[0]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ ...userData, est: -1 })
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
+    it("Send invalid est", (done) => {
+      supertest(app)
+        .patch(`/api/task/update/${taskData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...userData, est: -1 })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
 
-  //         expect(res.body.message).toBe("The est shouldn't be negative number.");
+          expect(res.body.errors.est).toBe("The est shouldn't be negative number.");
 
-  //         done();
-  //       })
-  //   })
+          done();
+        })
+    })
 
-  //   it("Send invalid act", (done) => {
-  //     supertest(app)
-  //       .patch(`/api/task/update/${taskData[0]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ ...userData, act: -1 })
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
+    it("Send invalid act", (done) => {
+      supertest(app)
+        .patch(`/api/task/update/${taskData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...userData, act: -1 })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
 
-  //         expect(res.body.message).toBe("The act shouldn't be negative number.");
+          expect(res.body.errors.act).toBe("The act shouldn't be negative number.");
 
-  //         done();
-  //       })
-  //   })
+          done();
+        })
+    })
 
-  //   it("Send act more than est", (done) => {
-  //     supertest(app)
-  //       .patch(`/api/task/update/${taskData[0]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ ...userData, act: 3 })
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
+    it("Send act more than est", (done) => {
+      supertest(app)
+        .patch(`/api/task/update/${taskData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...userData, act: 3 })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
 
-  //         expect(res.body.message).toBe("The act shouldn't be more than est.");
+          expect(res.body.errors.act).toBe("The act shouldn't be more than est.");
 
-  //         done();
-  //       })
-  //   })
+          done();
+        })
+    })
 
-  //   it("Sending invalid name", (done) => {
-  //     supertest(app)
-  //       .patch(`/api/task/update/${taskData[0]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ ...taskData[0], name: "test1 test1 test1 test1 test1 test1 test1 test1 test1 test1" })
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
+    it("Sending invalid name", (done) => {
+      supertest(app)
+        .patch(`/api/task/update/${taskData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...taskData[0], name: "test1".repeat(50) })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
 
-  //         expect(res.body.message).toBe("The name length is more than 50 characters.");
+          expect(res.body.errors.name).toBe("The name length is more than 50 characters.");
 
-  //         done();
-  //       })
-  //   })
+          done();
+        })
+    })
 
-  //   it("Sending invalid notes", (done) => {
-  //     supertest(app)
-  //       .patch(`/api/task/update/${taskData[0]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ ...taskData[0], notes: "test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1 test1" })
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
+    it("Sending invalid notes", (done) => {
+      supertest(app)
+        .patch(`/api/task/update/${taskData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...taskData[0], notes: "test1".repeat(500) })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
 
-  //         expect(res.body.message).toBe("The notes length is more than 500 characters.");
+          expect(res.body.errors.notes).toBe("The notes length is more than 500 characters.");
 
-  //         done();
-  //       })
-  //   })
+          done();
+        })
+    })
 
-  //   it("Sending valid data", (done) => {
-  //     supertest(app)
-  //       .patch(`/api/task/update/${taskData[0]._id}`)
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .send({ ...taskData[0], name: "test2", act: 1 })
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
+    it("Sending valid data", (done) => {
+      supertest(app)
+        .patch(`/api/task/update/${taskData[0]._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ ...taskData[0], name: "test2", act: 1 })
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
 
-  //         const data = res.body;
+          const data = res.body;
 
-  //         test(data, { userId, check: false, notes: taskData[0].notes, act: 1, est: taskData[0].est, name: "test2", _id: taskData[0]._id });
+          test(data, { userId, check: false, notes: taskData[0].notes, act: 1, est: taskData[0].est, name: "test2", _id: taskData[0]._id });
 
-  //         done();
-  //       })
-  //   })
-  // });
+          done();
+        })
+    })
+  });
 
   // describe("Testing deleteTask controller route /api/task/delete/:id", () => {
   //   it("Send request with invalid id", (done) => {
