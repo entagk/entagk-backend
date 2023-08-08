@@ -34,7 +34,9 @@ const openDBConnect = (setData, signup, done) => {
 
 const closeDBConnect = (done) => {
   mongoose.connection.db.dropDatabase(() => {
-    mongoose.connection.close(() => done());
+    mongoose.connection.close(() => {
+      done();
+    });
     console.log("done")
   });
 }
