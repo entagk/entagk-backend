@@ -30,19 +30,5 @@ describe('User APIs', () => {
 
   require('./updateUser')();
 
-  // describe("Testing deleteAccount controller route /api/user/delete_user", () => {
-  //   it("Delete account successfully", (done) => {
-  //     supertest(app)
-  //       .delete('/api/user/delete_user')
-  //       .set("Authorization", `Bearer ${token}`)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("Deleted account successfully");
-  //         expect(res.body.deleted_id).toBe(userId);
-
-  //         done();
-  //       })
-  //   })
-  // });
+  require('./deleteUser')();
 })

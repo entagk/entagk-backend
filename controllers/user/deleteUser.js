@@ -15,16 +15,20 @@ const deleteAccount = async (req, res) => {
     await Tasks.deleteMany({ userId: userId });
     await Setting.deleteOne({ userId: userId });
     await Template.deleteMany({ userId: userId });
-    await File.deleteMany({ userId: userId });
+    const files = await File.deleteMany({ userId: userId });
+
+    console.log(files);
 
     // delete user files
     await cloudinary.api.delete_resources_by_tag(userId, { resource_type: 'raw' });
     await cloudinary.api.delete_resources_by_tag(userId);
-    
-    await cloudinary.api.delete_folder(`/image/avatar/${userId}`);
-    await cloudinary.api.delete_folder(`/audio/ticking/${userId}`);
-    await cloudinary.api.delete_folder(`/audio/click/${userId}`);
-    await cloudinary.api.delete_folder(`/audio/alarm/${userId}`);
+
+    if (files.deletedCount > 0) {
+      await cloudinary.api.delete_folder(`/image/avatar/${userId}`);
+      await cloudinary.api.delete_folder(`/audio/ticking/${userId}`);
+      await cloudinary.api.delete_folder(`/audio/click/${userId}`);
+      await cloudinary.api.delete_folder(`/audio/alarm/${userId}`);
+    }
 
     res
       .status(200)
@@ -33,8 +37,8 @@ const deleteAccount = async (req, res) => {
         deleted_id: user?._id.toString() || userId,
       });
   } catch (error) {
-    res.status(500).json({ message: error.message });
     console.log(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
