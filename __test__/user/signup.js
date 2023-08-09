@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const { getData } = require("./utils");
 
-module.exports = () => describe('testing Signup POST through route /api/user/signup', () => {
+module.exports = () => describe('Testing Signup POST through route /api/user/signup', () => {
   const userData = getData('userData');
 
   it("Testing sending without data and it should return error message and statusCode is 400", (done) => {

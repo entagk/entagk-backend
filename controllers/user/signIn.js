@@ -20,7 +20,7 @@ const signIn = async (req, res) => {
     if (!existingUser) return res.status(404).json({ message: "user not found" });
 
     const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
-    if (!isPasswordCorrect) return res.status(400).json({ errrors: { password: "wrong password" } });
+    if (!isPasswordCorrect) return res.status(400).json({ errors: { password: "wrong password" } });
 
     const token = createAcessToken({ email: existingUser.email, id: existingUser._id });
 
