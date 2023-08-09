@@ -58,7 +58,7 @@ const updateSetting = async (req, res) => {
     if (typeof body.applyTaskSetting !== 'boolean' && body.applyTaskSetting)
       return res.status(400).json({
         errors: {
-          applyTaskSetting: "The property of the focusMode is boolean"
+          applyTaskSetting: "The property of the apply task setting is boolean"
         }
       })
 
