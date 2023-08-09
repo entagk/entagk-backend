@@ -2,16 +2,18 @@ const app = require('../../server');
 const supertest = require('supertest');
 
 const { createAcessToken } = require('./../../utils/helper');
-const {getData} = require('./utils');
+const { getData } = require('./utils');
 
-module.exports = (url) => {
+module.exports = (url, method) => {
   it("Testing sending request without token", (done) => {
     supertest(app)
-      .get(url)
+    [method](url)
       .expect(401)
       .end((err, res) => {
         if (err) throw err;
 
+        if (url.includes('update'))
+          console.log(res.body);
         expect(res.body.message).toBe("Invalid Authentication.");
         done();
       })
@@ -19,12 +21,14 @@ module.exports = (url) => {
 
   it('Testing sending request with invalid token', (done) => {
     supertest(app)
-      .get(url)
+    [method](url)
       .set("Authorization", `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QwMTIzQGV4YW1wbGUuY29tIiwiaWQiOiI2MzhjMTE2NDI1ZGI3OGI1MGJjYzFjMDgiLCJpYXQiOjE2NzEwMzE5NzMsImV4cCI6MTY3MTA4OTU3M30.6lafCmgJDX393gGNakvwPbprgCHvrvVIXxUC3wSmxMg`)
       .expect(401)
       .end((err, res) => {
         if (err) throw err;
 
+        if (url.includes('update'))
+          console.log(res.body);
         expect(res.body.message).toBe("Invalid Authentication and jwt expired");
 
         done();
@@ -35,11 +39,14 @@ module.exports = (url) => {
     const userData = getData('userData');
     const fakeToken = createAcessToken({ email: userData.email, id: "kjkljfdskfj" });
     supertest(app)
-      .get(url)
+    [method](url)
       .set("Authorization", `Bearer ${fakeToken}`)
       .expect(401)
       .end((err, res) => {
         if (err) throw err;
+
+        if (url.includes('update'))
+          console.log(res.body);
 
         expect(res.body.message).toBe("Invalid Authentication");
 
@@ -50,11 +57,14 @@ module.exports = (url) => {
   it('Testing sending request with token using non found user', (done) => {
     const fakeToken = createAcessToken({ email: "wjdjsifk@jfdd.com", id: '641ee1ba92578ebf24203deb' });
     supertest(app)
-      .get(url)
+    [method](url)
       .set("Authorization", `Bearer ${fakeToken}`)
       .expect(404)
       .end((err, res) => {
         if (err) throw err;
+
+        if (url.includes('update'))
+          console.log(res.body);
 
         expect(res.body.message).toBe("user not found");
 

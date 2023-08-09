@@ -6,7 +6,8 @@ const updateUser = async (req, res) => {
   try {
     const { name, oldPassword, newPassword } = req.body;
 
-    if (!name && (!oldPassword && !newPassword)) return res.status(400).json({ message: "Please enter the new data" });
+    if (!name && (!oldPassword && !newPassword))
+      return res.status(400).json({ message: "Please enter the new data" });
 
     const oldUser = await User.findOne({ _id: req.user._id.toString() });
 
@@ -20,10 +21,11 @@ const updateUser = async (req, res) => {
         oldUser.password
       );
 
-      if (!isPasswordCorrect) return res.status(400).json({ errors: { oldPassword: "The old password does not match." } });
+      if (!isPasswordCorrect)
+        return res.status(400).json({ errors: { oldPassword: "The old password does not match." } });
 
       if (newPassword.length < 8) {
-        res.status(400).json({ errors: { newPassword: "The password shouldn't be less than 8 letter or numbers" } })
+        return res.status(400).json({ errors: { newPassword: "The password shouldn't be less than 8 letter or numbers" } })
       }
 
       const passwordHash = await bcrypt.hash(newPassword, 12);

@@ -6,7 +6,7 @@ const { getData } = require("./utils");
 const validateAuth = require('./validateAuth');
 
 module.exports = () => describe("Testing GetUser GET through route /api/user/user_info", () => {
-  validateAuth('/api/user/user_info');
+  validateAuth('/api/user/user_info', 'get');
 
   it("Testing sending request with token", (done) => {
     const token = getData('token');

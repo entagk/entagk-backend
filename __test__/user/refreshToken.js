@@ -6,11 +6,11 @@ const mongoose = require('mongoose')
 const { getData, setData } = require("./utils");
 
 module.exports = () => describe("Testing refreshToken GET route /api/user/refresh_token", () => {
-  require('./validateAuth')("/api/user/refresh_token");
+  require('./validateAuth')("/api/user/refresh_token", 'get');
 
   it("Sending valid request", (done) => {
     supertest(app)
-      .get('/api/user/refresh_token')
+      ["get"]('/api/user/refresh_token')
       .set('Authorization', `Bearer ${getData('token')}`)
       .expect(200)
       .end((err, res) => {
