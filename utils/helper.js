@@ -37,4 +37,13 @@ const createRefrishToken = (payload) => {
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "30d" })
 }
 
-module.exports = { validNumber, validAudioType, validateEmail, filterBody, createObjFromObj, createAcessToken, createPasswordResetPassword, createRefrishToken };
+module.exports = {
+  validNumber,
+  validAudioType,
+  validateEmail,
+  filterBody,
+  createObjFromObj,
+  createAcessToken,
+  createPasswordResetPassword,
+  createRefrishToken
+};

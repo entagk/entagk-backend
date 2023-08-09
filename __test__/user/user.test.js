@@ -19,90 +19,13 @@ afterAll((done) => {
 });
 
 describe('User APIs', () => {
-  const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" }
-
   require('./signup')();
 
   require('./signin')();
 
-  // describe("Testing GetUser GET through route /api/user/user_info", () => {
-  //   it("Testing sending request without token", (done) => {
-  //     supertest(app)
-  //       .get('/api/user/user_info')
-  //       .expect(401)
-  //       .end((err, res) => {
-  //         if (err) throw err;
+  require('./getUser')();
 
-  //         expect(res.body.message).toBe("Invalid Authentication.");
-  //         done();
-  //       })
-  //   });
-
-  //   it("Testing sending request with token", (done) => {
-  //     supertest(app)
-  //       .get('/api/user/user_info')
-  //       .set('Authorization', `Bearer ${token}`)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         const data = res.body;
-  //         expect(mongoose.Types.ObjectId.isValid(data._id)).toBe(true);
-  //         expect(data.name).toBe(userData.name);
-  //         expect(data.email).toBe(userData.email);
-
-  //         done();
-  //       })
-  //   });
-  // });
-
-  // describe("Testing forgotPassword POST through route /api/user/forgot_password", () => {
-  //   // PASS
-  //   it("Testing forgotPassword controller and return success message", (done) => {
-  //     supertest(app)
-  //       .post('/api/user/forgot_password')
-  //       .send({ email: userData.email })
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("checkout your email.");
-  //         expect(res.body.result.accepted[0]).toBe(userData.email);
-
-  //         resetTokenId = res.body.result.ResetId;
-
-  //         done();
-  //       })
-  //   })
-
-  //   // PASS
-  //   it("Testing forgotPassword controller with invalid email and then return error message", (done) => {
-  //     supertest(app)
-  //       .post('/api/user/forgot_password')
-  //       .send({ email: "kjdsafk" })
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-  //         expect(res.body.message).toBe('This email is invalid');
-  //         done();
-  //       })
-  //   })
-
-  //   // PASS
-  //   it("Testing forgotPassword controller with not founded email and then return error message", (done) => {
-  //     supertest(app)
-  //       .post('/api/user/forgot_password')
-  //       .send({ email: "kjdsafk@fkjd.come" })
-  //       .expect(404)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("This email is not found");
-
-  //         done();
-  //       })
-  //   })
-  // });
+  
 
   // describe("Testing verifyResetId POST through route /api/user/verify_reset_id", () => {
   //   // PASS

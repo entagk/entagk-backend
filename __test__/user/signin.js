@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const jwt = require('jsonwebtoken');
 
-const { getData, setData } = require("./utils");
+const { getData, setData, setTokenAndUserId } = require("./utils");
 
 module.exports = () => describe("Testing Signin POST through route /api/user/signin", () => {
   const notFoundUser = { password: 'kdsfjkjske', email: "kdsfjkjske@test.com" };
@@ -47,16 +47,14 @@ module.exports = () => describe("Testing Signin POST through route /api/user/sig
 
         expect(res.body.message).toBe("You are logged in successfully");
 
-        setData('token', res.body.access_token);
-
         if (res.body.access_token.length < 500) {
           const tokenData = jwt.verify(res.body.access_token, process.env.ACCESS_TOKEN_SECRET);
           expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
-          setData('userId', tokenData.id);
+          setTokenAndUserId(res.body.access_token, tokenData.id)
         } else {
           const tokenData = jwt.decode(res.body.access_token);
           expect(mongoose.Types.ObjectId.isValid(tokenData.sub)).toBe(true);
-          setData('userId', tokenData.sub);
+          setTokenAndUserId(res.body.access_token, tokenData.sub)
         }
 
         done();

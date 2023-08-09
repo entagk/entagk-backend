@@ -17,6 +17,9 @@ const googleLogin = async (req, res) => {
   const { token } = req.body;
 
   try {
+    console.log(await client.getToken());
+    console.log(client.credentials === token);
+
     const verify = await client.verifyIdToken({ idToken: token, audience: process.env.MAILING_SERVICE_CLIENT_ID })
 
     const { email_verified, email, name, picture } = verify.getPayload();
