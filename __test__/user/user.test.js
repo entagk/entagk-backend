@@ -25,7 +25,7 @@ describe('User APIs', () => {
 
   require('./getUser')();
 
-  
+  require('./forgetPassword')();
 
   // describe("Testing verifyResetId POST through route /api/user/verify_reset_id", () => {
   //   // PASS
