@@ -1,7 +1,7 @@
 const supertest = require('supertest');
 const app = require('./../../server');
 
-const { getData } = require("./utils");
+const { getData, setData } = require("./utils");
 
 module.exports = () => describe("Testing forgotPassword POST through route /api/user/forgot_password", () => {
   it("Testing forgotPassword controller with invalid email and then return error message", (done) => {
@@ -42,7 +42,8 @@ module.exports = () => describe("Testing forgotPassword POST through route /api/
         expect(res.body.message).toBe("checkout your email.");
         expect(res.body.result.accepted[0]).toBe(userData.email);
 
-        resetTokenId = res.body.result.ResetId;
+        setData('resetTokenId', res.body.result.ResetId);
+        console.log(getData('resetTokenId'));
 
         done();
       })

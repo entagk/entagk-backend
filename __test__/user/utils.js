@@ -43,7 +43,7 @@ module.exports = {
   },
   setData: (field, data, index) => {
     const oldData = JSON.parse(fs.readFileSync(fileName, { encoding: 'utf-8' }))
-    if (data instanceof Array) {
+    if (!index) {
       oldData[field] = data;
     } else {
       oldData[field][index] = data;
