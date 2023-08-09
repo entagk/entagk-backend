@@ -6,16 +6,17 @@ const validateTaskData = async (req, res, next) => {
   try {
     const { name, est, act, notes, project, order, template } = req.body;
     if (req._parsedUrl.pathname === '/add/') {
-      if (!name?.trim() || !est) return res.status(400).json({
-        errors: !name?.trim() && !est ? {
-          name: "This field is required",
-          est: "This field is required"
-        } : !est ? {
-          est: "This field is required"
-        } : {
-          name: "This field is required",
-        }
-      });
+      if (!name?.trim() || !est)
+        return res.status(400).json({
+          errors: !name?.trim() && !est ? {
+            name: "This field is required",
+            est: "This field is required"
+          } : !est ? {
+            est: "This field is required"
+          } : {
+            name: "This field is required",
+          }
+        });
 
     } else {
       // updateTask
@@ -43,11 +44,7 @@ const validateTaskData = async (req, res, next) => {
       })
 
     const templateData = await Template.findById(template?._id) || await Task.findById(template?._id);
-    console.log(templateData);
     if (template) {
-      console.log(!templateData?._id);
-      console.log(!mongoose.Types.ObjectId.isValid(template?._id))
-      console.log(templateData === null)
       if (!templateData?._id || !mongoose.Types.ObjectId.isValid(template?._id) || templateData === null) return res.status(400).json({ message: "Invalid template" });
       else {
         template.todo = templateData?.template === null;

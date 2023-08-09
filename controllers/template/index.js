@@ -30,7 +30,6 @@ const TempleteControllers = {
   deleteTemplate: require('./deleteTemplate'),
   updateTemplate: require('./updateTemplate'),
   getTasksForTodoTemp: require('./getTasksForTodoTemp'),
-  getTasksForMultTodoTemp: require('./getTasksForMultTodoTemp')
 };
 
 module.exports = TempleteControllers;

@@ -42,7 +42,6 @@ const forgotPassword = async (req, res) => {
           res.status(200).json({ message: 'checkout your email.', result })
         }
       }
-      console.log(result);
     }).catch((error) => {
       console.log(error);
       res.status(500).json({ message: error.message || 'some thing error while sending mail', error });

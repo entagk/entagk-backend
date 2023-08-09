@@ -44,7 +44,6 @@ const addTemplate = async (req, res) => {
 
     const updateTemplate = await Template.findByIdAndUpdate(templateData._id, { tasks: tasksIds, est: est }, { new: true });
 
-    console.log(updateTemplate);
     res.status(200).json(updateTemplate);
   } catch (error) {
     res.status(500).json({ message: error.message });

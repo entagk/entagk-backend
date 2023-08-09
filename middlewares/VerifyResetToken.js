@@ -9,13 +9,11 @@ const VerifyResetToken = async (req, res, next) => {
     let tokenPart3;
     if(req?.headers?.authorization) {
       tokenPart3 = req?.headers?.authorization?.split(" ")[1];
-      console.log(req?.headers?.authorization, tokenPart3);
     }
     
     if (!tokenPart3) return res.status(401).json({ message: "Invalid Authentication." });
 
     const tokenData = await ResetId.findOne({ partThree: tokenPart3 });
-    console.log(tokenData);
 
     if (!tokenData) return res.status(404).json({ message: 'Expired token, please try set password again.' })
 

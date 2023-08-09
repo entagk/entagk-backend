@@ -4,8 +4,6 @@ const getTasksForOne = async (req, res) => {
   const { page } = req.query || 1;
   try {
     const { id } = req.params;
-    const template = req.oldTemplate;
-    console.log(template);
 
     const limit = 25;
     const startIndex = (Number(page) - 1) * limit;

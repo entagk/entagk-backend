@@ -1,7 +1,7 @@
 const supertest = require('supertest');
 const app = require('../../server');
 
-const { test, getTokenAndUserId, setTaskData, getTaskData } = require('./utils');
+const { test, getTokenAndUserId, getTaskData } = require('./utils');
 
 const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" };
 

@@ -61,7 +61,7 @@ const addToTodoList = async (req, res) => {
     const newTemplate = await Task.create(templateData);
 
     const oldTasks = await Task.find({ template: { _id: id, todo: false } });
-    console.log(oldTasks);
+
     const tasksData = oldTasks.map(({ _doc: task }) => {
       delete task._id;
       delete task.createdAt;
@@ -77,7 +77,6 @@ const addToTodoList = async (req, res) => {
     });
 
     const newTasks = await Task.insertMany(tasksData);
-    console.log(newTasks);
 
     const updateTemplate = await Task.findByIdAndUpdate(newTemplate._id, { tasks: newTasks.map((task) => task._id) }, { new: true });
 

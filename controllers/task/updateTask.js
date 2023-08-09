@@ -8,7 +8,6 @@ const updateTask = async (req, res) => {
 
     const { name, est, act, notes, project, order, setting } = req.body;
 
-    console.log(oldTask.act, oldTask.est);
     const newAct = req.body?.act !== undefined ? act : oldTask?.act;
     const newEst = req.body?.est !== undefined ? est : oldTask?.est;
 

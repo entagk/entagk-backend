@@ -1,7 +1,7 @@
 const supertest = require('supertest');
 const app = require('../../server');
 
-const { test, getTokenAndUserId, setTaskData, getTaskData, initializeTaskData } = require('./utils');
+const { test, getTokenAndUserId, setTaskData, getTaskData, initializeData } = require('./utils');
 
 const userData = { name: "testing123", email: "testing123@test.com", password: "testing123" };
 
@@ -35,7 +35,7 @@ module.exports = () => describe("Testing checkTask controller route /api/task/ch
       })
   })
 
-  initializeTaskData();
+  initializeData("taskData");
   const taskData = getTaskData();
   it("Add new task", (done) => {
     supertest(app)

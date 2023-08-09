@@ -6,7 +6,6 @@ const getAllForTodo = async (req, res) => {
     const userId = req.user._id.toString();
     const limit = 25;
     const startIndex = (Number(page) - 1) * limit;
-    console.log(userId);
 
     const total = await Task.countDocuments({ userId: userId, tasks: { $ne: [] }, template: { $eq: null } });
     const templates = await Task.find({ userId: userId, tasks: { $ne: [] }, template: { $eq: null } }).limit(limit).skip(startIndex);

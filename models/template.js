@@ -13,7 +13,7 @@ const mongoose = require("mongoose");
  *   "userId": userId,
  *   "est": Number,
  *   "act": Number,
- *   "color": "#ef9b0f",
+ *   "color": "",
  *   "usedBy": 1,
  *   "time": {
  *      "PERIOD": 1500,
@@ -73,7 +73,7 @@ const templateSchema = mongoose.Schema(
     },
     color: {
       type: String,
-      default: '#ef9b0f'
+      default: ""
     },
     usedBy: {
       type: Number,

@@ -12,7 +12,8 @@ const Auth = async (req, res, next) => {
       token = req?.headers?.authorization?.split(" ")[1];
     }
 
-    if (!token) return res.status(401).json({ message: "Invalid Authentication." });
+    if (!token)
+      return res.status(401).json({ message: "Invalid Authentication." });
 
     const isCustomAuth = token.length < 500;
 
@@ -33,11 +34,13 @@ const Auth = async (req, res, next) => {
       userId = decodedData?.sub;
     }
 
-    if (!mongoose.Types.ObjectId.isValid(userId)) return res.status(401).json({ message: "Invalid Authentication" });
+    if (!mongoose.Types.ObjectId.isValid(userId))
+      return res.status(401).json({ message: "Invalid Authentication" });
 
     const user = await User.findById(userId).select("-password") || await User.findOne({ email: decodedData.email }).select("-password");
 
-    if (!user) return res.status(404).json({ message: "user not found" });
+    if (!user)
+      return res.status(404).json({ message: "user not found" });
 
     req.user = user;
 

@@ -6,7 +6,6 @@ const deleteTask = async (req, res) => {
     const { id } = req.params;
 
     const oldTask = req.oldTask;
-    console.log(oldTask);
 
     if (oldTask.template?._id) {
       if (oldTask.template.todo) {

@@ -19,7 +19,6 @@ router.get("/user", Auth, templateControllers.getForUser);
 
 router.get("/todo/", Auth, templateControllers.getAllForTodo);
 router.get("/todo/tasks/:id", Auth, templateControllers.getTasksForTodoTemp);
-router.get("/todo/tasks/mult", Auth, templateControllers.getTasksForMultTodoTemp);
 
 router.post('/todo/:id', Auth, validateTemplate, templateControllers.addToTodoList);
 

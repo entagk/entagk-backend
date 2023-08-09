@@ -1,7 +1,7 @@
 const supertest = require('supertest');
 const app = require('../../server');
 
-const { test, getTokenAndUserId, setTaskData, getTaskData, initializeTaskData } = require('./utils');
+const { test, getTokenAndUserId, setTaskData, getTaskData } = require('./utils');
 
 module.exports = () => describe("Testing clearFinished controller route /api/task/clear_finished/", () => {
   it("Add two tasks", (done) => {

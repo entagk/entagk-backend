@@ -1,7 +1,9 @@
 const Template = require("../../models/template");
 
 const getForUser = async (req, res) => { // get templates not at todo list
-  const { search, sort, page } = req.query || { search: "", sort: "updatedAt", page: 1 };
+  const page = req.query.page || 1;
+  const search = req.query.search || "";
+  const sort = req.query.sort || "updatedAt";
   try {
     const limit = 25;
     const startIndex = (Number(page) - 1) * limit;

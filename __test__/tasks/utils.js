@@ -52,45 +52,25 @@ module.exports = {
       console.log(err);
     }
   },
-  initializeTaskData: () => {
+  initializeData: (field) => {
     try {
+      const init = {
+        "taskData": [
+          {
+            "name": "test1",
+            "est": 2,
+            "notes": "test1 test1 test1 test1"
+          }
+        ],
+        "token": "",
+        "userId": "",
+        "userData": ""
+      };
       const oldData = JSON.parse(fs.readFileSync(fileName, { encoding: 'utf-8' }))
+      const newData = field ? { ...oldData, [field]: init[field] } : init;
       fs.writeFileSync(
         fileName,
-        JSON.stringify({
-          "taskData": [
-            {
-              "name": "test1",
-              "est": 2,
-              "notes": "test1 test1 test1 test1"
-            }
-          ],
-          ...oldData
-        }
-        ),
-        { encoding: 'utf8', flag: '' }
-      );
-    } catch (err) {
-      console.log(err);
-    }
-  },
-  initializeData: () => {
-    try {
-      fs.writeFileSync(
-        fileName,
-        JSON.stringify({
-          "taskData": [
-            {
-              "name": "test1",
-              "est": 2,
-              "notes": "test1 test1 test1 test1"
-            }
-          ],
-          "token": "",
-          "userId": "",
-          "userData": ""
-        }
-        ),
+        JSON.stringify(newData),
         { encoding: 'utf8', flag: '' }
       );
     } catch (err) {

@@ -79,21 +79,21 @@ const ValidateTimeData = async (req, res, next) => {
 
     if (typeof autoBreaks !== 'boolean' && autoBreaks)
       return res.status(400).json({
-        error: {
+        errors: {
           autoBreaks: "The property of the autoBreaks is boolean"
         }
       })
 
     if (typeof autoPomodors !== 'boolean' && autoPomodors)
       return res.status(400).json({
-        error: {
+        errors: {
           autoPomodors: "The property of the autoPomodors is boolean"
         }
       })
 
     if (typeof autoStartNextTask !== 'boolean' && autoStartNextTask)
       return res.status(400).json({
-        error: {
+        errors: {
           autoStartNextTask: "The property of the autoStartNextTask is boolean"
         }
       })
