@@ -1,13 +1,15 @@
+const path = require('path');
+const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../../server');
-const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose')
 
 const { getData, setData } = require("./utils");
-const validateAuth = require('./validateAuth');
+const validateAuth = require('../validateAuth');
 
 module.exports = () => describe("Testing updateUser PATCH route /api/user/update_user", () => {
-  validateAuth("/api/user/update_user", 'patch');
+  const utilsPath = path.resolve(__dirname, 'utils');
+  validateAuth("/api/user/update_user", 'patch', utilsPath);
 
   it("Sending request without data", (done) => {
     supertest(app)

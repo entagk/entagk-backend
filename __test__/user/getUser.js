@@ -1,12 +1,14 @@
-const app = require('../../server');
+const path = require('path');
 const mongoose = require('mongoose');
 const supertest = require('supertest');
+const app = require('../../server');
 
 const { getData } = require("./utils");
-const validateAuth = require('./validateAuth');
+const validateAuth = require('../validateAuth');
 
 module.exports = () => describe("Testing GetUser GET through route /api/user/user_info", () => {
-  validateAuth('/api/user/user_info', 'get');
+  const utilsPath = path.resolve(__dirname, 'utils');
+  validateAuth('/api/user/user_info', 'get', utilsPath);
 
   it("Testing sending request with token", (done) => {
     const token = getData('token');

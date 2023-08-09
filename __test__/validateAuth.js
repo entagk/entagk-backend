@@ -1,10 +1,10 @@
-const app = require('../../server');
+const app = require('../server');
 const supertest = require('supertest');
 
-const { createAcessToken } = require('./../../utils/helper');
-const { getData } = require('./utils');
+const { createAcessToken } = require('../utils/helper');
 
-module.exports = (url, method) => {
+module.exports = (url, method, utilsFile) => {
+  const { getData } = require(utilsFile);
   it("Testing sending request without token", (done) => {
     supertest(app)
     [method](url)

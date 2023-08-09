@@ -2,8 +2,6 @@ const { closeDBConnect, openDBConnect } = require("../helper");
 
 const { initializeData } = require('./utils');
 
-let resetTokenId;
-
 beforeAll((done) => {
   openDBConnect(() => {}, false, done);
 });

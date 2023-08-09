@@ -1,3 +1,4 @@
+const path = require('path');
 const supertest = require('supertest');
 const app = require('../../server');
 const jwt = require('jsonwebtoken');
@@ -6,7 +7,8 @@ const mongoose = require('mongoose')
 const { getData, setData } = require("./utils");
 
 module.exports = () => describe("Testing refreshToken GET route /api/user/refresh_token", () => {
-  require('./validateAuth')("/api/user/refresh_token", 'get');
+  const utilsPath = path.resolve(__dirname, 'utils');
+  require('../validateAuth')("/api/user/refresh_token", 'get', utilsPath);
 
   it("Sending valid request", (done) => {
     supertest(app)

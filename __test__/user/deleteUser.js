@@ -1,11 +1,14 @@
 const supertest = require('supertest');
 const app = require('../../server');
+const path = require('path');
 
 const { getData } = require("./utils");
-const validateAuth = require('./validateAuth');
+const validateAuth = require('../validateAuth');
+
+const utilsPath = path.resolve(__dirname, 'utils');
 
 module.exports = () => describe("Testing deleteUser controller route /api/user/delete_user", () => {
-  validateAuth('/api/user/delete_user', 'delete');
+  validateAuth('/api/user/delete_user', 'delete', utilsPath);
 
   it("Delete account successfully", (done) => {
     supertest(app)
