@@ -1,16 +1,11 @@
-const app = require('../../server');
-const mongoose = require('mongoose');
-const supertest = require('supertest');
-const jwt = require('jsonwebtoken');
 const { closeDBConnect, openDBConnect } = require("../helper");
 
-const { createAcessToken } = require('../../utils/helper');
-const { setTokenAndUserId, initializeData } = require('./utils');
+const { initializeData } = require('./utils');
 
 let resetTokenId;
 
 beforeAll((done) => {
-  openDBConnect(setTokenAndUserId, false, done);
+  openDBConnect(() => {}, false, done);
 });
 
 afterAll((done) => {
@@ -29,78 +24,7 @@ describe('User APIs', () => {
 
   require('./verifyResetId')();
 
-  // describe("Testing resetPassword POST route /api/user/reset_password", () => {
-  //   it("without sending password", (done) => {
-  //     supertest(app)
-  //       .post('/api/user/reset_password')
-  //       .set('Authorization', `Bearer ${resetTokenId}`)
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("Please, enter a valid new password.");
-
-  //         done();
-  //       })
-  //   })
-
-  //   it("sending invalid password", (done) => {
-  //     supertest(app)
-  //       .post('/api/user/reset_password')
-  //       .send({ password: "test" })
-  //       .set('Authorization', `Bearer ${resetTokenId}`)
-  //       .expect(400)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("Please, enter a valid new password.");
-
-  //         done();
-  //       })
-  //   })
-
-  //   it("Sending valid data", (done) => {
-  //     const newPass = "testing987";
-  //     supertest(app)
-  //       .post('/api/user/reset_password')
-  //       .send({ password: newPass })
-  //       .set('Authorization', `Bearer ${resetTokenId}`)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("The password is changed successfuly.");
-
-  //         userData.password = newPass;
-  //         done();
-  //       });
-  //   });
-
-  //   it("Login for testing password reseting", (done) => {
-  //     supertest(app)
-  //       .post('/api/user/signin')
-  //       .send(userData)
-  //       .expect(200)
-  //       .end((err, res) => {
-  //         if (err) throw err;
-
-  //         expect(res.body.message).toBe("You are logged in successfully");
-
-  //         token = res.body.access_token;
-  //         if (res.body.access_token.length < 500) {
-  //           const tokenData = jwt.verify(res.body.access_token, process.env.ACCESS_TOKEN_SECRET);
-  //           expect(mongoose.Types.ObjectId.isValid(tokenData.id)).toBe(true);
-  //           userId = tokenData.id;
-  //         } else {
-  //           const tokenData = jwt.decode(res.body.access_token);
-  //           expect(mongoose.Types.ObjectId.isValid(tokenData.sub)).toBe(true);
-  //           userId = tokenData.sub;
-  //         }
-
-  //         done();
-  //       })
-  //   });
-  // });
+  require('./resetPassword')();
 
   // describe("Testing refreshToken GET route /api/user/refresh_token", () => {
   //   it("Testing sending request without token", (done) => {

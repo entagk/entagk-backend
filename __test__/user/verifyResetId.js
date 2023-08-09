@@ -1,9 +1,7 @@
 const supertest = require('supertest');
 const app = require('../../server');
-const ResetId = require('../../models/resetId')
 
 const { getData } = require("./utils");
-const { createPasswordResetPassword } = require('./../../utils/helper');
 
 module.exports = () => describe("Testing verifyResetId POST through route /api/user/verify_reset_id", () => {
   it("Testing controller without resetTokenId", (done) => {

@@ -43,7 +43,6 @@ module.exports = () => describe("Testing forgotPassword POST through route /api/
         expect(res.body.result.accepted[0]).toBe(userData.email);
 
         setData('resetTokenId', res.body.result.ResetId);
-        console.log(getData('resetTokenId'));
 
         done();
       })

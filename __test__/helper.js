@@ -26,7 +26,7 @@ const openDBConnect = (setData, signup, done) => {
         userId = tokenData?.id;
       }
 
-      setData(token, userId);
+      setData?.(token, userId);
     }
     done();
   });
