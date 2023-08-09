@@ -63,17 +63,6 @@ module.exports = {
       }
     })
   },
-  initializeData: () => {
-    try {
-      fs.writeFileSync(
-        fileName,
-        JSON.stringify(init),
-        { encoding: 'utf8', flag: '' }
-      );
-    } catch (err) {
-      console.log(err);
-    }
-  },
   getData: (field) => {
     try {
       const oldData = JSON.parse(

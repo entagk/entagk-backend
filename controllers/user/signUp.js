@@ -10,11 +10,17 @@ const { validateEmail, createAcessToken } = require("../../utils/helper");
 dotenv.config();
 
 const signUp = async (req, res) => {
-  const { name, email, password, avatar } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Please enter all data fields" });
+      return res.status(400).json({
+        errors: {
+          email: !email ? "This field is required" : "",
+          name: !name ? "This field is required" : "",
+          password: !password ? "This field is required" : ""
+        }
+      });
     }
 
     if (!validateEmail(email)) {
@@ -33,7 +39,7 @@ const signUp = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const newUser = { email, password: hashedPassword, name, avatar };
+    const newUser = { email, password: hashedPassword, name };
     const result = await User.create(newUser);
 
     await Setting.create({ userId: result._id });
