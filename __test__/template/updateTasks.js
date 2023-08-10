@@ -2,7 +2,13 @@ const supertest = require("supertest");
 const app = require("../../server");
 const { getData, setData } = require("./utils");
 
+const path = require('path');
+const validateAuth = require('../validateAuth');
+
 module.exports = () => describe("Update template tasks", () => {
+  const utilsPath = path.resolve(__dirname, 'utils');
+  validateAuth('/api/user/delete_user', 'delete', utilsPath);
+
   it("Update task", (done) => {
     const updatedTask = { name: "Updated task", act: 5 };
     const templateTasks = getData('templateTasks');

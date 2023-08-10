@@ -2,7 +2,13 @@ const supertest = require("supertest");
 const app = require("../../server");
 const { getData, verifyForMultiple } = require("./utils");
 
-module.exports = () => describe("Testing getting user templates using route /api/template/user/", () => {
+const path = require('path');
+const validateAuth = require('../validateAuth');
+
+module.exports = () => describe("Testing getting user templates using route /api/template/user/", () => {  
+  const utilsPath = path.resolve(__dirname, 'utils');
+  validateAuth('/api/user/delete_user', 'delete', utilsPath);
+
   it("Send request without token", (done) => {
     supertest(app)
       .get("/api/template/user")

@@ -3,7 +3,13 @@ const app = require("../../server");
 const mongoose = require('mongoose')
 const { getData, setData } = require("./utils");
 
+const path = require('path');
+const validateAuth = require('../validateAuth');
+
 module.exports = () => describe("Adding new task for a template", () => {
+  const utilsPath = path.resolve(__dirname, 'utils');
+  validateAuth('/api/user/delete_user', 'delete', utilsPath);
+
   const taskData = [{ name: "new task", est: 10 }];
   it("adding task", (done) => {
     const templateData = getData('templateData');

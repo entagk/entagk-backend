@@ -2,7 +2,13 @@ const supertest = require("supertest");
 const app = require("../../server");
 const { getData, verifyDeleting, setData } = require("./utils");
 
+const path = require('path');
+const validateAuth = require('../validateAuth');
+
 module.exports = () => describe("Testing delete template using DELETE method & route /api/template/:id", () => {
+  const utilsPath = path.resolve(__dirname, 'utils');
+  validateAuth('/api/user/delete_user', 'delete', utilsPath);
+
   let deletedId;
   let deletedTodo;
   it("Sending invalid template id", (done) => {

@@ -2,7 +2,12 @@ const supertest = require("supertest");
 const app = require("../../server");
 const { getData, setData, verifyTemplateData } = require("./utils");
 
+const path = require('path');
+const validateAuth = require('../validateAuth');
 module.exports = () => describe("Testing add template to todo list using route /api/template/toto/:id", () => {
+  const utilsPath = path.resolve(__dirname, 'utils');
+  validateAuth('/api/user/delete_user', 'delete', utilsPath);
+
   it("Sending invalid template id", (done) => {
     supertest(app)
       .post(`/api/template/todo/dsfdsafasf`)

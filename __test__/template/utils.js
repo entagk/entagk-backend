@@ -7,6 +7,11 @@ const fileName = path.resolve(__dirname, "data.json");
 const init = {
   "token": "",
   "userId": "",
+  "userData": {
+    "name": "testing123",
+    "email": "testing123@test.com",
+    "password": "testing123"
+  },
   "templateData": [
     {
       "name": "Template 1",

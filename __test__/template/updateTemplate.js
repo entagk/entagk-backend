@@ -4,9 +4,13 @@ const app = require("../../server");
 const { getData, setData } = require("./utils");
 
 const validateTimeAndAudioData = require('./../validateTimeAndAudioData');
+const validateAuth = require('../validateAuth');
 
 module.exports = () => describe("Testing update template using PATCH method & route /api/template/:id", () => {
   const utilsPath = path.resolve(__dirname, 'utils.js')
+
+  validateAuth('/api/user/delete_user', 'delete', utilsPath);
+
   it("Sending invalid template id", (done) => {
     supertest(app)
       .patch(`/api/template/dsfdsafasf`)

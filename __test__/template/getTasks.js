@@ -34,7 +34,13 @@ const testUnFoundTemplate = (url) => {
   });
 }
 
+const path = require('path');
+const validateAuth = require('../validateAuth');
+
 module.exports = () => describe("Testing getting template tasks controller", () => {
+  const utilsPath = path.resolve(__dirname, 'utils');
+  validateAuth('/api/user/delete_user', 'delete', utilsPath);
+
   sendInvalidId("/api/template/one/tasks");
   testUnFoundTemplate('/api/template/one/tasks')
 

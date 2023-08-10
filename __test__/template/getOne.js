@@ -2,7 +2,13 @@ const supertest = require("supertest");
 const app = require("../../server");
 const { getData } = require("./utils");
 
+const path = require('path');
+const validateAuth = require('../validateAuth');
+
 module.exports = () => describe("Testing getOne controller", () => {
+  const utilsPath = path.resolve(__dirname, 'utils');
+  validateAuth('/api/user/delete_user', 'delete', utilsPath);
+
   it("get public template", (done) => {
     const templateData = getData('templateData');
     supertest(app)
