@@ -4,14 +4,34 @@ const mongoose = require('mongoose')
 
 const fileName = path.resolve(__dirname, "data.json");
 
-const getTaskData = () => JSON.parse(
-  fs.readFileSync(
-    fileName,
-    { encoding: "utf-8" }
-  )
-).taskData;
+const init = {
+  "taskData": [
+    {
+      "name": "test1",
+      "est": 2,
+      "notes": "test1 test1 test1 test1"
+    }
+  ],
+  "token": "",
+  "userId": "",
+  "userData": ""
+};
 
 module.exports = {
+  getData: (field) => {
+    try {
+      const oldData = JSON.parse(
+        fs.readFileSync(
+          fileName,
+          { encoding: "utf-8" }
+        )
+      );
+
+      return field ? oldData[field] : oldData;
+    } catch (error) {
+      console.log(error);
+    }
+  },
   setTokenAndUserId: (t, uId) => {
     const oldData = JSON.parse(fs.readFileSync(fileName, { encoding: "utf-8" }));
     try {
@@ -24,23 +44,14 @@ module.exports = {
       console.log(err);
     }
   },
-  getTokenAndUserId: () => {
-    const oldData = JSON.parse(
-      fs.readFileSync(
-        fileName,
-        { encoding: "utf-8" }
-      )
-    );
-
-    return { token: oldData.token, userId: oldData.userId };
-  },
-  getTaskData: getTaskData,
-  setTaskData: (taskData, index) => {
+  setData: (field, data, index) => {
     const oldData = JSON.parse(fs.readFileSync(fileName, { encoding: 'utf-8' }))
-    if (taskData instanceof Array) {
-      oldData.taskData = taskData;
+    if (index) {
+      console.log(oldData)
+      oldData[field][index] = data;
+      console.log(oldData[field]);
     } else {
-      oldData.taskData[index] = taskData;
+      oldData[field] = data;
     }
     try {
       fs.writeFileSync(
@@ -54,18 +65,6 @@ module.exports = {
   },
   initializeData: (field) => {
     try {
-      const init = {
-        "taskData": [
-          {
-            "name": "test1",
-            "est": 2,
-            "notes": "test1 test1 test1 test1"
-          }
-        ],
-        "token": "",
-        "userId": "",
-        "userData": ""
-      };
       const oldData = JSON.parse(fs.readFileSync(fileName, { encoding: 'utf-8' }))
       const newData = field ? { ...oldData, [field]: init[field] } : init;
       fs.writeFileSync(
