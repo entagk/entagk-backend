@@ -4,6 +4,8 @@ const app = require('./../server');
 module.exports = (url, method, utilsFile) => {
   const { getData } = require(utilsFile);
   it("Sending invalid time", (done) => {
+    if (url.includes('template'))
+      url = "/api/template/" + getData('templateData')[0]._id;
     supertest(app)
     [method](url)
       .set("Authorization", `Bearer ${getData('token')}`)
@@ -16,6 +18,7 @@ module.exports = (url, method, utilsFile) => {
       .end((err, res) => {
         if (err) throw err;
 
+        console.log(res.body);
         expect(res.body.errors.time)
           .toBe("The time should be at this format {PERIOD: ---, SHORT: ---, LONG: ---} with positive numbers");
 

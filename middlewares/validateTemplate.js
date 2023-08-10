@@ -4,6 +4,9 @@ const Template = require('./../models/template');
 const validateTemplate = async (req, res, next) => {
   try {
     const { id } = req.params;
+
+    if (req.method === 'PATCH') console.log(id);
+
     if (!mongoose.Types.ObjectId.isValid(id))
       return res.status(400).json({ message: "Invalid id" });
 
