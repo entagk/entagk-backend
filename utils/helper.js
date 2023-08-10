@@ -19,6 +19,12 @@ const filterBody = (props, body) => {
   return Object.fromEntries(keys);
 }
 
+const createObjFromObj = (obj, props) => {
+  const result = Object.entries(obj).filter(([key, value]) => props.includes(key)).reduce((newObj, prop) => ({ ...newObj, [prop[0]]: prop[1] }), {});
+
+  return result;
+}
+
 const createAcessToken = (payload) => {
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "24h" });
 };
@@ -31,4 +37,13 @@ const createRefrishToken = (payload) => {
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "30d" })
 }
 
-module.exports = { validNumber, validAudioType, validateEmail, filterBody, createAcessToken, createPasswordResetPassword, createRefrishToken };
+module.exports = {
+  validNumber,
+  validAudioType,
+  validateEmail,
+  filterBody,
+  createObjFromObj,
+  createAcessToken,
+  createPasswordResetPassword,
+  createRefrishToken
+};

@@ -10,7 +10,7 @@ const ValidTask = async (req, res, next) => {
 
     if (!oldTask?._id) return res.status(404).json({ message: "This task doesn't found." });
 
-    if (oldTask?.userId !== req.userId) return res.status(401).json({ message: "This task doesn't belong to you." });
+    if (oldTask?.userId !== req.user._id.toString()) return res.status(401).json({ message: "This task doesn't belong to you." });
 
     req.oldTask = oldTask;
     next();

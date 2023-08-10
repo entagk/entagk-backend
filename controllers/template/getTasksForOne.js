@@ -4,14 +4,12 @@ const getTasksForOne = async (req, res) => {
   const { page } = req.query || 1;
   try {
     const { id } = req.params;
-    const template = req.oldTemplate._doc;
-    console.log(template);
 
     const limit = 25;
     const startIndex = (Number(page) - 1) * limit;
 
-    const total = await Task.countDocuments({ template: { _id: id, todo: template.todo !== null } });
-    const tasks = await Task.find({ template: { _id: id, todo: template.todo !== null } }).limit(limit).skip(startIndex);
+    const total = await Task.countDocuments({ "template._id": id });
+    const tasks = await Task.find({ "template._id": id }).limit(limit).skip(startIndex);
 
     res.status(200).json({
       tasks,
@@ -20,6 +18,7 @@ const getTasksForOne = async (req, res) => {
       numberOfPages: Math.ceil(total / limit)
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message })
   }
 };

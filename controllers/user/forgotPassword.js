@@ -15,13 +15,12 @@ const forgotPassword = async (req, res) => {
     const { email } = req.body;
 
     if (!validateEmail(email)) {
-      return res.status(400).json({ message: 'This email is invalid' });
+      return res.status(400).json({ errors: { email: 'This email is invalid' } });
     }
-    console.log(validateEmail(email));
 
     const user = await User.findOne({ email });
 
-    if (!user) return res.status(404).json({ message: "This email is not found" });
+    if (!user) return res.status(404).json({ errors: { email: "This email is not found" } });
 
     const token = createPasswordResetPassword({ id: user._id }).split(".");
 
@@ -43,7 +42,6 @@ const forgotPassword = async (req, res) => {
           res.status(200).json({ message: 'checkout your email.', result })
         }
       }
-      console.log(result);
     }).catch((error) => {
       console.log(error);
       res.status(500).json({ message: error.message || 'some thing error while sending mail', error });

@@ -1,5 +1,4 @@
 const Task = require("../../models/task.js");
-const Template = require('../../models/template');
 
 const increaseAct = async (req, res) => {
   try {
@@ -7,15 +6,22 @@ const increaseAct = async (req, res) => {
 
     const task = req.oldTask;
 
+    if (!task.template?.todo && task.template !== null) {
+      return res.status(400).json({ message: "invalid template task" })
+    }
+
+    if (task.tasks.length > 0) return res.status(400).json({ message: "This is template not single task" })
+
     if (task.act === task.est) return res.status(400).json({ message: "This task is completed." });
 
-    const newTask = Object.assign(task, { act: task.act + 1, check: task.act + 1 === task.est });
+    const newTask = { act: task.act + 1, check: task.act + 1 === task.est };
 
     const updatedTask = await Task.findByIdAndUpdate(id, newTask, { new: true });
 
     if (task.template?._id) {
-      const templateData = await Template.findById(task.template._id);
-      await Template.findByIdAndUpdate(task.template._id, { act: (templateData.act + 1) });
+      const templateData = await Task.findById(task.template._id);
+      const newAct = templateData.act + 1;
+      await Task.findByIdAndUpdate(task.template._id, { act: newAct, check: newAct === templateData.est }, { new: true });
     }
 
     res.status(200).json(updatedTask);

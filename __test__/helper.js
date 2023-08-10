@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 
 const MONGODB_URL = "mongodb://127.0.0.1:27017/?authMechanism=DEFAULT";
 
-
 const openDBConnect = (setData, signup, done) => {
   mongoose.connect(MONGODB_URL,
     { useNewUrlParser: true, useUnifiedTopology: true },
@@ -27,7 +26,7 @@ const openDBConnect = (setData, signup, done) => {
         userId = tokenData?.id;
       }
 
-      setData(token, userId);
+      setData?.(token, userId);
     }
     done();
   });
@@ -35,10 +34,11 @@ const openDBConnect = (setData, signup, done) => {
 
 const closeDBConnect = (done) => {
   mongoose.connection.db.dropDatabase(() => {
-    mongoose.connection.close(() => done());
+    mongoose.connection.close(() => {
+      done();
+    });
     console.log("done")
   });
 }
-
 
 module.exports = { closeDBConnect, openDBConnect }

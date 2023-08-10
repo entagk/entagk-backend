@@ -83,6 +83,10 @@ const timerSettingSchema = new mongoose.Schema(
     userId: {
       type: String,
       require: [true, "You should enter the userId."]
+    },
+    applyTaskSetting: {
+      type: Boolean,
+      default: true
     }
   },
   {

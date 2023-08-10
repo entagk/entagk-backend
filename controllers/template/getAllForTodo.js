@@ -1,15 +1,14 @@
-const Template = require("../../models/template");
+const Task = require("../../models/task");
 
 const getAllForTodo = async (req, res) => {
   const { page } = req.query || 1;
   try {
-    const userId = req.userId;
+    const userId = req.user._id.toString();
     const limit = 25;
     const startIndex = (Number(page) - 1) * limit;
-    console.log(userId);
 
-    const total = await Template.countDocuments({ userId: userId, todo: { $ne: null } });
-    const templates = await Template.find({ userId: userId, todo: { $ne: null } }).limit(limit).skip(startIndex);
+    const total = await Task.countDocuments({ userId: userId, tasks: { $ne: [] }, template: { $eq: null } });
+    const templates = await Task.find({ userId: userId, tasks: { $ne: [] }, template: { $eq: null } }).limit(limit).skip(startIndex);
 
     res.status(200).json({
       templates,

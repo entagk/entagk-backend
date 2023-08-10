@@ -75,7 +75,7 @@ const sendMail = async (to, url, name, text) => {
               </tr>
               <tr>
                 <td >
-                <a href=${url} target="_blank" style="border-radius: 5px; box-shadow: 0px 0px 10px #7a7a7a7d; background: crimson; text-decoration: none; color: white; padding: 10px 20px; margin: 10px 0; display: inline-block; color: rgb(255, 0, 47);">Set a new password</a>
+                <a href=${url} target="_blank" style="border-radius: 5px; box-shadow: 0px 0px 10px #7a7a7a7d; background: crimson; text-decoration: none; color: white; padding: 10px 20px; margin: 10px 0; display: inline-block;">Set a new password</a>
                 </td>
               </tr>
               <tr>

@@ -1,6 +1,6 @@
 const getOne = async (req, res) => {
   try {
-    const template = req.oldTemplate._doc;
+    const template = req.oldTemplate;
 
     res.status(200).json(template);
   } catch (error) {

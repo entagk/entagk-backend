@@ -1,13 +1,17 @@
 const Template = require("../../models/template");
 
 const getAll = async (req, res) => {
-  const { page } = req.query || 1;
+  const page = req.query.page || 1;
+  const search = req.query.search || "";
+  const sort = req.query.sort || "updatedAt";
   try {
     const limit = 25;
     const startIndex = (Number(page) - 1) * limit;
 
-    const total = await Template.countDocuments({ visibility: { $eq: true } });
-    const templates = await Template.find({ visibility: { $eq: true } }).limit(limit).skip(startIndex);
+    const keys = search?.trim()?.split(" ").map(e => new RegExp(e, 'gi'));
+
+    const total = await Template.countDocuments({ $or: [{ name: { $in: keys } }, { desc: { $in: keys } }], visibility: { $eq: true } });
+    const templates = await Template.find({ $or: [{ name: { $in: keys } }, { desc: { $in: keys } }], visibility: { $eq: true } }).sort({ [sort]: 1 }).limit(limit).skip(startIndex);
 
     res.status(200).json({
       templates,

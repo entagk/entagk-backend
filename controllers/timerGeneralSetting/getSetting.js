@@ -2,7 +2,7 @@ const TimerSetting = require('../../models/timerGeneralSetting');
 
 const getSetting = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user._id.toString();
 
     const settingData = await TimerSetting.findOne({ userId: userId });
 

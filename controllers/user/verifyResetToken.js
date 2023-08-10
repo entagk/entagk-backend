@@ -9,6 +9,7 @@ const verifyResetToken = async (req, res) => {
     } else {
       res.status(404).json({ verify: false, message: "Sorry, this user is not found." })
     }
+
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
