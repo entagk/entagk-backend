@@ -1,6 +1,21 @@
 const { default: mongoose } = require('mongoose');
 const ActiveDay = require('../../models/active');
+const User = require('../../models/user');
 const Task = require('../../models/task');
+
+const updateUser = async (oldDay, user, totalMins) => {
+  await User.findByIdAndUpdate(
+    user._id,
+    {
+      totalFocusDay: !oldDay ? user.totalFocusDay + 1 : user.totalFocusDay,
+      totalActiveDay: !oldDay ? user.totalActiveDay + 1 : user.totalActiveDay,
+      totalHours: user.totalHours + (totalMins / 60)
+    },
+    {
+      new: true
+    }
+  )
+}
 
 /**
  * res.body: 
@@ -67,8 +82,11 @@ const addActivity = async (req, res) => {
 
       const updateDay = await ActiveDay.findByIdAndUpdate(day._id, day, { new: true });
 
+      await updateUser(true, req.user, totalMins)
+
       res.status(200).json(updateDay)
     } else {
+
       if (activeTask) {
         const newTypes = taskData?.type ? [{ name: taskData?.type, totalMins }] : [];
         const newTasks = taskData?.name ? [{ id: taskData?._id, name: taskData.name, totalMins }] : [];
@@ -82,12 +100,16 @@ const addActivity = async (req, res) => {
           totalMins
         });
 
+        await updateUser(false, req.user, totalMins)
+
         res.status(200).json(newDay)
       } else {
         const newDay = await ActiveDay.create({
           userId: req.user?._id.toString(),
           totalMins
         });
+
+        await updateUser(false, req.user, totalMins)
 
         res.status(200).json(newDay)
       }
