@@ -42,13 +42,13 @@ const addActivity = async (req, res) => {
       day.totalMins = day.totalMins + totalMins;
 
       if (activeTask) {
-        const oldTask = dayTasks.filter(t => t.id === activeTask)[0] || { name: taskData.name };
-        oldTask.totalMins = totalMins + (oldTask?.totalMins || 0);
-        day.tasks = oldTask.name ? [...dayTasks.filter(t => t.id === activeTask), oldTask] : dayTasks;
+        const oldTask = dayTasks.filter(t => t.id === activeTask)[0] || { name: taskData.name, id: activeTask };
+        oldTask.totalMins = oldTask?.totalMins ? totalMins + oldTask?.totalMins : totalMins;
+        day.tasks = oldTask.name ? [...dayTasks.filter(t => t.id !== activeTask), oldTask] : dayTasks;
 
         if (taskData?.type) {
           const oldType = dayTypes.filter(t => t.name === taskData?.type)[0] || { name: taskData?.type };
-          oldType.totalMins = totalMins + (oldType?.totalMins || 0);
+          oldType.totalMins = oldType?.totalMins ? totalMins + oldType?.totalMins : totalMins;
 
           day.types = oldType.name ? [...dayTypes.filter(t => t.name !== oldType.name), oldType] : dayTypes;
         }
@@ -59,7 +59,7 @@ const addActivity = async (req, res) => {
           const oldTemplate =
             dayTemplates.filter(t => t.id === taskData?.template?._id)[0] ||
             { id: taskData.template?._id, name: templateData.name };
-          oldTemplate.totalMins = totalMins + (oldTemplate?.totalMins || 0);
+          oldTemplate.totalMins = oldTemplate?.totalMins ? totalMins + oldTemplate?.totalMins : totalMins;
 
           day.templates = oldTemplate.name ? [...day.templates.filter(t => t.id !== taskData?.template?._id), oldTemplate] : dayTemplates;
         }
