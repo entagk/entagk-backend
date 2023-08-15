@@ -4,5 +4,7 @@ const ActiveController = require('../controllers/activeDay');
 
 router.post('/', Auth, ActiveController.addActive);
 
+router.post('/:day', Auth, ActiveController.getDay);
+
 module.exports = router;
 

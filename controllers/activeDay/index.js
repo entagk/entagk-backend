@@ -1,3 +1,4 @@
 module.exports = {
-  addActive: require('./addActivity')
+  addActive: require('./addActivity'),
+  getDay: require('./getDay')
 }
