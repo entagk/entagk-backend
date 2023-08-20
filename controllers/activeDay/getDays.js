@@ -31,15 +31,15 @@ const getDays = async (req, res) => {
     const validateStartDate = validateDate(start);
     const validateEndDate = validateDate(end);
 
-    if (validateStartDate) res.status(400).json({ message: validateStartDate })
-    if (validateEndDate) res.status(400).json({ message: validateEndDate })
+    if (validateStartDate) return res.status(400).json({ message: validateStartDate })
+    if (validateEndDate) return res.status(400).json({ message: validateEndDate })
 
     if (start === end) {
       const dayData = await ActiveDay.findOne({ day: start, userId: req.user._id.toString() });
 
       res.status(200).json([dayData]);
     } else {
-      const days = calcDays(start, end);
+      const days = calcDays(start, end, res);
       const daysData = await ActiveDay
         .find
         (
