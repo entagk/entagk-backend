@@ -36,8 +36,9 @@ const getDays = async (req, res) => {
 
     if (start === end) {
       const dayData = await ActiveDay.findOne({ day: start, userId: req.user._id.toString() });
+      const daysData = dayData === null ? [] : [dayData];
 
-      res.status(200).json([dayData]);
+      res.status(200).json(daysData);
     } else {
       const days = calcDays(start, end, res);
       const daysData = await ActiveDay
