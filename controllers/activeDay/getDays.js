@@ -1,15 +1,15 @@
 const ActiveDay = require('../../models/active');
 const { validateDate } = require('../../utils/helper');
 
-const calcDays = (start, end, res) => {
+const calcDays = (start, end) => {
   const startDate = new Date(start);
   const endDate = new Date(end);
 
   const different = (endDate - startDate) / 1000 / 60 / 60 / 24;
   if (different < 0) {
-    res.status(400).json({ message: 'Invalid start and end days' });
+    return { message: 'Invalid start and end days' };
   } else if (different === 1) {
-    return [start, end];
+    return { days: [start, end] };
   } else {
     const days = [start, end,];
     for (let i = 1; i < different; i++) {
@@ -18,7 +18,7 @@ const calcDays = (start, end, res) => {
       days.push(date.toJSON().split('T')[0]);
     }
 
-    return days;
+    return { days: days };
   }
 }
 
@@ -26,7 +26,7 @@ const getDays = async (req, res) => {
   try {
     const { start, end } = req.query;
 
-    if (!start && !end) res.status(400).json({ message: "Please, enter the start and the end days" });
+    if (!start && !end) return res.status(400).json({ message: "Please, enter the start and the end days" });
 
     const validateStartDate = validateDate(start);
     const validateEndDate = validateDate(end);
@@ -40,25 +40,29 @@ const getDays = async (req, res) => {
 
       res.status(200).json(daysData);
     } else {
-      const days = calcDays(start, end, res);
-      const daysData = await ActiveDay
-        .find
-        (
-          {
-            day: { $in: days },
-            userId: req.user._id.toString()
-          }
-        );
+      const days = calcDays(start, end);
 
-      console.log(days);
-      console.log(daysData);
+      if (days?.message) {
+        res.status(400).json({ message: days.message });
+      } else {
+        const daysData = await ActiveDay
+          .find
+          (
+            {
+              day: { $in: days.days },
+              userId: req.user._id.toString()
+            }
+          );
 
-      res.status(200).json(daysData);
+        console.log(days);
+        console.log(daysData);
+
+        res.status(200).json(daysData);
+      }
     }
-
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: error?.message })
+    return res.status(400).json({ message: error?.message })
   }
 }
 
