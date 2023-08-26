@@ -12,7 +12,7 @@ const getDay = async (req, res) => {
     // 2. get the day data
     const dayData = await ActiveDay.findOne({ day, userId: req.user._id.toString() });
 
-    res.status(200).json(dayData);
+    return res.status(200).json(dayData);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error?.message });
