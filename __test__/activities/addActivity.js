@@ -1,5 +1,4 @@
 const path = require('path');
-const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../../server');
 

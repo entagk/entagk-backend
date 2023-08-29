@@ -13,5 +13,7 @@ afterAll((done) => {
 
 describe('Activities APIs', () => {
   require('./addActivity')();
+
+  require('./getDay')();
 })
 

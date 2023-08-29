@@ -6,9 +6,13 @@ const getDay = async (req, res) => {
   try {
     const { day } = req.params;
 
+    if (!day)
+      return res.status(400).json({ message: "No day parameter" });
+
     // 1. validate the day
     const validatedDate = validateDate(day);
-    if (validatedDate) res.status(400).json({ message: validatedDate });
+    if (validatedDate)
+      return res.status(400).json({ message: validatedDate });
     // 2. get the day data
     const dayData = await ActiveDay.findOne({ day, userId: req.user._id.toString() });
 
