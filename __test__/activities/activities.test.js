@@ -15,5 +15,7 @@ describe('Activities APIs', () => {
   require('./addActivity')();
 
   require('./getDay')();
+
+  require('./getDays')();
 })
 

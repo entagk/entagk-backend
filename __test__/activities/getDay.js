@@ -2,13 +2,13 @@ const path = require('path');
 const supertest = require('supertest');
 const app = require('../../server');
 
-const { getData, setData, test } = require('./utils');
+const { getData, test } = require('./utils');
 const validateAuth = require('../validateAuth');
 
 module.exports = () =>
   describe('Testing getDay GET through router /api/active/:day controller', () => {
     const utilsPath = path.resolve(__dirname, 'utils');
-    validateAuth('/api/active', 'post', utilsPath);
+    validateAuth('/api/active', 'get', utilsPath);
 
     it('send invalid year', (done) => {
       const token = getData('token');

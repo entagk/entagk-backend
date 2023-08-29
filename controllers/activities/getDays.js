@@ -26,13 +26,24 @@ const getDays = async (req, res) => {
     const startDate = new Date(start);
     const endDate = new Date(end);
 
-    if (!start && !end) return res.status(400).json({ message: "Please, enter the start and the end days" });
+    if (!start && !end)
+      return res.status(400).json({
+        message:
+          "Please, enter the start and the end days"
+      });
 
-    const validateStartDate = validateDate(start);
-    const validateEndDate = validateDate(end);
+    const validateStartDate = start ? validateDate(start) : 'Please, enter the start date';
+    const validateEndDate = end ? validateDate(end) : "Please, enter the end date";
 
-    if (validateStartDate) return res.status(400).json({ message: validateStartDate })
-    if (validateEndDate) return res.status(400).json({ message: validateEndDate })
+    if (validateStartDate)
+      return res.status(400).json({
+        message: start ? `${validateStartDate} for start date` : validateStartDate
+      });
+
+    if (validateEndDate)
+      return res.status(400).json({
+        message: end ? `${validateEndDate} for end date` : validateEndDate
+      })
 
     if (start === end) {
       const dayData = await ActiveDay.findOne({ day: start, userId: req.user._id.toString() });
@@ -42,7 +53,9 @@ const getDays = async (req, res) => {
     } else {
       const different = calcDifferent(start, end);
       if (different < 0) {
-        return res.status(400).json({ message: 'Invalid start and end days' });
+        return res.status(400).json({
+          message: 'Invalid start and end days'
+        });
       } else if (different > 31) {
         return res.status(400).json({ message: "Sorry, the limit is 31 days." });
       } else if (
@@ -71,7 +84,6 @@ const getDays = async (req, res) => {
 
         res.status(200).json(daysData);
       }
-
     }
   } catch (error) {
     console.log(error);
