@@ -51,6 +51,10 @@ app.use("/api/setting/", require("./routers/timerGeneralSetting"));
 
 app.use("/api/template/", require("./routers/template"));
 
+app.use('/api/leaderboard', require('./routers/leaderboard'));
+
+app.use('/api/active', require('./routers/active'));
+
 app.use(express.static(path.join(__dirname, 'build')));
 
 // use "*" for making make the react-router-dom working

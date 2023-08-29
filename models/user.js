@@ -20,9 +20,21 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    totalHours: {
+      type: Number,
+      default: 0
+    },
+    totalFocusDay: {
+      type: Number,
+      default: 0
+    },
+    totalActiveDay: {
+      type: Number,
+      default: 0
+    },
   },
   {
-    timeseries: true,
+    timestamps: true,
   }
 );
 

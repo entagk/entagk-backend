@@ -37,6 +37,14 @@ const createRefrishToken = (payload) => {
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "30d" })
 }
 
+const validateDate = (dayValue) => {
+  const [year, month, day] = dayValue?.split('-');
+  if (!year || year.length < 4) return 'invalid year';
+  else if (!month || month.length < 2 || Number(month) > 12 || Number(month) < 0) return 'invalid month';
+  else if (!day || day.length < 2 || Number(day) > 31 || Number(day) < 0) return 'invalid day';
+  else return '';
+}
+
 module.exports = {
   validNumber,
   validAudioType,
@@ -45,5 +53,6 @@ module.exports = {
   createObjFromObj,
   createAcessToken,
   createPasswordResetPassword,
-  createRefrishToken
+  createRefrishToken,
+  validateDate
 };
