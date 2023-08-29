@@ -4,6 +4,8 @@ const getYear = async (req, res) => {
   try {
     const { year } = req.query;
 
+    if (!year) return res.status(400).json({ message: "Invalid year value"})
+
     if (year.length !== 4) {
       return res.status(400).json({ message: "Invalid year" });
     }

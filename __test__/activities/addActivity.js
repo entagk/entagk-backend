@@ -219,7 +219,7 @@ module.exports = () =>
           if (err) throw err;
 
           const data = res.body;
-          const userId = getData('userId')
+          const userId = getData('userId');
           const oldDay = getData('days')[0];
           const taskTotalMins = 20;
           test(

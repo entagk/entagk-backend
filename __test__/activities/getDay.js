@@ -78,7 +78,7 @@ module.exports = () =>
         });
     })
 
-    it('send unfound day', (done) => {
+    it('send real day', (done) => {
       const token = getData('token');
       supertest(app)
         .get(`/api/active/${new Date().toJSON().split('T')[0]}`)
