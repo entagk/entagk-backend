@@ -31,17 +31,24 @@ const addActivity = async (req, res) => {
   try {
     const { activeTask, time } = req.body;
 
+    if (!activeTask && !time)
+      return res.status(400).json({ message: "Please, enter the active data" })
+
     // validate body data
     // 1. validate task data
-    if (!mongoose.Types.ObjectId.isValid(activeTask) && activeTask) res.status(400).json({ message: 'The active task id is not vaild.' });
+    if (!mongoose.Types.ObjectId.isValid(activeTask) && activeTask)
+      return res.status(400).json({ message: 'The active task id is not vaild.' });
 
     const taskData = await Task.findById(activeTask);
 
-    if (!taskData && activeTask) res.status(400).json({ message: "Invalid task" });
+    if (!taskData && activeTask)
+      return res.status(400).json({ message: "Invalid task" });
 
     // 2. validate time data
-    if (!time.start || time.start < 0) res.status(400).json({ message: "Invalid start time" });
-    if (!time.end || time.end < 0) res.status(400).json({ message: "Invalid end time" });
+    if (!time.start || time.start < 0)
+      return res.status(400).json({ message: "Invalid start time" });
+    if (!time.end || time.end < 0)
+      return res.status(400).json({ message: "Invalid end time" });
 
     const activeDay = new Date().toJSON().split('T')[0];
     const totalMins = (time.end - time.start) / 1000 / 60;
@@ -86,7 +93,6 @@ const addActivity = async (req, res) => {
 
       res.status(200).json(updateDay)
     } else {
-
       if (activeTask) {
         const newTypes = taskData?.type ? [{ name: taskData?.type, totalMins }] : [];
         const newTasks = taskData?.name ? [{ id: taskData?._id, name: taskData.name, totalMins }] : [];

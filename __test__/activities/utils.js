@@ -2,20 +2,18 @@ const path = require('path');
 const fs = require('fs');
 const mongoose = require('mongoose')
 
-const fileName = path.resolve(__dirname, "data.json");
+const fileName = path.resolve(__dirname, 'data.json');
 
 const init = {
-  "taskData": [
-    {
-      "name": "test1",
-      "est": 2,
-      "notes": "test1 test1 test1 test1"
-    }
-  ],
   "token": "",
   "userId": "",
-  "userData": ""
-};
+  "userData": {
+    "name": "testing123",
+    "email": "testing123@test.com",
+    "password": "testing123"
+  },
+  "days": []
+}
 
 module.exports = {
   getData: (field) => {
@@ -32,18 +30,6 @@ module.exports = {
       console.log(error);
     }
   },
-  setTokenAndUserId: (t, uId) => {
-    const oldData = JSON.parse(fs.readFileSync(fileName, { encoding: "utf-8" }));
-    try {
-      fs.writeFileSync(
-        fileName,
-        JSON.stringify({ ...oldData, token: t, userId: uId }),
-        { encoding: 'utf8', flag: '' }
-      );
-    } catch (err) {
-      console.log(err);
-    }
-  },
   setData: (field, data, index) => {
     const oldData = JSON.parse(fs.readFileSync(fileName, { encoding: 'utf-8' }))
     if (index >= 0) {
@@ -51,10 +37,23 @@ module.exports = {
     } else {
       oldData[field] = data;
     }
+
     try {
       fs.writeFileSync(
         fileName,
         JSON.stringify({ ...oldData }),
+        { encoding: 'utf8', flag: '' }
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  setTokenAndUserId: (t, uId) => {
+    const oldData = JSON.parse(fs.readFileSync(fileName, { encoding: "utf-8" }));
+    try {
+      fs.writeFileSync(
+        fileName,
+        JSON.stringify({ ...oldData, token: t, userId: uId }),
         { encoding: 'utf8', flag: '' }
       );
     } catch (err) {
@@ -84,5 +83,6 @@ module.exports = {
       if (data[k])
         expect(body[k]).toStrictEqual(data[k]);
     })
-  }
+  },
 }
+
