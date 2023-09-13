@@ -3,7 +3,6 @@ const AuthWS = require("../middlewares/authWS.js");
 const Auth = require("../middlewares/auth.js");
 const noteController = require('../controllers/stickyNotes');
 
-
 // get notes
 router.get('/', Auth, noteController.getNotes);
 // get opened notes
