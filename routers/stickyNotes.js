@@ -6,14 +6,13 @@ const noteController = require('../controllers/stickyNotes');
 // create note or update note
 router.ws('/:id', AuthWS, noteController.modifyNote)
 
+// get notes
+router.get('/', Auth, noteController.getNotes);
 // get opened notes
 router.get('/open/', Auth, noteController.getOpenedNotes);
 
 // get single note
 router.get('/:id', Auth, noteController.getSingleNote);
-
-
-// get notes
 
 // remove note
 
