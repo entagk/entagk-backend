@@ -9,9 +9,11 @@ const deleteNote = async (req, res) => {
       res.status(400).json({ message: "invalid note id" });
     }
 
-    await StickyNotes.deleteOne({ _id: id, userId: req.user?._id });
+    const deletedNote = await StickyNotes.deleteOne({ _id: id, userId: req.user?._id });
 
-    res.status(200).json({ message: "Deleted Succesfully", deletedId: id });
+    if (deletedNote.deletedCount === 1)
+      res.status(200).json({ message: "Deleted Succesfully", deletedId: id });
+    else res.status(404).json({ message: "Not found note" });
 
   } catch (error) {
     console.log(error);

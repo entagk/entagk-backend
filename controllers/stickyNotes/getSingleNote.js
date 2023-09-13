@@ -11,6 +11,8 @@ const getSingleNote = async (req, res) => {
 
     const note = await StickyNote.findById(id);
 
+    if (!note?._id) res.status(404).json({ message: "Not found note" });
+
     res.status(200).json(note);
   } catch (error) {
     console.log(error);
