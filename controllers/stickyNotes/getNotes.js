@@ -3,8 +3,8 @@ const StickyNotes = require('../../models/stickyNote');
 const getNotes = async (req, res) => {
   try {
     const user = req.user,
-      page = req.params.page || 1,
-      limit = 20,
+      page = req.query.page || 1,
+      limit = 25,
       startIndex = (Number(page) - 1) * limit;
 
     const total = await StickyNotes.countDocuments({ userId: user._id });
