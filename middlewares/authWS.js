@@ -14,7 +14,8 @@ const Auth = async (ws, req, next) => {
 
     if (!token) {
       error = 1;
-      ws.close(1013, JSON.stringify({ message: "Invalid Authentication" }));
+      ws.send(JSON.stringify({ message: "Invalid Authentication" }));
+      ws.close(1013, "Invalid Authentication");
     }
 
     const isCustomAuth = token.length < 500;
@@ -22,7 +23,8 @@ const Auth = async (ws, req, next) => {
     const tokenValidateion = jwt.decode(token);
     if (tokenValidateion?.exp * 1000 < new Date().getTime()) {
       error = 1;
-      ws.close(1013, JSON.stringify({ message: "Invalid Authentication and jwt expired" }));
+      ws.send(JSON.stringify({ message: "Invalid Authentication and jwt expired" }));
+      ws.close(1013, "Invalid Authentication and jwt expired");
     }
 
     let decodedData, userId;
@@ -39,14 +41,16 @@ const Auth = async (ws, req, next) => {
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       error = 1;
-      ws.close(1013, JSON.stringify({ message: "Invalid Authentication." }));
+      ws.send(JSON.stringify({ message: "Invalid Authentication." }));
+      ws.close(1013, "Invalid Authentication.");
     }
-
+    
     const user = await User.findById(userId).select("-password") || await User.findOne({ email: decodedData.email }).select("-password");
-
+    
     if (!user) {
       error = 1;
-      ws.close(1013, JSON.stringify({ message: "user not found" }));
+      ws.send(JSON.stringify({ message: "user not found" }));
+      ws.close(1013, "user not found");
     }
 
     req.user = user;
@@ -54,6 +58,7 @@ const Auth = async (ws, req, next) => {
     if (!error) next();
   } catch (error) {
     console.log(error);
+    ws.send(JSON.stringify(error));
     ws.close(1011, error.message);
   }
 }

@@ -57,83 +57,89 @@ const validateContent = (content) => {
 }
 
 const modifyNote = async (ws, req) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  ws.isPaused = false;
+    ws.isPaused = false;
 
-  if (!id) {
-    ws.send("The id is required");
-    ws.close(1007, "The id is required");
-    ws.isPaused = true;
-  } else if ((!mongoose.Types.ObjectId.isValid(id) && id !== 'new')) {
-    ws.send("Invalid Id");
-    ws.close(1007, "Invalid Id");
-    ws.isPaused = true;
+    if (!id) {
+      ws.send(JSON.stringify({ message: "The id is required" }));
+      ws.close(1007, "The id is required");
+      ws.isPaused = true;
+    } else if ((!mongoose.Types.ObjectId.isValid(id) && id !== 'new')) {
+      ws.send(JSON.stringify({ message: "Invalid Id" }));
+      ws.close(1007, "Invalid Id");
+      ws.isPaused = true;
+    }
+
+    const note = id !== 'new' ? await StickyNote.findById(id) : {};
+
+    if (!note?._id && id !== 'new') {
+      ws.send(JSON.stringify({ message: "Invalid Id" }));
+      ws.close(1007, "Invalid Id");
+      ws.isPaused = true;
+    }
+
+    ws.on('message', async function (msg) {
+      const msgData = JSON.parse(msg);
+
+      // validate note content
+      if (msgData?.content && !validateContent(msgData?.content)) {
+        ws.send(JSON.stringify({ message: "invalid content" }));
+        ws.close(1007, 'invalid content');
+        ws.isPaused = true;
+      }
+
+      // validate coordinates
+      if (msgData?.coordinates) {
+        const { width, height } = msgData.coordinates;
+        if (!width && !height) {
+          ws.send(JSON.stringify({ message: "invalid coordinates" }));
+          ws.close(1007, 'invalid coordinates');
+          ws.isPaused = true;
+        }
+
+        if (width < 100) {
+          ws.send(JSON.stringify({ message: "invalid width" }));
+          ws.close(1007, 'invalid width');
+          ws.isPaused = true;
+        }
+
+        if (height < 100) {
+          ws.send(JSON.stringify({ message: "invalid height" }));
+          ws.close(1007, 'invalid height');
+          ws.isPaused = true;
+        }
+
+        msgData.coordinates = { ...note.coordinates, ...msgData.coordinates };
+      }
+
+      if (msgData?.color && typeof msgData.color !== 'string') {
+        ws.send(JSON.stringify({ message: "invalid color" }));
+        ws.close(1007, 'invalid color');
+        ws.isPaused = true;
+      }
+
+      if (msgData?.open && typeof msgData?.open !== 'boolean') {
+        ws.send(JSON.stringify({ message: "invalid open" }));
+        ws.close(1007, 'invalid open');
+        ws.isPaused = true;
+      }
+
+      if (!ws.isPaused) {
+        const updatedNote =
+          id === 'new' ?
+            await StickyNote.create({ ...msgData, userId: req.user._id }) :
+            await StickyNote.findByIdAndUpdate(note._id, msgData, { new: true });
+
+        ws.send(JSON.stringify(updatedNote));
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    ws.send(JSON.stringify(error));
+    ws.close(1011, error.message);
   }
-
-  const note = id !== 'new' ? await StickyNote.findById(id) : {};
-
-  if (!note?._id && id !== 'new') {
-    ws.send("Invalid Id");
-    ws.close(1007, "Invalid Id");
-    ws.isPaused = true;
-  }
-
-  ws.on('message', async function (msg) {
-    const msgData = JSON.parse(msg);
-
-    // validate note content
-    if (msgData?.content && !validateContent(msgData?.content)) {
-      ws.send('invalid content');
-      ws.close(1007, 'invalid content');
-      ws.isPaused = true;
-    }
-
-    // validate coordinates
-    if (msgData?.coordinates) {
-      const { width, height } = msgData.coordinates;
-      if (!width && !height) {
-        ws.send("invalid coordinates");
-        ws.close(1007, 'invalid coordinates');
-        ws.isPaused = true;
-      }
-
-      if (width < 100) {
-        ws.send("invalid width");
-        ws.close(1007, 'invalid width');
-        ws.isPaused = true;
-      }
-
-      if (height < 100) {
-        ws.send("invalid height");
-        ws.close(1007, 'invalid height');
-        ws.isPaused = true;
-      }
-
-      msgData.coordinates = { ...note.coordinates, ...msgData.coordinates };
-    }
-
-    if (msgData?.color && typeof msgData.color !== 'string') {
-      ws.send('invalid color');
-      ws.close(1007, 'invalid color');
-      ws.isPaused = true;
-    }
-
-    if (msgData?.open && typeof msgData?.open !== 'boolean') {
-      ws.send('invalid open');
-      ws.close(1007, 'invalid open');
-      ws.isPaused = true;
-    }
-
-    if (!ws.isPaused) {
-      const updatedNote =
-        id === 'new' ?
-          await StickyNote.create({ ...msgData, userId: req.user._id }) :
-          await StickyNote.findByIdAndUpdate(note._id, msgData, { new: true });
-
-      ws.send(JSON.stringify(updatedNote));
-    }
-  });
 };
 
 module.exports = modifyNote;
