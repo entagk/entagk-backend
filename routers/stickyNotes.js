@@ -1,10 +1,10 @@
 const router = require("express").Router();
 const AuthWS = require("../middlewares/authWS.js");
-// const Auth = require("../middlewares/auth.js");
+const Auth = require("../middlewares/auth.js");
 const noteController = require('../controllers/stickyNotes');
 
 // get single note
-// router.get('/:id', Auth, );
+router.get('/:id', Auth, noteController.getSingleNote);
 
 // get opened notes
 
