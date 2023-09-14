@@ -8,9 +8,10 @@ const mongoose = require("mongoose");
  * position: Object,
  * color: String,
  * open: Boolean,
- *  userId : String,
- *  createdAt: Date,
- *  updatedAt: Date,
+ * contentLength: Object,
+ * userId : String,
+ * createdAt: Date,
+ * updatedAt: Date,
  * }
  */
 
@@ -19,6 +20,10 @@ const stickySchema = new mongoose.Schema(
     content: {
       type: Array,
       require: [true, "Please, enter the note content"]
+    },
+    contentLength: {
+      type: Object,
+      require: [true, "Please, enter the note length"]
     },
     coordinates: {
       type: Object,

@@ -23,35 +23,41 @@ const validateContent = (content) => {
     "strikethrough",
   ]
 
-  if (content.length === 0) return false;
+  if (content.length === 0)
+    return { validContent: false, textLength: 0 };
 
   let textLength = 0;
   if (!content instanceof Array) {
-    return false;
+    return { validContent: false, textLength: 0 };
   } else {
     for (const row of content) {
       if (!types.includes(row.type) || !row.children) {
-        return false;
+        return { validContent: false, textLength, invalidType: true };
       }
 
       if (row.children.length === 0 || (row.children.length === 1 && row.children[0].text.trim().length === 0)) {
-        return false;
+        return { validContent: false, textLength, invalidChildren: true };
       }
 
       if (row.type === "numbered-list" || row.type === "bulleted-list") {
-        if (!validateContent(row.children)) return false;
+        const validList = validateContent(row.children);
+        if (!validList.validContent)
+          return { validContent: false, textLength, invalidChildren: true };
+        else textLength += validList.textLength;
       } else {
         for (const text of row.children) {
-          if (!text.text) return false;
+          if (!text.text)
+            return { validContent: false, textLength, invalidChildren: true };
           const textStyles = Object.keys(text).filter(s => s !== 'text');
-          if (!textStyles.every(sty => styles.includes(sty))) return false;
+          if (!textStyles.every(sty => styles.includes(sty)))
+            return { validContent: false, textLength, invalidChildren: true };
           textLength += text.text.trim().length;
         };
       }
     }
   }
 
-  return textLength > 0 ? true : false;
+  return { validContent: textLength > 0 ? true : false, textLength };
 }
 
 const modifyNote = async (ws, req) => {
@@ -82,13 +88,15 @@ const modifyNote = async (ws, req) => {
     ws.on('message', async function (msg) {
       const msgData = JSON.parse(msg);
 
-      if (id === 'new' && (!msgData?.content || !validateContent(msgData?.content))) {
+      const validContent = validateContent(msgData?.content);
+
+      if (id === 'new' && (!msgData?.content || !validContent.validContent)) {
         ws.send(JSON.stringify({ message: "invalid note" }));
         ws.isPaused = true;
       }
 
       // validate note content
-      if (msgData?.content && !validateContent(msgData?.content)) {
+      if (msgData?.content && !validContent.validContent) {
         ws.send(JSON.stringify({ message: "invalid content" }));
         ws.isPaused = true;
       }
@@ -125,10 +133,24 @@ const modifyNote = async (ws, req) => {
       }
 
       if (!ws.isPaused) {
+        if (msgData.content) {
+          msgData.contentLength = {
+            textLength: validContent.textLength,
+            arrayLength: msgData.content.length
+          }
+        }
+
         const updatedNote =
           id === 'new' ?
-            await StickyNote.create({ ...msgData, userId: req.user._id }) :
-            await StickyNote.findByIdAndUpdate(note._id, msgData, { new: true });
+            await StickyNote.create({
+              ...msgData,
+              userId: req.user._id,
+            }) :
+            await StickyNote.findByIdAndUpdate(
+              note._id,
+              msgData,
+              { new: true }
+            );
 
         ws.send(JSON.stringify(updatedNote));
         if (id === 'new') ws.close(1000, "Done");
