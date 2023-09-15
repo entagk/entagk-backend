@@ -46,8 +46,6 @@ const validateContent = (content) => {
         else textLength += validList.textLength;
       } else {
         for (const text of row.children) {
-          if (!text.text)
-            return { validContent: false, textLength, invalidChildren: true };
           const textStyles = Object.keys(text).filter(s => s !== 'text');
           if (!textStyles.every(sty => styles.includes(sty)))
             return { validContent: false, textLength, invalidChildren: true };
@@ -64,6 +62,8 @@ const modifyNote = async (ws, req) => {
   try {
     const { id } = req.params;
 
+    let note;
+
     ws.isPaused = false;
     ws.on('upgrade', async () => {
       if (!id) {
@@ -76,7 +76,7 @@ const modifyNote = async (ws, req) => {
         ws.isPaused = true;
       }
 
-      const note = id !== 'new' ? await StickyNote.findById(id) : {};
+      note = id !== 'new' ? await StickyNote.findById(id) : {};
 
       if (!note?._id && id !== 'new') {
         ws.send(JSON.stringify({ message: "Invalid Id" }));
@@ -87,8 +87,9 @@ const modifyNote = async (ws, req) => {
 
     ws.on('message', async function (msg) {
       const msgData = JSON.parse(msg);
+      console.log(msgData);
 
-      const validContent = validateContent(msgData?.content);
+      const validContent = msgData?.content ? validateContent(msgData?.content) : { validateContent: false };
 
       if (id === 'new' && (!msgData?.content || !validContent.validContent)) {
         ws.send(JSON.stringify({ message: "invalid note" }));
@@ -119,7 +120,7 @@ const modifyNote = async (ws, req) => {
           ws.isPaused = true;
         }
 
-        msgData.coordinates = { ...note.coordinates, ...msgData.coordinates };
+        msgData.coordinates = { ...note?.coordinates, ...msgData.coordinates };
       }
 
       if (msgData?.color && typeof msgData.color !== 'string') {
@@ -147,7 +148,7 @@ const modifyNote = async (ws, req) => {
               userId: req.user._id,
             }) :
             await StickyNote.findByIdAndUpdate(
-              note._id,
+              note?._id,
               msgData,
               { new: true }
             );
