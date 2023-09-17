@@ -151,7 +151,6 @@ const modifyNote = async (ws, req) => {
             );
 
         ws.send(JSON.stringify(updatedNote));
-        if (id === 'new') ws.close(1000, "Done");
       }
     });
   } catch (error) {
