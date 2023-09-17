@@ -9,7 +9,7 @@ router.get('/', Auth, noteController.getNotes);
 router.get('/open/', Auth, noteController.getOpenedNotes);
 
 // create note or update note
-router.ws('/:id', AuthWS, noteController.modifyNote);
+router.ws('/', AuthWS, noteController.modifyNote);
 
 // get single note
 router.get('/:id', Auth, noteController.getSingleNote);

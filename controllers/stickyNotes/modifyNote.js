@@ -35,7 +35,7 @@ const validateContent = (content) => {
         return { validContent: false, textLength, invalidType: true };
       }
 
-      if (row.children.length === 0 || (row.children.length === 1 && row.children[0].text.trim().length === 0)) {
+      if (row.children.length === 0) {
         return { validContent: false, textLength, invalidChildren: true };
       }
 
@@ -55,7 +55,7 @@ const validateContent = (content) => {
     }
   }
 
-  return { validContent: textLength > 0 ? true : false, textLength };
+  return { validContent: true, textLength };
 }
 
 const modifyNote = async (ws, req) => {
