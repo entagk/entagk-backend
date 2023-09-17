@@ -60,12 +60,14 @@ const validateContent = (content) => {
 
 const modifyNote = async (ws, req) => {
   try {
-    const { id } = req.params;
-
     let note;
 
     ws.isPaused = false;
-    ws.on('upgrade', async () => {
+    ws.on('message', async function (msg) {
+      const msgData = JSON.parse(msg);
+      const id = msgData?.id || msgData?._id;
+      console.log(msgData);
+
       if (!id) {
         ws.send(JSON.stringify({ message: "The id is required" }));
         ws.close(1007, "The id is required");
@@ -83,11 +85,6 @@ const modifyNote = async (ws, req) => {
         ws.close(1007, "Invalid Id");
         ws.isPaused = true;
       }
-    })
-
-    ws.on('message', async function (msg) {
-      const msgData = JSON.parse(msg);
-      console.log(msgData);
 
       const validContent = msgData?.content ? validateContent(msgData?.content) : { validateContent: false };
 
