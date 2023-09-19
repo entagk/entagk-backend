@@ -72,15 +72,15 @@ const modifyNote = async (ws, req) => {
         ws.send(JSON.stringify({ message: "The id is required" }));
         ws.close(1007, "The id is required");
         ws.isPaused = true;
-      } else if ((!mongoose.Types.ObjectId.isValid(id) && id !== 'new')) {
+      } else if ((!mongoose.Types.ObjectId.isValid(id) && !id.includes('new'))) {
         ws.send(JSON.stringify({ message: "Invalid Id" }));
         ws.close(1007, "Invalid Id");
         ws.isPaused = true;
       }
 
-      note = id !== 'new' ? await StickyNote.findById(id) : {};
+      note = !id.includes('new') ? await StickyNote.findById(id) : {};
 
-      if (!note?._id && id !== 'new') {
+      if (!note?._id && !id.includes('new')) {
         ws.send(JSON.stringify({ message: "Invalid Id" }));
         ws.close(1007, "Invalid Id");
         ws.isPaused = true;
@@ -88,7 +88,7 @@ const modifyNote = async (ws, req) => {
 
       const validContent = msgData?.content ? validateContent(msgData?.content) : { validateContent: false };
 
-      if (id === 'new' && (!msgData?.content || !validContent.validContent)) {
+      if (id.includes('new') && (!msgData?.content || !validContent.validContent)) {
         ws.send(JSON.stringify({ message: "invalid note" }));
         ws.isPaused = true;
       }
@@ -138,8 +138,11 @@ const modifyNote = async (ws, req) => {
           }
         }
 
+        delete msgData?.id;
+        delete msgData?._id;
+
         const updatedNote =
-          id === 'new' ?
+          id.includes('new') ?
             await StickyNote.create({
               ...msgData,
               userId: req.user._id,
@@ -150,7 +153,7 @@ const modifyNote = async (ws, req) => {
               { new: true }
             );
 
-        ws.send(JSON.stringify(updatedNote));
+        ws.send(JSON.stringify({ ...updatedNote?._doc, oldId: !id.includes('new') ? id : id }));
       }
     });
   } catch (error) {
