@@ -23,6 +23,20 @@ const validateContent = (content) => {
     "strikethrough",
   ]
 
+  const validateChildren = (children) => {
+    for (const text of children) {
+      if (text.type !== 'link') {
+        const textStyles = Object.keys(text).filter(s => s !== 'text');
+        if (!textStyles.every(sty => styles.includes(sty)))
+          return { validContent: false, textLength, invalidChildren: true };
+        textLength += text.text?.trim()?.length;
+      } else {
+        const validLink = validateChildren(text.children);
+        textLength += validLink.textLength;
+      }
+    };
+  }
+
   if (content.length === 0)
     return { validContent: false, textLength: 0 };
 
@@ -46,10 +60,14 @@ const validateContent = (content) => {
         else textLength += validList.textLength;
       } else {
         for (const text of row.children) {
-          const textStyles = Object.keys(text).filter(s => s !== 'text');
-          if (!textStyles.every(sty => styles.includes(sty)))
-            return { validContent: false, textLength, invalidChildren: true };
-          textLength += text.text.trim().length;
+          if (text.type !== 'link') {
+            const textStyles = Object.keys(text).filter(s => s !== 'text');
+            if (!textStyles.every(sty => styles.includes(sty)))
+              return { validContent: false, textLength, invalidChildren: true };
+            textLength += text.text?.trim()?.length;
+          } else {
+            textLength += text.children[0].text?.trim()?.length;
+          }
         };
       }
     }
@@ -66,7 +84,6 @@ const modifyNote = async (ws, req) => {
     ws.on('message', async function (msg) {
       const msgData = JSON.parse(msg);
       const id = msgData?.id || msgData?._id;
-      console.log(msgData);
 
       if (!id) {
         ws.send(JSON.stringify({ message: "The id is required" }));
