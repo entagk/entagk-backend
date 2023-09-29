@@ -9,7 +9,7 @@ const getNotes = async (req, res) => {
 
     const total = await StickyNotes.countDocuments({ userId: user._id });
     const notes = await StickyNotes.find(
-      { userId: user._id, },
+      { userId: user._id, open: false },
       { // this projection for getting one element at content array.
         content: { $slice: 1 },
       }
