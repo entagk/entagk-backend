@@ -4,4 +4,5 @@ module.exports = {
   deleteNote: require('./deleteNote'),
   getOpenedNotes: require('./getOpenedNotes'),
   getNotes: require('./getNotes'),
+  addMultipleNotes: require("./addMultipleNotes")
 }

@@ -1,80 +1,6 @@
 const mongoose = require('mongoose');
 const StickyNote = require('../../models/stickyNote');
-
-const validateContent = (content) => {
-  const types = [
-    "heading-one",
-    "heading-two",
-    "block-quote",
-    "bulleted-list",
-    "numbered-list",
-    "list-item",
-    "link",
-    "paragraph"
-  ];
-
-  const styles = [
-    "bold",
-    "code",
-    "italic",
-    "underline",
-    "subscript",
-    "superscript",
-    "strikethrough",
-  ]
-
-  const validateChildren = (children) => {
-    for (const text of children) {
-      if (text.type !== 'link') {
-        const textStyles = Object.keys(text).filter(s => s !== 'text');
-        if (!textStyles.every(sty => styles.includes(sty)))
-          return { validContent: false, textLength, invalidChildren: true };
-        textLength += text.text?.trim()?.length;
-      } else {
-        const validLink = validateChildren(text.children);
-        textLength += validLink.textLength;
-      }
-    };
-  }
-
-  if (content.length === 0)
-    return { validContent: false, textLength: 0 };
-
-  let textLength = 0;
-  if (!content instanceof Array) {
-    return { validContent: false, textLength: 0 };
-  } else {
-    for (const row of content) {
-      if (!types.includes(row.type) || !row.children) {
-        return { validContent: false, textLength, invalidType: true };
-      }
-
-      if (row.children.length === 0) {
-        return { validContent: false, textLength, invalidChildren: true };
-      }
-
-      if (row.type === "numbered-list" || row.type === "bulleted-list") {
-        const validList = validateContent(row.children);
-        if (!validList.validContent)
-          return { validContent: false, textLength, invalidChildren: true };
-        else textLength += validList.textLength;
-      } else {
-        for (const text of row.children) {
-          if (text.type !== 'link') {
-            const textStyles = Object.keys(text).filter(s => s !== 'text');
-            if (!textStyles.every(sty => styles.includes(sty)))
-              return { validContent: false, textLength, invalidChildren: true };
-            textLength += text.text?.trim()?.length;
-          } else {
-            textLength += text.children[0].text?.trim()?.length;
-          }
-        };
-      }
-    }
-  }
-
-  return { validContent: true, textLength };
-}
+const { validateNoteContent } = require('../../utils/helper');
 
 const modifyNote = async (ws, req) => {
   try {
@@ -103,7 +29,7 @@ const modifyNote = async (ws, req) => {
         ws.isPaused = true;
       }
 
-      const validContent = msgData?.content ? validateContent(msgData?.content) : { validateContent: false };
+      const validContent = msgData?.content ? validateNoteContent(msgData?.content) : { validateContent: false };
 
       if (id.includes('new') && (!msgData?.content || !validContent.validContent)) {
         ws.send(JSON.stringify({ message: "invalid note" }));
@@ -137,7 +63,9 @@ const modifyNote = async (ws, req) => {
         msgData.coordinates = { ...note?.coordinates, ...msgData.coordinates };
       }
 
-      if (msgData?.color && typeof msgData.color !== 'string') {
+      const colors = ["pink", "yellow", "orange", "green", "blue"];
+
+      if (msgData?.color && (typeof msgData.color !== 'string' || colors.includes(msgData.color))) {
         ws.send(JSON.stringify({ message: "invalid color" }));
         ws.isPaused = true;
       }
