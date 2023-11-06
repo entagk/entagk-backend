@@ -65,7 +65,7 @@ const modifyNote = async (ws, req) => {
 
       const colors = ["pink", "yellow", "orange", "green", "blue"];
 
-      if (msgData?.color && (typeof msgData.color !== 'string' || colors.includes(msgData.color))) {
+      if (msgData?.color && (typeof msgData.color !== 'string' || !colors.includes(msgData.color))) {
         ws.send(JSON.stringify({ message: "invalid color" }));
         ws.isPaused = true;
       }
