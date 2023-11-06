@@ -12,8 +12,12 @@ const bodyParser = require("body-parser");
  */
 const cors = require("cors");
 const dotenv = require("dotenv");
-// const fileUpload = require('express-fileupload');
+
 const app = express();
+
+const expressWs = require('express-ws');
+
+expressWs(app);
 
 dotenv.config();
 
@@ -54,6 +58,8 @@ app.use("/api/template/", require("./routers/template"));
 app.use('/api/leaderboard', require('./routers/leaderboard'));
 
 app.use('/api/active', require('./routers/active'));
+
+app.use('/api/stickynote', require('./routers/stickyNotes'));
 
 app.use(express.static(path.join(__dirname, 'build')));
 
