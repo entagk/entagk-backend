@@ -16,6 +16,7 @@ const mongoose = require("mongoose");
  *    _id: ObjectId(templateId),
  *    todo: false
  *  },
+ *  type: {name: "Work", cod: "1F4BC"}
  *  taskClone: "",
  * }
  */
@@ -70,6 +71,10 @@ const taskSchema = new mongoose.Schema(
     setting: {// templateTodo
       type: Object,
       default: null
+    },
+    type: {
+      type: Object,
+      default: { name: "Nothing", code: "1F6AB" }
     },
     templateClone: "" // templateTodo
   },
