@@ -6,7 +6,7 @@ const updateTask = async (req, res) => {
     const { id } = req.params;
     const oldTask = req.oldTask;
 
-    const { name, est, act, notes, project, order, setting } = req.body;
+    const { name, est, act, notes, project, order, setting, type } = req.body;
 
     const newAct = req.body?.act !== undefined ? act : oldTask?.act;
     const newEst = req.body?.est !== undefined ? est : oldTask?.est;
@@ -17,7 +17,7 @@ const updateTask = async (req, res) => {
       }
     });
 
-    const newTask = { name, est: newEst, act: newAct, notes, project, order, check: newAct === newEst, setting };
+    const newTask = { name, est: newEst, act: newAct, notes, project, order, check: newAct === newEst, setting, type };
     const updatedTask = await Task.findByIdAndUpdate(id, newTask, { new: true });
 
     if (oldTask.template) {
