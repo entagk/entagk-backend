@@ -51,6 +51,10 @@ const templateSchema = mongoose.Schema(
       type: Boolean,
       default: false
     },
+    type: {
+      type: Object,
+      default: { name: "Nothing", code: "1F6AB" }
+    },
     desc: {
       type: String,
       require: [true, "please enter the template description!"]
