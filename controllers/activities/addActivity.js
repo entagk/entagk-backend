@@ -56,6 +56,7 @@ const addActivity = async (req, res) => {
       day: activeDay,
       userId: req.user._id.toString()
     });
+    console.log(day);
 
     if (day) {
       const dayTypes = day.types;
@@ -69,10 +70,10 @@ const addActivity = async (req, res) => {
         day.tasks = oldTask.name ? [...dayTasks.filter(t => t.id !== activeTask), oldTask] : dayTasks;
 
         if (taskData?.type) {
-          const oldType = dayTypes.filter(t => t.name === taskData?.type)[0] || { name: taskData?.type };
+          const oldType = dayTypes.filter(t => t?.typeData?.name === taskData?.type.name)[0] || { typeData: taskData?.type };
           oldType.totalMins = oldType?.totalMins ? totalMins + oldType?.totalMins : totalMins;
 
-          day.types = oldType.name ? [...dayTypes.filter(t => t.name !== oldType.name), oldType] : dayTypes;
+          day.types = oldType?.typeData?.name ? [...dayTypes.filter(t => t?.typeData?.name !== oldType.name), oldType] : dayTypes;
         }
 
         if (taskData?.template?.todo) {
@@ -94,7 +95,7 @@ const addActivity = async (req, res) => {
       res.status(200).json(updateDay)
     } else {
       if (activeTask) {
-        const newTypes = taskData?.type ? [{ name: taskData?.type, totalMins }] : [];
+        const newTypes = taskData?.type ? [{ typeData: taskData?.type, totalMins }] : [];
         const newTasks = taskData?.name ? [{ id: taskData?._id, name: taskData.name, totalMins }] : [];
         const newTemplates = taskData?.template?.todo ? [{ id: taskData?.template?._id, name: await Task.findById(taskData?.template?._id).name, totalMins }] : [];
 
