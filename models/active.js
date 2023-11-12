@@ -11,7 +11,7 @@ const activeSchema = new mongoose.Schema(
       default: []
     },
     tasks: {
-      type: Array,// [{id, name, totalMins}]
+      type: Array,// [{id, typeData, totalMins}]
       default: []
     },
     totalMins: {

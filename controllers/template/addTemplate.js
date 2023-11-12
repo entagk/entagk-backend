@@ -7,6 +7,7 @@ const addTemplate = async (req, res) => {
     const props = `
       name,
       visibility,
+      type,
       desc,
       tasks,
       iconURL,

@@ -1,3 +1,4 @@
+const { types } = require('../utils/helper')
 /**
  * [
     {
@@ -40,7 +41,7 @@ const ValidateMultiTasksData = async (req, res, next) => {
 
     for (let index = 0; index < tasks.length; index++) {
       const task = tasks[index];
-      const { name, est, act, notes, project, order } = task;
+      const { name, est, act, notes, project, order, type } = task;
 
       if (!name?.trim() || !est)
         return res.status(400).json({
@@ -84,6 +85,13 @@ const ValidateMultiTasksData = async (req, res, next) => {
 
       if (order < 0 || !order) task.order = index;
 
+      // fix it if you want to give the user ability of adding other type
+      if (type && !types.find(t => t.name === type.name && t.code === type.code)) {
+        return res.status(400).json({
+          message: "Invalid task type"
+        });
+      }
+
       delete task?._id;
     }
 
@@ -96,4 +104,4 @@ const ValidateMultiTasksData = async (req, res, next) => {
   }
 }
 
-module.exports = ValidateMultiTasksData;
+module.exports = ValidateMultiTasksData;  

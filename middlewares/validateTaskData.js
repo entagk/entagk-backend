@@ -1,10 +1,11 @@
 const Template = require("../models/template");
 const Task = require("../models/task");
 const mongoose = require("mongoose");
+const { types } = require('../utils/helper');
 
 const validateTaskData = async (req, res, next) => {
   try {
-    const { name, est, act, notes, project, order, template } = req.body;
+    const { name, est, act, notes, project, order, template, type } = req.body;
     if (req._parsedUrl.pathname === '/add/') {
       if (!name?.trim() || !est)
         return res.status(400).json({
@@ -29,6 +30,7 @@ const validateTaskData = async (req, res, next) => {
           est: "The est shouldn't be negative number."
         }
       });
+
     if (name?.length > 50 && name?.trim())
       return res.status(400).json({
         errors: {
@@ -41,7 +43,14 @@ const validateTaskData = async (req, res, next) => {
         errors: {
           notes: "The notes length is more than 500 characters."
         }
-      })
+      });
+
+    // fix it if you want to give the user ability of adding other type
+    if (type && !types.find(t => t.name === type.name && t.code === type.code)) {
+      return res.status(400).json({
+        message: "Invalid task type"
+      });
+    }
 
     const templateData = await Template.findById(template?._id) || await Task.findById(template?._id);
     if (template) {

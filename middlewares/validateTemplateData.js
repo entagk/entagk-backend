@@ -1,9 +1,12 @@
+const { types } = require('../utils/helper');
+
 const validateTemplateData = (req, res, next) => {
   try {
     const {
       name,
       desc,
-      tasks
+      tasks,
+      type
     } = req.body;
 
     if (req._parsedUrl.pathname === '/add/') {
@@ -25,6 +28,13 @@ const validateTemplateData = (req, res, next) => {
     if (name?.trim()?.length > 50 && name?.trim()) return res.status(400).json({ errors: { name: "The name length is more than 50 characters." } })
 
     if (desc?.trim()?.length > 500 && desc?.trim()) return res.status(400).json({ errors: { desc: "The description length is more than 500 characters." } })
+
+    // fix it if you want to give the user ability of adding other type
+    if (type && !types.find(t => t.name === type.name && t.code === type.code)) {
+      return res.status(400).json({
+        message: "Invalid task type"
+      });
+    }
 
     if (req._parsedUrl.pathname === '/add/') {
       if (!tasks || tasks.length === 0) return res.status(400).json({ message: "please enter the template tasks." });
@@ -74,6 +84,13 @@ const validateTemplateData = (req, res, next) => {
               notes: `For task ${index + 1}, The notes length is more than 500 characters.`
             }
           });
+
+        // fix it if you want to give the user ability of adding other type
+        if (type && !types.find(t => t.name === type.name && t.code === type.code)) {
+          return res.status(400).json({
+            message: "Invalid task type"
+          });
+        }
       }
     }
 
