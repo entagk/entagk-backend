@@ -44,6 +44,11 @@ const Auth = async (req, res, next) => {
 
     req.user = user;
 
+    if (user.totalFocusDay > 0 &&
+      Math.ceil(((new Date(new Date().toJSON().split('T')[0]) - new Date(new Date(user?.updatedAt).toJSON().split("T")[0])) / 1000 / 60 / 60 / 24)) > 1) {
+      req.user = await User.findByIdAndUpdate(user._id, { totalFocusDay: 0 }, { new: true });
+    }
+
     next();
   } catch (error) {
     console.log(error);
