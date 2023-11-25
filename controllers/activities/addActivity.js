@@ -18,22 +18,27 @@ const updateUser = async (oldDay, user, totalMins) => {
 }
 
 const updateActiveDay = async (day, activeTask, taskData, user, totalMins) => {
-  if (day) {
-    const dayTypes = day.types;
-    const dayTemplates = day.templates;
-    const dayTasks = day.tasks;
-    day.totalMins = day.totalMins + totalMins;
+  const dayData = await ActiveDay.findOne({
+    day: day,
+    userId: user._id.toString()
+  });
+
+  if (dayData) {
+    const dayTypes = dayData.types;
+    const dayTemplates = dayData.templates;
+    const dayTasks = dayData.tasks;
+    dayData.totalMins = dayData.totalMins + totalMins;
 
     if (activeTask) {
       const oldTask = dayTasks.filter(t => t.id === activeTask)[0] || { name: taskData.name, id: activeTask, type: taskData?.type };
       oldTask.totalMins = oldTask?.totalMins ? totalMins + oldTask?.totalMins : totalMins;
-      day.tasks = [...dayTasks.filter(t => t.id !== activeTask), oldTask];
+      dayData.tasks = [...dayTasks.filter(t => t.id !== activeTask), oldTask];
 
       if (taskData?.type) {
         const oldType = dayTypes.filter(t => t?.typeData?.name === taskData?.type.name)[0] || { typeData: taskData?.type };
         oldType.totalMins = oldType?.totalMins ? totalMins + oldType?.totalMins : totalMins;
 
-        day.types = [...dayTypes.filter(t => t?.typeData?.name !== oldType.typeData.name), oldType];
+        dayData.types = [...dayTypes.filter(t => t?.typeData?.name !== oldType.typeData.name), oldType];
       }
 
       if (taskData?.template?.todo) {
@@ -44,11 +49,11 @@ const updateActiveDay = async (day, activeTask, taskData, user, totalMins) => {
           { id: taskData.template?._id, name: templateData.name };
         oldTemplate.totalMins = oldTemplate?.totalMins ? totalMins + oldTemplate?.totalMins : totalMins;
 
-        day.templates = [...day.templates.filter(t => t.id !== taskData?.template?._id), oldTemplate];
+        dayData.templates = [...dayData.templates.filter(t => t.id !== taskData?.template?._id), oldTemplate];
       }
     }
 
-    const updateDay = await ActiveDay.findByIdAndUpdate(day._id, day, { new: true });
+    const updateDay = await ActiveDay.findByIdAndUpdate(dayData._id, dayData, { new: true });
 
     await updateUser(true, user, totalMins)
 
@@ -64,7 +69,8 @@ const updateActiveDay = async (day, activeTask, taskData, user, totalMins) => {
         tasks: newTasks,
         templates: newTemplates,
         userId: user?._id.toString(),
-        totalMins
+        totalMins,
+        dayData: day,
       });
 
       await updateUser(false, user, totalMins)
@@ -132,29 +138,29 @@ const addActivity = async (req, res) => {
     const totalMins = (time.end - time.start) / 1000 / 60;
 
     if (startDay === endDay) {
-      const day = await ActiveDay.findOne({
-        day: startDay,
-        userId: req.user._id.toString()
-      });
+      // const day = await ActiveDay.findOne({
+      //   day: startDay,
+      //   userId: req.user._id.toString()
+      // });
 
-      const updatedActiveDay = await updateActiveDay(day, activeTask, taskData, req.user, totalMins);
+      const updatedActiveDay = await updateActiveDay(startDay, activeTask, taskData, req.user, totalMins);
       res.status(200).json(updatedActiveDay);
     } else {
-      const startDayData = await ActiveDay.findOne({
-        day: startDay,
-        userId: req.user._id.toString()
-      });
+      // const startDayData = await ActiveDay.findOne({
+      //   day: startDay,
+      //   userId: req.user._id.toString()
+      // });
       const totalMinsAtStart = (endOfDay(day) - time.start) / 1000 / 60;
 
-      await updateActiveDay(startDayData, activeTask, taskData, req.user, totalMinsAtStart);
+      await updateActiveDay(startDay, activeTask, taskData, req.user, totalMinsAtStart);
 
-      const endDayData = await ActiveDay.findOne({
-        day: endDay,
-        userId: req.user._id.toString()
-      });
+      // const endDayData = await ActiveDay.findOne({
+      //   day: endDay,
+      //   userId: req.user._id.toString()
+      // });
       const totalMinsAtEnd = (endOfDay(day) - time.start) / 1000 / 60;
 
-      const updatedDay = await updateActiveDay(endDayData, activeTask, taskData, req.user, totalMinsAtEnd);
+      const updatedDay = await updateActiveDay(endDay, activeTask, taskData, req.user, totalMinsAtEnd);
       res.status(200).json(updatedDay)
     }
   } catch (error) {
