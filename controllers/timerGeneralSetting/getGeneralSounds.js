@@ -1,6 +1,5 @@
 const cloudinary = require('cloudinary').v2;
 
-
 // Configuration 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -43,11 +42,15 @@ const getGeneralSounds = async (req, res) => {
 
     res.status(200).json({
       files: resources.map(
-        (resource) => ({ src: resource.secure_url, name: resource.public_id.split(folder)[1].replace("-", " ") })
+        (resource) => ({
+          src: resource.secure_url,
+          name: resource.public_id.split(folder)[1].replace("-", " ")
+        })
       ),
       total: resources.length
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 }

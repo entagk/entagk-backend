@@ -12,7 +12,6 @@ const user = {
 };
 
 module.exports = () => describe("Testing Google login POST through route /api/user/google_login", () => {
-  let accessToken = "";
   it('Sending short google token', (done) => {
     const token = 'invalid_google_token';
 
