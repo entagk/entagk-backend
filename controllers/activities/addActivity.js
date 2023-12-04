@@ -143,26 +143,12 @@ const addActivity = async (req, res) => {
     const totalMins = (time.end - time.start) / 1000 / 60;
 
     if (startDay === endDay) {
-      // const day = await ActiveDay.findOne({
-      //   day: startDay,
-      //   userId: req.user._id.toString()
-      // });
-
       const updatedActiveDay = await updateActiveDay(startDay, activeTask, taskData, req.user, totalMins);
       res.status(200).json(updatedActiveDay);
     } else {
-      // const startDayData = await ActiveDay.findOne({
-      //   day: startDay,
-      //   userId: req.user._id.toString()
-      // });
       const totalMinsAtStart = (endOfDay(day) - time.start) / 1000 / 60;
 
       await updateActiveDay(startDay, activeTask, taskData, req.user, totalMinsAtStart);
-
-      // const endDayData = await ActiveDay.findOne({
-      //   day: endDay,
-      //   userId: req.user._id.toString()
-      // });
       const totalMinsAtEnd = (endOfDay(day) - time.start) / 1000 / 60;
 
       const updatedDay = await updateActiveDay(endDay, activeTask, taskData, req.user, totalMinsAtEnd);
