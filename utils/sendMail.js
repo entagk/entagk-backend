@@ -3,8 +3,6 @@ const dotenv = require("dotenv");
 const { google } = require("googleapis");
 const { OAuth2 } = google.auth;
 
-const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
-
 dotenv.config();
 
 const {
@@ -13,13 +11,14 @@ const {
   MAILING_SERVICE_REFRESH_TOKEN,
   GOOGLE_EMAIL,
   WEBSITE,
+  REDIRECT_URI
   // GOOGLE_PASSWORD
 } = process.env;
 
 const oAuth2Client = new OAuth2(
   MAILING_SERVICE_CLIENT_ID,
   MAILING_SERVICE_CLIENT_SECRET,
-  MAILING_SERVICE_REFRESH_TOKEN,
+  // MAILING_SERVICE_REFRESH_TOKEN,
   REDIRECT_URI
 );
 

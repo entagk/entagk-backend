@@ -68,6 +68,8 @@ module.exports = () => describe("Testing updateUser PATCH route /api/user/update
       .end((err, res) => {
         if (err) throw err;
 
+        console.log(res.body);
+
         expect(res.body.errors.newPassword).toBe("The password shouldn't be less than 8 letter or numbers");
 
         done();
@@ -84,6 +86,7 @@ module.exports = () => describe("Testing updateUser PATCH route /api/user/update
       .expect(200)
       .end((err, res) => {
         if (err) throw err;
+        console.log(res.body);
 
         expect(res.body.message).toBe("Successfuly updates");
         userData.password = newPass;

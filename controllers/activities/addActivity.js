@@ -62,7 +62,12 @@ const updateActiveDay = async (day, activeTask, taskData, user, totalMins) => {
     if (activeTask) {
       const newTypes = taskData?.type ? [{ typeData: taskData?.type, totalMins }] : [];
       const newTasks = taskData?.name ? [{ id: taskData?._id, name: taskData.name, totalMins, type: taskData?.type }] : [];
-      const newTemplates = taskData?.template?.todo ? [{ id: taskData?.template?._id, name: await Task.findById(taskData?.template?._id).name, totalMins }] : [];
+      const newTemplates = taskData?.template?.todo ?
+        [{
+          id: taskData?.template?._id,
+          name: await Task.findById(taskData?.template?._id).name,
+          totalMins
+        }] : [];
 
       const newDay = await ActiveDay.create({
         types: newTypes,

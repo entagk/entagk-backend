@@ -7,7 +7,7 @@ router.post("/signin", UserController.signIn);
 
 router.post("/signup", UserController.signUp);
 
-router.post('/google_login', UserController.googleLogin); // write its unit testing
+router.post('/google_login', UserController.googleLogin);
 
 router.get("/user_info", Auth, UserController.getUser);
 
