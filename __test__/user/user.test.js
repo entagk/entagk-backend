@@ -16,6 +16,8 @@ describe('User APIs', () => {
 
   require('./signin')();
 
+  require('./googleLogin')();
+
   require('./getUser')();
 
   require('./forgetPassword')();
