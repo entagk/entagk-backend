@@ -21,7 +21,8 @@ const validateTaskData = async (req, res, next) => {
 
     } else {
       // updateTask
-      if (!name && !est && !act && !notes && !project) return res.status(400).json({ message: "Please enter the data that you want to update the task to it." })
+      if (!name && !est && !act && !notes && !project)
+        return res.status(400).json({ message: "Please enter the data that you want to update the task to it." })
     }
 
     if (est <= 0)

@@ -97,7 +97,7 @@ module.exports = () => describe("Testing updateTask controller route /api/task/u
 
         done();
       })
-  })
+  });
 
   it("Sending invalid name", (done) => {
     const taskData = getData('taskData');
@@ -113,7 +113,7 @@ module.exports = () => describe("Testing updateTask controller route /api/task/u
 
         done();
       })
-  })
+  });
 
   it("Sending invalid notes", (done) => {
     const taskData = getData('taskData');
@@ -129,7 +129,23 @@ module.exports = () => describe("Testing updateTask controller route /api/task/u
 
         done();
       })
-  })
+  });
+
+  it('Sending invalid type', (done) => {
+    const taskData = getData('taskData');
+    supertest(app)
+      .patch(`/api/task/update/${taskData[0]._id}`)
+      .set("Authorization", `Bearer ${getData("token")}`)
+      .send({ ...taskData[0], type: { name: "kdsaj", code: "kdsj" } })
+      .expect(400)
+      .end((err, res) => {
+        if (err) throw err;
+
+        expect(res.body.message).toBe("Invalid task type");
+
+        done();
+      })
+  });
 
   it("Sending valid data", (done) => {
     const taskData = getData('taskData');
