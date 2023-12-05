@@ -136,6 +136,8 @@ const addActivity = async (req, res) => {
       return res.status(400).json({ message: "Invalid start time" });
     if (!time.end || time.end < 0)
       return res.status(400).json({ message: "Invalid end time" });
+    if (time.end - time.start > (60 * 60 * 1000))
+      return res.status(400).json({ message: "Invalid activity" });
 
     const startDay = new Date(time.start).toJSON().split('T')[0];
     const endDay = new Date(time.start).toJSON().split('T')[0];

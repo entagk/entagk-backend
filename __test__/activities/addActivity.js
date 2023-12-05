@@ -6,6 +6,11 @@ const { getData, setData, test } = require('./utils');
 const validateAuth = require('../validateAuth');
 const { types } = require('../../utils/helper');
 
+/**
+ * 1- test the template tasks
+ * 2- send the activity of 2 days
+ * @returns 
+ */
 module.exports = () =>
   describe('Testing addActivity POST through router /api/active controller', () => {
     const utilsPath = path.resolve(__dirname, 'utils');
@@ -160,6 +165,30 @@ module.exports = () =>
 
           const data = res.body;
           expect(data.message).toBe("Invalid end time");
+
+          done();
+        });
+    });
+
+    it('Send invalid activity', (done) => {
+      const token = getData('token');
+      const start = Date.now();
+      supertest(app)
+        .post('/api/active')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          time: {
+            start: Date.now(),
+            end: start + (1000 * 60 * 61)
+          },
+          activeTask: taskData[0]._id
+        })
+        .expect(400)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+          expect(data.message).toBe("Invalid activity");
 
           done();
         });
