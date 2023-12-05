@@ -147,6 +147,22 @@ module.exports = () => describe("Testing updateTask controller route /api/task/u
       })
   });
 
+  it('Sending invalid template', (done) => {
+    const taskData = getData('taskData');
+    supertest(app)
+      .patch(`/api/task/update/${taskData[0]._id}`)
+      .set("Authorization", `Bearer ${getData("token")}`)
+      .send({ ...taskData[0], template: "template_id" })
+      .expect(400)
+      .end((err, res) => {
+        if (err) throw err;
+
+        expect(res.body.message).toBe("Invalid template");
+
+        done();
+      });
+  });
+
   it("Sending valid data", (done) => {
     const taskData = getData('taskData');
     supertest(app)

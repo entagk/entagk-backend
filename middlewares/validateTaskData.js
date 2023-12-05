@@ -55,7 +55,8 @@ const validateTaskData = async (req, res, next) => {
 
     const templateData = await Template.findById(template?._id) || await Task.findById(template?._id);
     if (template) {
-      if (!templateData?._id || !mongoose.Types.ObjectId.isValid(template?._id) || templateData === null) return res.status(400).json({ message: "Invalid template" });
+      if (!templateData?._id || !mongoose.Types.ObjectId.isValid(template?._id) || templateData === null)
+        return res.status(400).json({ message: "Invalid template" });
       else {
         template.todo = templateData?.template === null;
       }

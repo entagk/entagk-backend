@@ -86,6 +86,21 @@ module.exports = () => describe("Testing addTask controller route /api/task/add/
       })
   })
 
+  it('Sending invalid template', (done) => {
+    supertest(app)
+      .post('/api/task/add/')
+      .set("Authorization", `Bearer ${getData('token')}`)
+      .send({ name: "test1", est: 2, template: "template_id" })
+      .expect(400)
+      .end((err, res) => {
+        if (err) throw err;
+
+        expect(res.body.message).toBe("Invalid template");
+
+        done();
+      });
+  });
+
   it("Sending valid data", (done) => {
     supertest(app)
       .post('/api/task/add/')
