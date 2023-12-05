@@ -75,7 +75,7 @@ const updateActiveDay = async (day, activeTask, taskData, user, totalMins) => {
         templates: newTemplates,
         userId: user?._id.toString(),
         totalMins,
-        dayData: day,
+        day: day,
       });
 
       await updateUser(false, user, totalMins)
@@ -85,6 +85,7 @@ const updateActiveDay = async (day, activeTask, taskData, user, totalMins) => {
       const newDay = await ActiveDay.create({
         userId: user?._id.toString(),
         totalMins,
+        day: day,
         types: [{ typeData: { name: "Nothing", code: "1F6AB" }, totalMins }]
       });
 
@@ -99,9 +100,9 @@ const endOfDay = (day) => {
   const dayDate = new Date(day);
 
   const endOfDay = new Date(dayDate);
-  endOfDay.setHours(23, 59, 59, 999);
+  endOfDay.setHours(24, 0, 0, 0);
 
-  return endOfDay;
+  return endOfDay.getTime();
 }
 
 /**
@@ -140,7 +141,7 @@ const addActivity = async (req, res) => {
       return res.status(400).json({ message: "Invalid activity" });
 
     const startDay = new Date(time.start).toJSON().split('T')[0];
-    const endDay = new Date(time.start).toJSON().split('T')[0];
+    const endDay = `${new Date(time.end).getFullYear()}-${new Date(time.end).getMonth() + 1}-${new Date(time.end).getDate() > 10 ? new Date(time.end).getDate() : '0' + new Date(time.end).getDate()}`;
 
     const totalMins = (time.end - time.start) / 1000 / 60;
 
@@ -148,10 +149,10 @@ const addActivity = async (req, res) => {
       const updatedActiveDay = await updateActiveDay(startDay, activeTask, taskData, req.user, totalMins);
       res.status(200).json(updatedActiveDay);
     } else {
-      const totalMinsAtStart = (endOfDay(day) - time.start) / 1000 / 60;
+      const totalMinsAtStart = (endOfDay(startDay) - time.start) / 1000 / 60;
 
       await updateActiveDay(startDay, activeTask, taskData, req.user, totalMinsAtStart);
-      const totalMinsAtEnd = (endOfDay(day) - time.start) / 1000 / 60;
+      const totalMinsAtEnd = (time.end - endOfDay(startDay)) / 1000 / 60;
 
       const updatedDay = await updateActiveDay(endDay, activeTask, taskData, req.user, totalMinsAtEnd);
       res.status(200).json(updatedDay)

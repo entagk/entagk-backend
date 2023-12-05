@@ -224,6 +224,8 @@ module.exports = () =>
             }
           );
 
+          delete data.updatedAt;
+
           setData('days', data, 0);
 
           done();
@@ -267,6 +269,8 @@ module.exports = () =>
               totalMins: oldDay.totalMins + taskTotalMins
             }
           );
+
+          delete data.updatedAt;
 
           setData('days', data, 0);
 
@@ -338,7 +342,66 @@ module.exports = () =>
             }
           );
 
+          delete data.updatedAt;
+
           setData('days', data, 0);
+
+          done();
+        });
+    });
+
+    it("Send request with 2 days activity", (done) => {
+      const token = getData('token');
+      const today = new Date().setHours(23, 30, 0, 0);
+      const end = today + (1000 * 60 * 60)
+
+      supertest(app)
+        .post('/api/active')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          time: {
+            start: today,
+            end: end
+          },
+          activeTask: taskData[1]._id
+        })
+        .expect(200)
+        .end((err, res) => {
+          if (err) throw err;
+
+          const data = res.body;
+          const userId = getData('userId');
+          const taskTotalMins = 30;
+
+          test(
+            data,
+            {
+              userId,
+              day: `${new Date(end).getFullYear()}-${new Date(end).getMonth() + 1}-${new Date(end).getDate() > 10 ? new Date(end).getDate() : '0' + new Date(end).getDate()}`,
+              tasks: [
+                {
+                  name: taskData[1].name,
+                  id: taskData[1]._id,
+                  totalMins: taskTotalMins,
+                  type: types.at(0)
+                },
+              ],
+              types: [{ typeData: types.at(0), totalMins: taskTotalMins }],
+              templates: [],
+              totalMins: taskTotalMins
+            }
+          );
+
+          const lastDay = getData('days')[0];
+          lastDay.totalMins += taskTotalMins;
+          lastDay.tasks.find(t => t.id === taskData[1]._id).totalMins += taskTotalMins;
+          lastDay.types.find(t => t.typeData.name === types.at(0).name).totalMins += taskTotalMins;
+
+          delete lastDay.updatedAt;
+          delete data.updatedAt;
+
+          setData('days', lastDay, 0);
+          setData('days', data, 1);
 
           done();
         });

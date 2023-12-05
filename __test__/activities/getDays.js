@@ -188,6 +188,7 @@ module.exports = () =>
           new Date().getDate() + 6)
       )
         .toJSON().split('T')[0];
+
       const start = new Date().toJSON().split('T')[0];
 
       supertest(app)
@@ -197,7 +198,9 @@ module.exports = () =>
         .end((err, res) => {
           if (err) throw err;
 
-          test(res.body, getData('days'))
+          const data = res.body.map((d) => { delete d.updatedAt; return d });
+
+          test(data, getData('days'))
 
           done();
         })
