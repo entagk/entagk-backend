@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkpomodoro_=self.webpackChunkpomodoro_||[]).push([[201],{1201:function(o,e,n){n.r(e);n(2791);var l=n(1578),a=n(184);e.default=function(o){var e=o.handleClick,n=o.time;return(0,a.jsx)("button",{"aria-label":"clear button on roll",className:"down-side",id:"down",disabled:0===n,onClick:e,children:(0,a.jsx)(l.k$W,{})})}}}]);
-//# sourceMappingURL=201.b763da73.chunk.js.map
