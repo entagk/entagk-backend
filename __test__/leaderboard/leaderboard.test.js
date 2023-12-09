@@ -39,11 +39,8 @@ describe('Leaderboard APIs', () => {
           expect(res.body.users[0]).toStrictEqual(
             {
               _id: userId,
-              "name": "testing123",
-              "email": "testing123@test.com",
+              name: "testing123",
               totalHours: 0,
-              totalFocusDay: 0,
-              totalActiveDay: 0,
             }
           );
 

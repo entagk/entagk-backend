@@ -7,7 +7,7 @@ const getLeaderboard = async (req, res) => {
     const startIndex = (Number(page) - 1) * limit;
 
     const total = await User.countDocuments();
-    const users = await User.find().select('-password').sort({ totalHours: -1 }).limit(limit).skip(startIndex);
+    const users = await User.find().select('name totalHours').sort({ totalHours: -1 }).limit(limit).skip(startIndex);
 
     res.status(200).json({
       users,
