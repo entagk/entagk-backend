@@ -9,14 +9,16 @@ const modifyNote = async (ws, req) => {
     ws.isPaused = false;
     ws.on('message', async function (msg) {
       const msgData = JSON.parse(msg);
-      const id = msgData?.id || msgData?._id;
+      const action = msgData?.action;
+      const data = msgData.data;
+      const id = data?.id || data?._id;
 
       if (!id) {
-        ws.send(JSON.stringify({ message: "The id is required" }));
+        ws.send(JSON.stringify({ message: "The id is required", action, success: false }));
         ws.close(1007, "The id is required");
         ws.isPaused = true;
       } else if ((!mongoose.Types.ObjectId.isValid(id) && !id.includes('new'))) {
-        ws.send(JSON.stringify({ message: "Invalid Id" }));
+        ws.send(JSON.stringify({ message: "Invalid Id", action, success: false }));
         ws.close(1007, "Invalid Id");
         ws.isPaused = true;
       }
@@ -24,81 +26,92 @@ const modifyNote = async (ws, req) => {
       note = !id.includes('new') ? await StickyNote.findById(id) : {};
 
       if (!note?._id && !id.includes('new')) {
-        ws.send(JSON.stringify({ message: "Invalid Id" }));
+        ws.send(JSON.stringify({ message: "Invalid Id", action, success: false }));
         ws.close(1007, "Invalid Id");
         ws.isPaused = true;
       }
 
-      const validContent = msgData?.content ? validateNoteContent(msgData?.content) : { validateContent: false };
+      const validContent = data?.content ? validateNoteContent(data?.content) : { validateContent: false };
 
-      if (id.includes('new') && (!msgData?.content || !validContent.validContent)) {
-        ws.send(JSON.stringify({ message: "invalid note" }));
+      if (id.includes('new') && (!data?.content || !validContent.validContent)) {
+        ws.send(JSON.stringify({ message: "invalid note", id, action, success: false }));
         ws.isPaused = true;
       }
 
       // validate note content
-      if (msgData?.content && !validContent.validContent) {
-        ws.send(JSON.stringify({ message: "invalid content" }));
+      if (data?.content && !validContent.validContent) {
+        ws.send(JSON.stringify({ message: "invalid content", id, action, success: false }));
         ws.isPaused = true;
       }
 
       // validate coordinates
-      if (msgData?.coordinates) {
-        const { width, height } = msgData.coordinates;
+      if (data?.coordinates) {
+        const { width, height } = data.coordinates;
         if (!width && !height) {
-          ws.send(JSON.stringify({ message: "invalid coordinates" }));
+          ws.send(JSON.stringify({ message: "invalid coordinates", id, action, success: false }));
           ws.isPaused = true;
         }
 
         if (width < 100) {
-          ws.send(JSON.stringify({ message: "invalid width" }));
+          ws.send(JSON.stringify({ message: "invalid width", id, action, success: false }));
           ws.isPaused = true;
         }
 
         if (height < 100) {
-          ws.send(JSON.stringify({ message: "invalid height" }));
+          ws.send(JSON.stringify({ message: "invalid height", id, action, success: false }));
           ws.isPaused = true;
         }
 
-        msgData.coordinates = { ...note?.coordinates, ...msgData.coordinates };
+        data.coordinates = { ...note?.coordinates, ...data.coordinates };
       }
 
       const colors = ["pink", "yellow", "orange", "green", "blue"];
 
-      if (msgData?.color && (typeof msgData.color !== 'string' || !colors.includes(msgData.color))) {
-        ws.send(JSON.stringify({ message: "invalid color" }));
+      if (data?.color && (typeof data.color !== 'string' || !colors.includes(data.color))) {
+        ws.send(JSON.stringify({ message: "invalid color", id, action, success: false }));
         ws.isPaused = true;
       }
 
-      if (msgData?.open && typeof msgData?.open !== 'boolean') {
-        ws.send(JSON.stringify({ message: "invalid open" }));
+      if (data?.open && typeof data?.open !== 'boolean') {
+        ws.send(JSON.stringify({ message: "invalid open", id, action, success: false }));
         ws.isPaused = true;
       }
 
       if (!ws.isPaused) {
-        if (msgData.content) {
-          msgData.contentLength = {
+        if (data.content) {
+          data.contentLength = {
             textLength: validContent.textLength,
-            arrayLength: msgData.content.length
+            arrayLength: data.content.length
           }
         }
 
-        delete msgData?.id;
-        delete msgData?._id;
+        delete data?.id;
+        delete data?._id;
 
         const updatedNote =
           id.includes('new') ?
             await StickyNote.create({
-              ...msgData,
+              ...data,
               userId: req.user._id,
             }) :
             await StickyNote.findByIdAndUpdate(
               note?._id,
-              msgData,
+              data,
               { new: true }
             );
 
-        ws.send(JSON.stringify({ ...updatedNote?._doc, oldId: !id.includes('new') ? id : id }));
+        const finalData = { id, action, success: true };
+
+        if (action === 'add' || action === 'edit') {
+          finalData.data = updatedNote;
+          if (action === 'add') {
+            finalData.oldId = !id.includes('new') ? id : id
+          }
+        }
+
+        console.log(finalData);
+
+        ws.send(JSON.stringify(finalData));
       }
     });
   } catch (error) {
