@@ -46,10 +46,10 @@ const updateActiveDay = async (day, activeTask, taskData, user, totalMins) => {
 
         const oldTemplate =
           dayTemplates.filter(t => t.id === taskData?.template?._id)[0] ||
-          { id: taskData.template?._id, name: templateData.name };
+          { id: taskData.template?._id.toString(), name: templateData.name };
         oldTemplate.totalMins = oldTemplate?.totalMins ? totalMins + oldTemplate?.totalMins : totalMins;
 
-        dayData.templates = [...dayData.templates.filter(t => t.id !== taskData?.template?._id), oldTemplate];
+        dayData.templates = [...dayData.templates.filter(t => t.id !== taskData?.template?._id.toString()), oldTemplate];
       }
     }
 
@@ -61,10 +61,10 @@ const updateActiveDay = async (day, activeTask, taskData, user, totalMins) => {
   } else {
     if (activeTask) {
       const newTypes = taskData?.type ? [{ typeData: taskData?.type, totalMins }] : [];
-      const newTasks = taskData?.name ? [{ id: taskData?._id, name: taskData.name, totalMins, type: taskData?.type }] : [];
+      const newTasks = taskData?.name ? [{ id: taskData?._id.toString(), name: taskData.name, totalMins, type: taskData?.type }] : [];
       const newTemplates = taskData?.template?.todo ?
         [{
-          id: taskData?.template?._id,
+          id: taskData?.template?._id.toString(),
           name: await Task.findById(taskData?.template?._id).name,
           totalMins
         }] : [];
