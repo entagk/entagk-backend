@@ -129,7 +129,7 @@ const addActivity = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(activeTask) && activeTask)
       return res.status(400).json({ message: 'The active task id is not vaild.' });
 
-    const taskData = await Task.findById(activeTask);
+    const taskData = activeTask ? await Task.findById(activeTask) : null;
     console.log("taskData: ", taskData);
 
     if (!taskData && activeTask)
