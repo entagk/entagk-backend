@@ -144,7 +144,7 @@ const addActivity = async (req, res) => {
       return res.status(400).json({ message: "Invalid activity" });
 
     const startDay = new Date(time.start).toJSON().split('T')[0];
-    const endDay = `${new Date(time.end).getFullYear()}-${new Date(time.end).getMonth() + 1}-${new Date(time.end).getDate() > 10 ? new Date(time.end).getDate() : '0' + new Date(time.end).getDate()}`;
+    const endDay = `${new Date(time.end).getFullYear()}-${new Date(time.end).getMonth() + 1 > 10 ? new Date(time.end).getMonth() + 1 : '0' + (new Date(time.end).getMonth() + 1)}-${new Date(time.end).getDate() > 10 ? new Date(time.end).getDate() : '0' + new Date(time.end).getDate()}`;
 
     console.log("start, end: ", startDay, endDay);
     const totalMins = (time.end - time.start) / 1000 / 60;
