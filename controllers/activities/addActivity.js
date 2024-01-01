@@ -119,7 +119,7 @@ const endOfDay = (day) => {
 const addActivity = async (req, res) => {
   try {
     const { activeTask, time } = req.body;
-    console.log(time);
+    console.log("time: ", time);
 
     if (!activeTask && !time)
       return res.status(400).json({ message: "Please, enter the active data" })
@@ -130,7 +130,7 @@ const addActivity = async (req, res) => {
       return res.status(400).json({ message: 'The active task id is not vaild.' });
 
     const taskData = await Task.findById(activeTask);
-    console.log(taskData);
+    console.log("taskData: ", taskData);
 
     if (!taskData && activeTask)
       return res.status(400).json({ message: "Invalid task" });
@@ -146,9 +146,9 @@ const addActivity = async (req, res) => {
     const startDay = new Date(time.start).toJSON().split('T')[0];
     const endDay = `${new Date(time.end).getFullYear()}-${new Date(time.end).getMonth() + 1}-${new Date(time.end).getDate() > 10 ? new Date(time.end).getDate() : '0' + new Date(time.end).getDate()}`;
 
-    console.log(startDay, endDay);
+    console.log("start, end: ", startDay, endDay);
     const totalMins = (time.end - time.start) / 1000 / 60;
-    console.log(totalMins);
+    console.log("totalMins: ", totalMins);
 
     if (startDay === endDay) {
       const updatedActiveDay = await updateActiveDay(startDay, activeTask, taskData, req.user, totalMins);
