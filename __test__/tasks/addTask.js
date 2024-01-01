@@ -71,6 +71,36 @@ module.exports = () => describe("Testing addTask controller route /api/task/add/
       })
   });
 
+  it('Sending invalid type', (done) => {
+    supertest(app)
+      .post('/api/task/add/')
+      .set("Authorization", `Bearer ${getData('token')}`)
+      .send({ name: "test1", est: 2, type: { name: "kdsaj", code: "kdsj" } })
+      .expect(400)
+      .end((err, res) => {
+        if (err) throw err;
+
+        expect(res.body.message).toBe("Invalid task type");
+
+        done();
+      })
+  })
+
+  it('Sending invalid template', (done) => {
+    supertest(app)
+      .post('/api/task/add/')
+      .set("Authorization", `Bearer ${getData('token')}`)
+      .send({ name: "test1", est: 2, template: "template_id" })
+      .expect(400)
+      .end((err, res) => {
+        if (err) throw err;
+
+        expect(res.body.message).toBe("Invalid template");
+
+        done();
+      });
+  });
+
   it("Sending valid data", (done) => {
     supertest(app)
       .post('/api/task/add/')

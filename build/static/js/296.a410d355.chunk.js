@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkpomodoro_=self.webpackChunkpomodoro_||[]).push([[296],{8296:function(a,e,l){l.r(e);l(2791);var i=l(1578),o=l(184);e.default=function(a){var e=a.handleClick,l=a.ariaLabel,s=a.className,n=a.time,r=a.id;return(0,o.jsx)("button",{"aria-label":l,className:s,id:r,disabled:0===n,onClick:e,children:(0,o.jsx)(i.y82,{})})}}}]);
-//# sourceMappingURL=296.a410d355.chunk.js.map

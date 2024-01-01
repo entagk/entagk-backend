@@ -11,8 +11,9 @@ const init = {
     "name": "testing123",
     "email": "testing123@test.com",
     "password": "testing123"
-  }
-};
+  },
+  "tokenAfterGoogleLogin": ""
+}
 
 module.exports = {
   getData: (field) => {

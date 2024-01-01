@@ -41,6 +41,26 @@ module.exports = () => describe("Testing addMultipleTasks controller throug rout
       })
   });
 
+  it("Send request with empty tasks", (done) => {
+    supertest(app)
+      .post('/api/task/add_multiple_tasks')
+      .set("Authorization", `Bearer ${getData('token')}`)
+      .send([{}])
+      .expect(400)
+      .end((err, res) => {
+        if (err) throw err;
+
+        test(res.body,
+          {
+            name: `For task 1, This field is required`,
+            est: `For task 1, This field is required`
+          }
+        );
+
+        done();
+      })
+  });
+
   it("Sending invalid est", (done) => {
     supertest(app)
       .post('/api/task/add_multiple_tasks')
@@ -84,7 +104,22 @@ module.exports = () => describe("Testing addMultipleTasks controller throug rout
 
         done();
       })
-  })
+  });
+
+  it("Sending invalid type", (done) => {
+    supertest(app)
+      .post('/api/task/add_multiple_tasks')
+      .set("Authorization", `Bearer ${getData('token')}`)
+      .send([{ name: "test1", est: 2, type: { name: "dsfs", code: "kfjds" } }])
+      .expect(400)
+      .end((err, res) => {
+        if (err) throw err;
+
+        expect(res.body.errors.type).toBe("For task 1, Invalid task type");
+
+        done();
+      })
+  });
 
   it("Sending valid data", (done) => {
     supertest(app)
@@ -106,7 +141,7 @@ module.exports = () => describe("Testing addMultipleTasks controller throug rout
 
         done();
       })
-  })
+  });
 
   it("get all tasks", (done) => {
     const taskData = getData('taskData');

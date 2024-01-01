@@ -15,4 +15,6 @@ describe("Timer Setting API", () => {
   require('./getSetting')();
 
   require('./updateSettings')();
+
+  require('./getGeneralSounds')();
 })

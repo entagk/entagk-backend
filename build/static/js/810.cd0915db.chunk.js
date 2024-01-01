@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkpomodoro_=self.webpackChunkpomodoro_||[]).push([[810],{9810:function(e,o,s){s.r(o);s(2791);var a=s(1578),l=s(184);o.default=function(e){var o=e.handleClick;return(0,l.jsx)("button",{"aria-label":"stop on roll",className:"pause-side",id:"pause-side",onClick:o,children:(0,l.jsx)(a.K6B,{})})}}}]);
-//# sourceMappingURL=810.cd0915db.chunk.js.map

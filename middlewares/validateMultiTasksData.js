@@ -32,8 +32,10 @@ const { types } = require('../utils/helper')
 
 const ValidateMultiTasksData = async (req, res, next) => {
   try {
-    if (!Array.isArray(req.body)) return res.status(400).json({ message: "The data have been sent is not array, please try again" });
-    if (req.body?.length === 0) return res.status(400).json({ message: 'No data have been sent yet.' });
+    if (!Array.isArray(req.body))
+      return res.status(400).json({ message: "The data have been sent is not array, please try again" });
+    if (req.body?.length === 0)
+      return res.status(400).json({ message: 'No data have been sent yet.' });
 
     const tasks = req.body?.map((task) => {
       return { ...task, userId: req.user._id.toString() };
@@ -88,7 +90,9 @@ const ValidateMultiTasksData = async (req, res, next) => {
       // fix it if you want to give the user ability of adding other type
       if (type && !types.find(t => t.name === type.name && t.code === type.code)) {
         return res.status(400).json({
-          message: "Invalid task type"
+          errors: {
+            type: `For task ${index + 1}, Invalid task type`
+          }
         });
       }
 

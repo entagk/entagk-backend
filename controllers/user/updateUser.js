@@ -9,7 +9,7 @@ const updateUser = async (req, res) => {
     if (!name && (!oldPassword && !newPassword))
       return res.status(400).json({ message: "Please enter the new data" });
 
-    const oldUser = req.user;
+    const oldUser = await User.findById(req.user._id);
 
     if (!oldUser) return res.status(404).json({ message: "This user is not found" });
 
@@ -45,6 +45,7 @@ const updateUser = async (req, res) => {
     res.status(200).json({ message: "Successfuly updates", afterUpdatae });
   } catch (error) {
     res.status(500).json({ message: error.message });
+    console.log(error);
   }
 };
 

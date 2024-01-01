@@ -63,9 +63,9 @@ module.exports = () =>
       supertest(app)
         .get(`/api/active/${new Date(
           new Date().setDate(
-            new Date().getDate() + 1)
+            new Date().getDate() + 2)
         )
-            .toJSON().split('T')[0]}`)
+          .toJSON().split('T')[0]}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200)
         .end((err, res) => {
@@ -80,15 +80,16 @@ module.exports = () =>
 
     it('send real day', (done) => {
       const token = getData('token');
+      const oldDay = getData('days').at(-1);
+
       supertest(app)
-        .get(`/api/active/${new Date().toJSON().split('T')[0]}`)
+        .get(`/api/active/${oldDay.day}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200)
         .end((err, res) => {
           if (err) throw err;
 
           const data = res.body;
-          const oldDay = getData('days')[0];
           test(data, oldDay);
 
           done();
